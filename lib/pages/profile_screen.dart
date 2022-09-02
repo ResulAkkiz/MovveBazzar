@@ -18,7 +18,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'Female': Icons.female,
     'Other': Icons.transgender
   };
-
+  TextEditingController controller = TextEditingController();
+  DateTime dateTime = DateTime.now();
   int choose = 0;
 
   @override
@@ -54,9 +55,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Flexible(
                       flex: 1,
-                      child: buildLoginTextformField(
-                          hintText: 'Date', iconData: Icons.date_range),
-                    ),
+                      child: buildDateTimePicker(
+                          onSelected: (DateTime date) {
+                            setState(() {
+                              dateTime = date;
+                              debugPrint(dateTime.toString());
+                            });
+                          },
+                          controller: controller,
+                          iconData: Icons.date_range,
+                          context: context),
+                    )
                   ],
                 ).separated(const SizedBox(
                   width: 15,
@@ -74,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             genderMap.values.toList().indexOf(entry.value);
                         return Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: InkWell(
+                          child: GestureDetector(
                             onTap: () {
                               setState(() {
                                 choose = index;
