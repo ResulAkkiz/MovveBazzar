@@ -5,7 +5,6 @@ import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,105 +24,133 @@ class _ProfileScreenState extends State<ProfileScreen> {
   DateTime dateTime = DateTime.now();
   ImagePicker imagePicker = ImagePicker();
   int choose = 0;
-  late File gamePhoto;
+  File? gamePhoto;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-          child: Column(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: <Widget>[_buildClipPath(), _buildCircleAvatar()],
-          ),
-          const SizedBox(
-            height: 35,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                buildLoginTextformField(
-                    hintText: 'Email', iconData: Icons.email),
-                buildLoginTextformField(
-                    hintText: 'Username', iconData: Icons.account_box),
-                buildLoginTextformField(
-                    hintText: 'Phone Number', iconData: Icons.phone_android),
-                Row(
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: buildLoginTextformField(
-                          hintText: 'Age',
-                          iconData: Icons.file_download_outlined),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: buildDateTimePicker(
-                          onSelected: (DateTime date) {
-                            setState(() {
-                              dateTime = date;
-                              debugPrint(dateTime.toString());
-                            });
-                          },
-                          controller: controller,
-                          iconData: Icons.date_range,
-                          context: context),
-                    )
-                  ],
-                ).separated(const SizedBox(
-                  width: 15,
-                )),
-                Column(
-                  children: [
-                    Text(
-                      'Select your gender',
-                      style: TextStyles.robotoRegular32Style,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: genderMap.entries.map((entry) {
-                        int index =
-                            genderMap.values.toList().indexOf(entry.value);
-                        return Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GestureDetector(
-                            onTap: () {
+    return SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 150.0),
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                _buildClipPath(),
+                _buildCircleAvatar(),
+                _buildSignoutButton()
+              ],
+            ),
+            const SizedBox(
+              height: 35,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  buildLoginTextformField(
+                      hintText: 'Email', iconData: Icons.email),
+                  buildLoginTextformField(
+                      hintText: 'Username', iconData: Icons.account_box),
+                  buildLoginTextformField(
+                      hintText: 'Phone Number', iconData: Icons.phone_android),
+                  Row(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: buildLoginTextformField(
+                            hintText: 'Age',
+                            iconData: Icons.file_download_outlined),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: buildDateTimePicker(
+                            onSelected: (DateTime date) {
                               setState(() {
-                                choose = index;
+                                dateTime = date;
+                                debugPrint(dateTime.toString());
                               });
                             },
-                            child: Padding(
-                              padding: const EdgeInsets.all(18.0),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    entry.value,
-                                    color: choose == index
-                                        ? Theme.of(context).primaryColor
-                                        : Colors.white,
-                                    size: 45,
-                                  ),
-                                  Text(
-                                    entry.key,
-                                  ),
-                                ],
+                            controller: controller,
+                            iconData: Icons.date_range,
+                            context: context),
+                      )
+                    ],
+                  ).separated(
+                    const SizedBox(
+                      width: 15,
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Select your gender',
+                        style: TextStyles.robotoRegular32Style,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: genderMap.entries.map((entry) {
+                          int index =
+                              genderMap.values.toList().indexOf(entry.value);
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  choose = index;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(18.0),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      entry.value,
+                                      color: choose == index
+                                          ? Theme.of(context).primaryColor
+                                          : Colors.white,
+                                      size: 45,
+                                    ),
+                                    Text(
+                                      entry.key,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Save',
+                      style: TextStyles.robotoBold18Style,
                     ),
-                  ],
-                ),
-              ],
-            ).separated(const SizedBox(
-              height: 20,
-            )),
-          ),
-        ],
-      )),
+                  ),
+                ],
+              ).separated(const SizedBox(
+                height: 20,
+              )),
+            ),
+          ],
+        ));
+  }
+
+  Align _buildSignoutButton() {
+    return Align(
+      alignment: Alignment.topRight,
+      child: IconButton(
+        iconSize: 30,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        icon: const Icon(
+          Icons.logout,
+        ),
+        onPressed: () {},
+      ),
     );
   }
 
@@ -177,7 +204,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               });
         },
         child: CircleAvatar(
-          backgroundImage: AssetImage(ImageEnums.profilepicture.toPath),
+          backgroundImage: gamePhoto != null
+              ? FileImage(gamePhoto!) as ImageProvider
+              : AssetImage(ImageEnums.profilepicture.toPath),
           radius: 64,
         ),
       ),

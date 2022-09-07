@@ -79,7 +79,7 @@ Widget buildDateTimePicker(
           controller: controller,
           decoration: InputDecoration(
               hintText: controller.text == ''
-                  ? 'Select your Birthday'
+                  ? 'Select your birthday'
                   : controller.text,
               contentPadding: const EdgeInsets.fromLTRB(74, 12, 10, 12)),
         ),

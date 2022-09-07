@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
+import 'package:flutter_application_1/model/media.dart';
 import 'package:intl/intl.dart';
 
 class HomepageBody extends StatelessWidget {
-  const HomepageBody({Key? key}) : super(key: key);
+  HomepageBody({Key? key}) : super(key: key);
+  final List<Media> _mediaList = [
+    Media(name: 'Shrek', date: DateTime.utc(2022, 07, 10)),
+    Media(name: 'Avengers', date: DateTime.utc(2022, 5, 12)),
+    Media(name: 'Mavi', date: DateTime.utc(2018, 07, 10)),
+    Media(name: 'Shrek', date: DateTime.utc(2022, 07, 10)),
+    Media(name: 'Shrek', date: DateTime.utc(2022, 07, 10))
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +56,14 @@ class HomepageBody extends StatelessWidget {
             overScroll.disallowIndicator();
             return false;
           },
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              buildFilmCard(filmName: 'Wonder', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Shrek 2', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
-              buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
-            ],
-          ),
+          child: ListView.builder(
+              itemCount: _mediaList.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                Media currentMedia = _mediaList[index];
+                return buildFilmCard(
+                    dateFilm: currentMedia.date, filmName: currentMedia.name);
+              }),
         ),
       ),
     );
@@ -88,3 +89,19 @@ class HomepageBody extends StatelessWidget {
     );
   }
 }
+
+// child: ListView(
+//             scrollDirection: Axis.horizontal,
+//             children: [
+//               buildFilmCard(filmName: 'Wonder', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Shrek 2', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
+//               buildFilmCard(filmName: 'Avengers', dateFilm: DateTime.now()),
+//             ],
+//           ),

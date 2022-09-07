@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
-import 'package:flutter_application_1/model/movie.dart';
-import 'package:flutter_application_1/model/tv.dart';
 import 'package:flutter_application_1/app_constants/ticket_widget.dart';
 
 class BookMarkScreen extends StatefulWidget {

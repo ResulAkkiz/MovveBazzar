@@ -1,9 +1,10 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/pages/bookmark_screen.dart';
+import 'package:flutter_application_1/pages/homebody_screen.dart';
+import 'package:flutter_application_1/pages/profile_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,6 +18,11 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   PageController _pageController = PageController();
+  final List<Widget> _pages = [
+    HomepageBody(),
+    const BookMarkScreen(),
+    const ProfileScreen(),
+  ];
 
   @override
   void initState() {
@@ -38,7 +44,7 @@ class _HomePageState extends State<HomePage> {
         bottomNavigationBar: _buildNavbar(context),
         body: NestedScrollView(
           floatHeaderSlivers: true,
-          body: const BookMarkScreen(),
+          body: _pages[_currentIndex],
           headerSliverBuilder:
               (BuildContext context, bool innerBoxIsScrolled) =>
                   [_buildSliverAppBar()],
@@ -87,7 +93,7 @@ class _HomePageState extends State<HomePage> {
           containerHeight: MediaQuery.of(context).size.height * 0.08,
           backgroundColor: const Color(0xFFDA1A37),
           selectedIndex: _currentIndex,
-          animationDuration: const Duration(milliseconds: 200),
+          animationDuration: const Duration(milliseconds: 300),
           showElevation: true,
           onItemSelected: (index) => setState(() {
             _currentIndex = index;
@@ -103,9 +109,6 @@ class _HomePageState extends State<HomePage> {
             ),
             _buildNavyBarItem(
               imageEnum: IconEnums.bookmark,
-            ),
-            _buildNavyBarItem(
-              imageEnum: IconEnums.play,
             ),
             _buildNavyBarItem(
               imageEnum: IconEnums.profile,
