@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -20,7 +23,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   };
   TextEditingController controller = TextEditingController();
   DateTime dateTime = DateTime.now();
+  ImagePicker imagePicker = ImagePicker();
   int choose = 0;
+  late File gamePhoto;
 
   @override
   Widget build(BuildContext context) {
@@ -135,21 +140,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Positioned _buildCircleAvatar() {
+  Widget _buildCircleAvatar() {
     return Positioned(
       left: 12,
       top: 110,
-      child: Center(
-        child: Column(
-          children: [
-            CircleAvatar(
-              backgroundImage: AssetImage(ImageEnums.profilepicture.toPath),
-              radius: 64,
-            ),
-          ],
+      child: GestureDetector(
+        onTap: () {
+          showModalBottomSheet(
+              backgroundColor: Theme.of(context).primaryColor,
+              context: context,
+              builder: (context) {
+                return ListView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  children: [
+                    ListTile(
+                      leading: const Icon(
+                        Icons.camera,
+                        color: Colors.white,
+                      ),
+                      title: const Text('Camera'),
+                      onTap: () {
+                        _kameradanCek();
+                      },
+                    ),
+                    ListTile(
+                      leading:
+                          const Icon(Icons.photo_album, color: Colors.white),
+                      title: const Text('Gallery'),
+                      onTap: () {
+                        _galeridenSec();
+                      },
+                    ),
+                  ],
+                );
+              });
+        },
+        child: CircleAvatar(
+          backgroundImage: AssetImage(ImageEnums.profilepicture.toPath),
+          radius: 64,
         ),
       ),
     );
+  }
+
+  void _kameradanCek() async {
+    var yeniResim = await imagePicker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      gamePhoto = (File(yeniResim!.path));
+    });
+  }
+
+  void _galeridenSec() async {
+    var yeniResim = await imagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      gamePhoto = (File(yeniResim!.path));
+    });
   }
 }
 

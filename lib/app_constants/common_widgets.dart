@@ -52,36 +52,6 @@ Widget buildLoginTextformField({
   );
 }
 
-// Widget buildDateTimePicker({
-//   required IconData iconData,
-//     required String hintText,
-//   required BuildContext context,
-//   DateTime? date,
-// }) {
-//   return Stack(
-//     alignment: Alignment.centerLeft,
-//     children: [
-//       GestureDetector(onTap: () {
-
-//       },
-//         child: TextFormField(
-//           cursorColor: Colors.red,
-//           decoration: InputDecoration(
-//               hintText: hintText,
-//               contentPadding: const EdgeInsets.fromLTRB(74, 12, 10, 12)),
-//         ),
-//       ),
-//       CircleAvatar(
-//         radius: 32,
-//         child: Icon(
-//           iconData,
-//           size: 48,
-//         ),
-//       ),
-//     ],
-//   );
-// }
-
 Future<DateTime?> pickDate(BuildContext context) async => showDatePicker(
     initialEntryMode: DatePickerEntryMode.calendarOnly,
     context: context,
@@ -92,15 +62,14 @@ Future<DateTime?> pickDate(BuildContext context) async => showDatePicker(
 Widget buildDateTimePicker(
     {required IconData iconData,
     required BuildContext context,
-    required Function(DateTime) onSelected,
+    required void Function(DateTime) onSelected,
     required TextEditingController controller}) {
   return InkWell(
     onTap: () async {
       final date = await pickDate(context);
       if (date == null) return;
       controller.text = '${date.day}/${date.month}/${date.year}';
-
-      onSelected(date); //16/08/1998
+      onSelected(date);
     },
     child: Stack(
       alignment: Alignment.centerLeft,
