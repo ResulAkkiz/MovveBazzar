@@ -15,6 +15,29 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late TextEditingController emailController;
+  late TextEditingController usernameController;
+  late TextEditingController phoneController;
+  late TextEditingController ageController;
+
+  @override
+  void initState() {
+    emailController = TextEditingController();
+    usernameController = TextEditingController();
+    phoneController = TextEditingController();
+    ageController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    usernameController.dispose();
+    phoneController.dispose();
+    ageController.dispose();
+    super.dispose();
+  }
+
   Map<String, IconData> genderMap = {
     'Male': Icons.male,
     'Female': Icons.female,
@@ -48,18 +71,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   buildLoginTextformField(
-                      hintText: 'Email', iconData: Icons.email),
+                      hintText: 'Email',
+                      iconData: Icons.email,
+                      controller: emailController),
                   buildLoginTextformField(
-                      hintText: 'Username', iconData: Icons.account_box),
+                      hintText: 'Username',
+                      iconData: Icons.account_box,
+                      controller: usernameController),
                   buildLoginTextformField(
-                      hintText: 'Phone Number', iconData: Icons.phone_android),
+                      hintText: 'Phone Number',
+                      iconData: Icons.phone_android,
+                      controller: phoneController),
                   Row(
                     children: [
                       Flexible(
                         flex: 1,
                         child: buildLoginTextformField(
                             hintText: 'Age',
-                            iconData: Icons.file_download_outlined),
+                            iconData: Icons.file_download_outlined,
+                            controller: ageController),
                       ),
                       Flexible(
                         flex: 1,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/pages/home_screen.dart';
+
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -9,29 +12,35 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  bool user = true;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: AnimatedContainer(
-          curve: Curves.bounceOut,
-          duration: const Duration(milliseconds: 500),
-          child: RichText(
-            text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                  text: 'Mov',
-                  style: TextStyles.splashLogoStyle,
-                ),
-                TextSpan(
-                  text: 've',
-                  style: TextStyles.splashLogoStyle.copyWith(
-                    color: const Color(0xFFE11A38),
-                  ),
-                ),
-              ],
+      body: _buildSplashLogo(),
+    );
+  }
+
+  Center _buildSplashLogo() {
+    return Center(
+      child: RichText(
+        text: TextSpan(
+          children: <TextSpan>[
+            TextSpan(
+              text: 'Mov',
+              style: TextStyles.splashLogoStyle,
             ),
-          ),
+            TextSpan(
+              text: 've',
+              style: TextStyles.splashLogoStyle.copyWith(
+                color: const Color(0xFFE11A38),
+              ),
+            ),
+          ],
         ),
       ),
     );

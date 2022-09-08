@@ -24,7 +24,6 @@ final ThemeData lightTheme = ThemeData(
   dividerColor: const Color(0x1f000000),
   highlightColor: const Color(0x66bcbcbc),
   splashColor: const Color(0x66c8c8c8),
-  selectedRowColor: const Color(0xfff5f5f5),
   unselectedWidgetColor: const Color(0x8a000000),
   disabledColor: const Color(0x61000000),
   toggleableActiveColor: const Color(0xff545478),
