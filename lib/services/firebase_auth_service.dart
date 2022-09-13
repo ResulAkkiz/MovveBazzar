@@ -87,4 +87,10 @@ class FirebaseAuthService extends AuthBase {
       return null;
     }
   }
+
+  @override
+  Future<void> updateEmail(String email) async {
+    User? currentUser = firebaseAuth.currentUser;
+    await currentUser?.updateEmail(email);
+  }
 }

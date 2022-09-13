@@ -32,11 +32,13 @@ Container buildSigninContainer(
 Widget buildLoginTextformField(
     {required IconData iconData,
     required String hintText,
+    TextInputType? keyboardType,
     required TextEditingController controller}) {
   return Stack(
     alignment: Alignment.centerLeft,
     children: [
       TextFormField(
+        keyboardType: keyboardType,
         controller: controller,
         cursorColor: Colors.red,
         decoration: InputDecoration(

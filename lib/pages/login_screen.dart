@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
-import 'package:flutter_application_1/pages/landing_screen.dart';
+
 import 'package:flutter_application_1/pages/signup_screen.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
@@ -17,9 +17,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  late GlobalKey<FormState> formKey;
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+  @override
+  void initState() {
+    formKey = GlobalKey<FormState>();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     MovierViewModel movierViewModel = Provider.of<MovierViewModel>(context);
@@ -144,18 +152,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  void _formSubmit() async {
-    debugPrint('Görev başladı');
-    MovierViewModel movierViewModel =
-        Provider.of<MovierViewModel>(context, listen: false);
-
-    debugPrint('Görev bitti');
-    if (movierViewModel.movier != null) {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const LandingScreen()));
-    }
   }
 
   RichText buildLogo() {

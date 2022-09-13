@@ -21,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController usernameController;
   late TextEditingController phoneController;
   late TextEditingController ageController;
+  late TextEditingController datecontroller;
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     usernameController = TextEditingController();
     phoneController = TextEditingController();
     ageController = TextEditingController();
+    datecontroller = TextEditingController();
     super.initState();
   }
 
@@ -37,6 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     usernameController.dispose();
     phoneController.dispose();
     ageController.dispose();
+    datecontroller.dispose();
     super.dispose();
   }
 
@@ -45,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'Female': Icons.female,
     'Other': Icons.transgender
   };
-  TextEditingController controller = TextEditingController();
+
   DateTime dateTime = DateTime.now();
   ImagePicker imagePicker = ImagePicker();
   int choose = 0;
@@ -53,7 +56,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final movierViewModel = Provider.of<MovierViewModel>(context);
+    MovierViewModel movierViewModel = Provider.of<MovierViewModel>(context);
+    if (movierViewModel.movier != null) {
+      emailController.text = movierViewModel.movier!.movierEmail;
+      usernameController.text = movierViewModel.movier!.movierUsername;
+    }
+
     return SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 90.0),
         child: Column(
@@ -74,6 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   buildLoginTextformField(
+                      keyboardType: TextInputType.emailAddress,
                       hintText: 'Email',
                       iconData: Icons.email,
                       controller: emailController),
@@ -82,6 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       iconData: Icons.account_box,
                       controller: usernameController),
                   buildLoginTextformField(
+                      keyboardType: TextInputType.phone,
                       hintText: 'Phone Number',
                       iconData: Icons.phone_android,
                       controller: phoneController),
@@ -90,6 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Flexible(
                         flex: 1,
                         child: buildLoginTextformField(
+                            keyboardType: TextInputType.number,
                             hintText: 'Age',
                             iconData: Icons.file_download_outlined,
                             controller: ageController),
@@ -103,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 debugPrint(dateTime.toString());
                               });
                             },
-                            controller: controller,
+                            controller: datecontroller,
                             iconData: Icons.date_range,
                             context: context),
                       )
@@ -197,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Container(
           color: const Color(0xFFE11A38),
           width: double.infinity,
-          height: 200.0,
+          height: MediaQuery.of(context).size.height * 0.25,
         ),
       ),
     );
@@ -206,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildCircleAvatar() {
     return Positioned(
       left: 12,
-      top: 110,
+      top: MediaQuery.of(context).size.height * 0.10,
       child: GestureDetector(
         onTap: () {
           showModalBottomSheet(
