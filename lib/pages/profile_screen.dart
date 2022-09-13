@@ -225,6 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: const Text('Camera'),
                       onTap: () {
                         _kameradanCek();
+                        Navigator.of(context).pop();
                       },
                     ),
                     ListTile(
@@ -233,6 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: const Text('Gallery'),
                       onTap: () {
                         _galeridenSec();
+                        Navigator.of(context).pop();
                       },
                     ),
                   ],
