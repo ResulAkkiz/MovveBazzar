@@ -9,29 +9,35 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  bool user = true;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: AnimatedContainer(
-          curve: Curves.bounceOut,
-          duration: const Duration(milliseconds: 500),
-          child: RichText(
-            text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                  text: 'Mov',
-                  style: TextStyles.splashLogoStyle,
-                ),
-                TextSpan(
-                  text: 've',
-                  style: TextStyles.splashLogoStyle.copyWith(
-                    color: const Color(0xFFE11A38),
-                  ),
-                ),
-              ],
+      body: _buildSplashLogo(),
+    );
+  }
+
+  Center _buildSplashLogo() {
+    return Center(
+      child: RichText(
+        text: TextSpan(
+          children: <TextSpan>[
+            TextSpan(
+              text: 'Mov',
+              style: TextStyles.splashLogoStyle,
             ),
-          ),
+            TextSpan(
+              text: 've',
+              style: TextStyles.splashLogoStyle.copyWith(
+                color: const Color(0xFFE11A38),
+              ),
+            ),
+          ],
         ),
       ),
     );

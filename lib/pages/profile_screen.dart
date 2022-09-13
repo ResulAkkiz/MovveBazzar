@@ -5,7 +5,9 @@ import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,6 +17,29 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late TextEditingController emailController;
+  late TextEditingController usernameController;
+  late TextEditingController phoneController;
+  late TextEditingController ageController;
+
+  @override
+  void initState() {
+    emailController = TextEditingController();
+    usernameController = TextEditingController();
+    phoneController = TextEditingController();
+    ageController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    usernameController.dispose();
+    phoneController.dispose();
+    ageController.dispose();
+    super.dispose();
+  }
+
   Map<String, IconData> genderMap = {
     'Male': Icons.male,
     'Female': Icons.female,
@@ -28,8 +53,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final movierViewModel = Provider.of<MovierViewModel>(context);
     return SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 150.0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 90.0),
         child: Column(
           children: [
             Stack(
@@ -48,18 +74,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   buildLoginTextformField(
-                      hintText: 'Email', iconData: Icons.email),
+                      hintText: 'Email',
+                      iconData: Icons.email,
+                      controller: emailController),
                   buildLoginTextformField(
-                      hintText: 'Username', iconData: Icons.account_box),
+                      hintText: 'Username',
+                      iconData: Icons.account_box,
+                      controller: usernameController),
                   buildLoginTextformField(
-                      hintText: 'Phone Number', iconData: Icons.phone_android),
+                      hintText: 'Phone Number',
+                      iconData: Icons.phone_android,
+                      controller: phoneController),
                   Row(
                     children: [
                       Flexible(
                         flex: 1,
                         child: buildLoginTextformField(
                             hintText: 'Age',
-                            iconData: Icons.file_download_outlined),
+                            iconData: Icons.file_download_outlined,
+                            controller: ageController),
                       ),
                       Flexible(
                         flex: 1,
@@ -100,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 });
                               },
                               child: Padding(
-                                padding: const EdgeInsets.all(18.0),
+                                padding: const EdgeInsets.all(10.0),
                                 child: Column(
                                   children: [
                                     Icon(
@@ -131,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ).separated(const SizedBox(
-                height: 20,
+                height: 15,
               )),
             ),
           ],
@@ -139,6 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Align _buildSignoutButton() {
+    final movierViewModel = Provider.of<MovierViewModel>(context);
     return Align(
       alignment: Alignment.topRight,
       child: IconButton(
@@ -149,7 +183,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         icon: const Icon(
           Icons.logout,
         ),
-        onPressed: () {},
+        onPressed: () async {
+          await movierViewModel.signOut();
+        },
       ),
     );
   }
@@ -189,6 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: const Text('Camera'),
                       onTap: () {
                         _kameradanCek();
+                        Navigator.of(context).pop();
                       },
                     ),
                     ListTile(
@@ -197,6 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: const Text('Gallery'),
                       onTap: () {
                         _galeridenSec();
+                        Navigator.of(context).pop();
                       },
                     ),
                   ],

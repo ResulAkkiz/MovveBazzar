@@ -24,7 +24,6 @@ final ThemeData lightTheme = ThemeData(
   dividerColor: const Color(0x1f000000),
   highlightColor: const Color(0x66bcbcbc),
   splashColor: const Color(0x66c8c8c8),
-  selectedRowColor: const Color(0xfff5f5f5),
   unselectedWidgetColor: const Color(0x8a000000),
   disabledColor: const Color(0x61000000),
   toggleableActiveColor: const Color(0xff545478),
@@ -38,13 +37,11 @@ final ThemeData lightTheme = ThemeData(
     selectionHandleColor: Color(0xffff2200),
   ),
   textButtonTheme: TextButtonThemeData(
-    style: TextButton.styleFrom(
-      primary: Colors.blue,
-    ),
+    style: TextButton.styleFrom(),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-        primary: const Color(0xFFDA1A37),
+        backgroundColor: const Color(0xFFDA1A37),
         padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 10)),
   ),
   buttonTheme: const ButtonThemeData(
@@ -143,11 +140,11 @@ final ThemeData lightTheme = ThemeData(
     fillColor: Color(0xffffffff),
     errorBorder: OutlineInputBorder(
       borderSide: BorderSide(
-        color: Color(0xff000000),
+        color: Colors.red,
         width: 1,
         style: BorderStyle.solid,
       ),
-      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+      borderRadius: BorderRadius.all(Radius.circular(30.0)),
     ),
     focusedBorder: OutlineInputBorder(
       borderSide: BorderSide(
