@@ -3,7 +3,6 @@ import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/pages/landing_screen.dart';
-
 import 'package:flutter_application_1/pages/signup_screen.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
@@ -72,9 +71,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (formKey.currentState!.validate()) {
-                              _formSubmit();
+                              await movierViewModel.signinMovier(
+                                  emailController.text,
+                                  passwordController.text);
                             }
                           },
                           child: Text(
@@ -149,12 +150,11 @@ class _LoginScreenState extends State<LoginScreen> {
     debugPrint('Görev başladı');
     MovierViewModel movierViewModel =
         Provider.of<MovierViewModel>(context, listen: false);
-    await movierViewModel.signinMovier(
-        emailController.text, passwordController.text);
+
     debugPrint('Görev bitti');
     if (movierViewModel.movier != null) {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => LandingScreen()));
+          .push(MaterialPageRoute(builder: (context) => const LandingScreen()));
     }
   }
 

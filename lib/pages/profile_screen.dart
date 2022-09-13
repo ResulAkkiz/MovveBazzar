@@ -183,8 +183,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         icon: const Icon(
           Icons.logout,
         ),
-        onPressed: () {
-          movierViewModel.signOut();
+        onPressed: () async {
+          await movierViewModel.signOut();
         },
       ),
     );

@@ -9,7 +9,7 @@ class LandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final movierViewModel = Provider.of<MovierViewModel>(context);
+    MovierViewModel movierViewModel = Provider.of<MovierViewModel>(context);
     debugPrint('Landing page içerisindeyiz');
     debugPrint(movierViewModel.movier?.movierEmail);
 
