@@ -82,15 +82,16 @@ class _HomePageState extends State<HomePage> {
   Widget _buildNavbar(BuildContext context) {
     return Container(
       color: Colors.transparent,
-      margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
+      margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.01, vertical: 40),
       padding: const EdgeInsets.symmetric(
-        horizontal: 50,
+        horizontal: 20,
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(50)),
         child: BottomNavyBar(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          containerHeight: MediaQuery.of(context).size.height * 0.08,
+          containerHeight: MediaQuery.of(context).size.height * 0.1,
           backgroundColor: const Color(0xFFDA1A37),
           selectedIndex: _currentIndex,
           animationDuration: const Duration(milliseconds: 300),

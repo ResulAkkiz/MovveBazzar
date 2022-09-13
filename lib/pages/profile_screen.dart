@@ -5,7 +5,9 @@ import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -51,8 +53,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final movierViewModel = Provider.of<MovierViewModel>(context);
     return SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 150.0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 90.0),
         child: Column(
           children: [
             Stack(
@@ -130,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 });
                               },
                               child: Padding(
-                                padding: const EdgeInsets.all(18.0),
+                                padding: const EdgeInsets.all(10.0),
                                 child: Column(
                                   children: [
                                     Icon(
@@ -161,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ).separated(const SizedBox(
-                height: 20,
+                height: 15,
               )),
             ),
           ],
@@ -169,6 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Align _buildSignoutButton() {
+    final movierViewModel = Provider.of<MovierViewModel>(context);
     return Align(
       alignment: Alignment.topRight,
       child: IconButton(
@@ -179,7 +183,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         icon: const Icon(
           Icons.logout,
         ),
-        onPressed: () {},
+        onPressed: () {
+          movierViewModel.signOut();
+        },
       ),
     );
   }

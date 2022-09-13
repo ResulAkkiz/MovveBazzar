@@ -2,127 +2,160 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_application_1/pages/landing_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+import 'package:flutter_application_1/pages/signup_screen.dart';
+import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
+import 'package:provider/provider.dart';
+
+import '../app_constants/common_widgets.dart';
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
+    MovierViewModel movierViewModel = Provider.of<MovierViewModel>(context);
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              buildLogo(),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15.0),
-                child: Text(
-                  'Welcome back!',
-                  style: TextStyles.robotoRegular32Style
-                      .copyWith(color: Colors.white.withOpacity(0.6)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Text(
-                  'Login to your account',
-                  style: TextStyles.robotoRegular16Style
-                      .copyWith(color: Colors.white.withOpacity(0.6)),
-                ),
-              ),
-              buildTextformField(iconData: Icons.person, hintText: 'Username'),
-              buildTextformField(
-                  iconData: Icons.lock_person, hintText: 'Password'),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text(
-                  'Sign in',
-                  style: TextStyles.robotoBold18Style,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                    0, MediaQuery.of(context).size.height * 0.10, 0, 0),
+      body: Form(
+        key: formKey,
+        child: SingleChildScrollView(
+          child: SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                   children: [
-                    Text(
-                      '---------------Or sign in with---------------',
-                      style: TextStyles.robotoRegular16Style.copyWith(
-                          color: Colors.white.withOpacity(0.6),
-                          letterSpacing: 0.8),
+                    buildLogo(),
+                    _buildWelcomeBack(),
+                    _buildLoginAcount(),
+                    Column(
+                      children: [
+                        buildSignupTextformField(
+                          context: context,
+                          iconData: Icons.email,
+                          hintText: 'E-mail',
+                          controller: emailController,
+                          isPassword: false,
+                          validator: (text) {
+                            if (text == '' || text == null) {
+                              return 'Please insert valid e-mail adress';
+                            } else {
+                              if (!text.contains('@')) {
+                                return 'Please insert valid e-mail adress';
+                              }
+                              return null;
+                            }
+                          },
+                        ),
+                        buildSignupTextformField(
+                          context: context,
+                          controller: passwordController,
+                          iconData: Icons.lock_person,
+                          hintText: 'Password',
+                          isPassword: true,
+                          validator: (text) {
+                            if (text == '' || text == null) {
+                              return 'Please insert valid password';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              _formSubmit();
+                            }
+                          },
+                          child: Text(
+                            'Sign in',
+                            style: TextStyles.robotoBold18Style,
+                          ),
+                        ),
+                      ],
+                    ).separated(const SizedBox(
+                      height: 15,
+                    )),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, MediaQuery.of(context).size.height * 0.07, 0, 0),
+                      child: Column(
+                        children: [
+                          Text(
+                            '---------------Or sign in with---------------',
+                            style: TextStyles.robotoRegular16Style.copyWith(
+                                color: Colors.white.withOpacity(0.6),
+                                letterSpacing: 0.8),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              buildSigninContainer(
+                                  onPressed: () {
+                                    movierViewModel.googlesignupMovier();
+                                  },
+                                  svgPicture: IconEnums.google.toImage),
+                              buildSigninContainer(
+                                  onPressed: () {},
+                                  svgPicture: IconEnums.twitter.toImage),
+                            ],
+                          ).separated(const SizedBox(
+                            width: 15,
+                          ))
+                        ],
+                      ).separated(
+                        const SizedBox(
+                          height: 15,
+                        ),
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        buildSigninContainer(
-                            svgPicture: IconEnums.google.toImage),
-                        buildSigninContainer(
-                            svgPicture: IconEnums.twitter.toImage),
+                        const Text("Don't have an account? "),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const SignupScreen(),
+                              ));
+                            },
+                            child: Text(
+                              'Sign up here.',
+                              style: TextStyles.robotoMediumStyle,
+                            ))
                       ],
-                    ).separated(const SizedBox(
-                      width: 15,
-                    ))
+                    ),
                   ],
-                ).separated(
-                  const SizedBox(
-                    height: 15,
-                  ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account? "),
-                  TextButton(
-                      onPressed: () {}, child: const Text('Sign up here'))
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Container buildSigninContainer({required SvgPicture svgPicture}) {
-    return Container(
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(10)),
-        child: IconButton(onPressed: () {}, icon: svgPicture));
-  }
-
-  Padding buildTextformField({
-    required IconData iconData,
-    required String hintText,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 32.0,
-        vertical: 16.0,
-      ),
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        children: [
-          TextFormField(
-            decoration: InputDecoration(
-                hintText: hintText,
-                contentPadding: const EdgeInsets.fromLTRB(74, 12, 10, 12)),
-          ),
-          CircleAvatar(
-            radius: 32,
-            child: Icon(
-              iconData,
-              size: 48,
-            ),
-          ),
-        ],
-      ),
-    );
+  void _formSubmit() async {
+    debugPrint('Görev başladı');
+    MovierViewModel movierViewModel =
+        Provider.of<MovierViewModel>(context, listen: false);
+    await movierViewModel.signinMovier(
+        emailController.text, passwordController.text);
+    debugPrint('Görev bitti');
+    if (movierViewModel.movier != null) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => LandingScreen()));
+    }
   }
 
   RichText buildLogo() {
@@ -140,6 +173,28 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Padding _buildWelcomeBack() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15.0),
+      child: Text(
+        'Welcome Back!',
+        style: TextStyles.robotoRegular32Style
+            .copyWith(color: Colors.white.withOpacity(0.6)),
+      ),
+    );
+  }
+
+  Padding _buildLoginAcount() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Text(
+        'Login to your account',
+        style: TextStyles.robotoRegular16Style
+            .copyWith(color: Colors.white.withOpacity(0.6)),
       ),
     );
   }

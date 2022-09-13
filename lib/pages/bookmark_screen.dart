@@ -68,13 +68,13 @@ class _BookMarkScreenState extends State<BookMarkScreen>
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
-        mainAxisExtent: 240,
+        mainAxisExtent: 200,
       ),
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 70.0, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
           child: TicketWidget(
-            width: (240 * 10 / 16) + 16,
+            width: (200 * 10 / 16) + 16,
             child: Row(
               children: [
                 Flexible(
@@ -90,13 +90,13 @@ class _BookMarkScreenState extends State<BookMarkScreen>
                 ),
                 Flexible(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 35.0),
+                    padding: const EdgeInsets.symmetric(vertical: 25.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           filmName,
-                          style: TextStyles.robotoRegularBold28Style,
+                          style: TextStyles.robotoRegularBold24Style,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -110,11 +110,11 @@ class _BookMarkScreenState extends State<BookMarkScreen>
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 SizedBox.square(
-                                    dimension: 25,
+                                    dimension: 20,
                                     child: IconEnums.fullstar.toImage),
                                 Text(
                                   filmStarRate,
-                                  style: TextStyles.robotoHeadlineStyle
+                                  style: TextStyles.robotoBold18Style
                                       .copyWith(color: Colors.amber),
                                 ),
                               ],
@@ -127,17 +127,14 @@ class _BookMarkScreenState extends State<BookMarkScreen>
                                 backgroundColor: Colors.amber.shade600,
                                 label: Text(
                                   'IMDB $filmImdbRate',
-                                  style: TextStyles.robotoMedium16Style
+                                  style: TextStyles.robotoRegular14Style
                                       .copyWith(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500),
                                 ))
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          child: Text(filmDirector),
-                        )
+                        Text(filmDirector)
                       ],
                     ),
                   ),

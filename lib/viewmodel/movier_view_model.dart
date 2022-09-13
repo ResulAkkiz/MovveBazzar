@@ -2,32 +2,48 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_application_1/model/movier.dart';
+import 'package:flutter_application_1/services/auth_base.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
 
-class MovierViewModel with ChangeNotifier {
+class MovierViewModel with ChangeNotifier implements AuthBase {
   Movier? _movier;
-
   FirebaseAuthService firebaseAuthService = FirebaseAuthService();
-
-  Movier? get movier {
-    return _movier;
-  }
+  Movier? get movier => _movier;
 
   MovierViewModel() {
+    debugPrint('Constructure method tetiklendi');
     currentMovier();
-    notifyListeners();
   }
 
+  @override
   Future<Movier?> currentMovier() async {
     _movier = await firebaseAuthService.currentMovier();
+    notifyListeners();
     return _movier;
   }
 
+  @override
   Future<Movier?> signinMovier(String email, String password) async {
-    return firebaseAuthService.signinMovier(email, password);
+    _movier = await firebaseAuthService.signinMovier(email, password);
+    return _movier;
   }
 
+  @override
   Future<Movier?> signupMovier(String email, String password) async {
-    return firebaseAuthService.signupMovier(email, password);
+    debugPrint('signupMovier fonk içindeyiz');
+    _movier = await firebaseAuthService.signupMovier(email, password);
+    return _movier;
+  }
+
+  @override
+  Future<Movier?> googlesignupMovier() async {
+    _movier = await firebaseAuthService.googlesignupMovier();
+    return _movier;
+  }
+
+  @override
+  Future<bool?> signOut() async {
+    _movier = null;
+    return await firebaseAuthService.signOut();
   }
 }

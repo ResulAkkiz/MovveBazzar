@@ -33,6 +33,13 @@ class TextStyles extends TextStyle {
     color: Colors.white,
   );
 
+  static TextStyle robotoRegular14Style = const TextStyle(
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.w100,
+    fontSize: 14,
+    color: Colors.white,
+  );
+
   static TextStyle robotoRegular16Style = const TextStyle(
     fontFamily: 'Roboto',
     fontWeight: FontWeight.w100,
@@ -44,6 +51,13 @@ class TextStyles extends TextStyle {
     fontFamily: 'Roboto',
     fontWeight: FontWeight.w100,
     fontSize: 19,
+    color: Colors.white,
+  );
+
+  static TextStyle robotoRegularBold24Style = const TextStyle(
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.w800,
+    fontSize: 24,
     color: Colors.white,
   );
 

@@ -21,11 +21,12 @@ RichText buildLogo() {
   );
 }
 
-Container buildSigninContainer({required SvgPicture svgPicture}) {
+Container buildSigninContainer(
+    {required SvgPicture svgPicture, required void Function() onPressed}) {
   return Container(
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(10)),
-      child: IconButton(onPressed: () {}, icon: svgPicture));
+      child: IconButton(onPressed: onPressed, icon: svgPicture));
 }
 
 Widget buildLoginTextformField(
@@ -51,6 +52,62 @@ Widget buildLoginTextformField(
       ),
     ],
   );
+}
+
+Widget buildSignupTextformField(
+    {required BuildContext context,
+    required IconData iconData,
+    required String hintText,
+    required TextEditingController controller,
+    required bool isPassword,
+    String? Function(String?)? validator}) {
+  return FormField(
+      validator: validator,
+      builder: (state) {
+        return Column(
+          children: [
+            Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                TextFormField(
+                  onChanged: (value) {
+                    state.didChange(value);
+                  },
+                  controller: controller,
+                  obscureText: isPassword,
+                  cursorColor: Colors.red,
+                  decoration: InputDecoration(
+                      hintText: hintText,
+                      contentPadding:
+                          const EdgeInsets.fromLTRB(74, 12, 10, 12)),
+                ),
+                CircleAvatar(
+                  radius: 32,
+                  child: Icon(
+                    iconData,
+                    size: 48,
+                  ),
+                ),
+              ],
+            ),
+            if (state.hasError)
+              Row(
+                children: [
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 74.0),
+                      child: Text(
+                        state.errorText ?? '',
+                        style:
+                            Theme.of(context).inputDecorationTheme.errorStyle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        );
+      });
 }
 
 Future<DateTime?> pickDate(BuildContext context) async => showDatePicker(

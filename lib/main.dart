@@ -1,10 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/custom_theme.dart';
-
 import 'package:flutter_application_1/model/custom_theme_data.dart';
-import 'package:flutter_application_1/pages/signup_screen.dart';
-
+import 'package:flutter_application_1/pages/landing_screen.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -36,8 +34,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: lightTheme,
-        //Provider.of<CustomThemeDataModal>(context).getThemeData,
         title: 'Material App',
-        home: SignupScreen());
+        home: const LandingScreen());
   }
 }

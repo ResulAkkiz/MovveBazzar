@@ -17,7 +17,12 @@ class HomepageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 150.0),
+      padding: EdgeInsets.fromLTRB(
+        15.0,
+        15.0,
+        15.0,
+        MediaQuery.of(context).size.width * 0.3,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -50,7 +55,7 @@ class HomepageBody extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.width * 0.40,
+        height: MediaQuery.of(context).size.width * 0.60,
         child: NotificationListener<OverscrollIndicatorNotification>(
           onNotification: (overScroll) {
             overScroll.disallowIndicator();
