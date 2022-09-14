@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 RichText buildLogo() {
@@ -118,6 +120,34 @@ Future<DateTime?> pickDate(BuildContext context) async => showDatePicker(
     initialDate: DateTime.now(),
     firstDate: DateTime(1910),
     lastDate: DateTime.now());
+
+Future<dynamic> buildShowModelBottomSheet(BuildContext context) {
+  return showModalBottomSheet(
+      backgroundColor: Theme.of(context).primaryColor,
+      context: context,
+      builder: (builder) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox.square(
+                  dimension: MediaQuery.of(context).size.width * 0.3,
+                  child: IconEnums.danger.toImage),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: Text(errorMessage,
+                      overflow: TextOverflow.clip,
+                      style: TextStyles.robotoRegularBold24Style
+                          .copyWith(color: Colors.black)),
+                ),
+              ),
+            ],
+          ),
+        );
+      });
+}
 
 Widget buildDateTimePicker(
     {required IconData iconData,

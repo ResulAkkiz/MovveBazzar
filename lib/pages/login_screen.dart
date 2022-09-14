@@ -85,6 +85,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   emailController.text,
                                   passwordController.text);
                             }
+                            if (!mounted) return;
+                            buildShowModelBottomSheet(context);
                           },
                           child: Text(
                             'Sign in',

@@ -4,6 +4,8 @@ import 'package:flutter_application_1/model/movier.dart';
 import 'package:flutter_application_1/services/auth_base.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+String errorMessage = '';
+
 class FirebaseAuthService extends AuthBase {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
@@ -15,20 +17,53 @@ class FirebaseAuthService extends AuthBase {
 
   @override
   Future<Movier?> signinMovier(String email, String password) async {
-    UserCredential userCredential = await firebaseAuth
-        .signInWithEmailAndPassword(email: email, password: password);
-    debugPrint('Giriş işlemi başarılı :${userCredential.user!.email}');
-    return userToMovier(userCredential.user);
+    try {
+      UserCredential userCredential = await firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
+      errorMessage = '';
+      return userToMovier(userCredential.user);
+    } on FirebaseAuthException catch (ex) {
+      debugPrint(ex.code);
+      switch (ex.code) {
+        case 'invalid-email':
+          errorMessage = 'Please insert valid email adress.';
+          break;
+        case 'email-already-in-use':
+          errorMessage = 'Email is already used by another acount.';
+          break;
+        case 'user-not-found':
+          errorMessage = 'User is not found.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'Please check your password.';
+          break;
+
+        default:
+      }
+      return null;
+    }
   }
 
   @override
   Future<Movier?> signupMovier(String email, String password) async {
-    debugPrint('user credential öncesi');
-    UserCredential userCredential = await firebaseAuth
-        .createUserWithEmailAndPassword(email: email, password: password);
-
-    debugPrint('Kayıt olan email:${userCredential.user?.email.toString()}');
-    return userToMovier(userCredential.user);
+    try {
+      UserCredential userCredential = await firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      errorMessage = '';
+      return userToMovier(userCredential.user);
+    } on FirebaseAuthException catch (ex) {
+      debugPrint(ex.code);
+      switch (ex.code) {
+        case 'invalid-email':
+          errorMessage = 'Please insert valid email adress';
+          break;
+        case 'email-already-in-use':
+          errorMessage = 'Email is already used by another acount';
+          break;
+        default:
+      }
+      return null;
+    }
   }
 
   @override

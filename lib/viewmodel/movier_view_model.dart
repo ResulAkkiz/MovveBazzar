@@ -26,7 +26,6 @@ class MovierViewModel with ChangeNotifier implements AuthBase {
   @override
   Future<Movier?> signinMovier(String email, String password) async {
     _movier = await firebaseAuthService.signinMovier(email, password);
-
     notifyListeners();
     return _movier;
   }
@@ -35,11 +34,11 @@ class MovierViewModel with ChangeNotifier implements AuthBase {
   Future<Movier?> signupMovier(String email, String password) async {
     debugPrint('signupMovier fonk içindeyiz');
     _movier = await firebaseAuthService.signupMovier(email, password);
+    notifyListeners();
     if (_movier != null) {
       firebaseDbService.saveMovier(_movier!);
     }
 
-    notifyListeners();
     return _movier;
   }
 

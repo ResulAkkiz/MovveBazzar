@@ -12,7 +12,8 @@ enum IconEnums {
   fullstar,
   google,
   twitter,
-  profilepicture
+  profilepicture,
+  danger
 }
 
 enum ImageEnums {

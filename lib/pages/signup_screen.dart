@@ -4,6 +4,7 @@ import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/pages/login_screen.dart';
+import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -69,12 +70,19 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (formKey.currentState!.validate()) {
-                              debugPrint(
-                                  formKey.currentState!.validate().toString());
-                              movierViewModel.signupMovier(emailController.text,
+                              await movierViewModel.signupMovier(
+                                  emailController.text,
                                   passwordController.text);
+                              if (errorMessage.isNotEmpty) {
+                                if (!mounted) return;
+                                buildShowModelBottomSheet(context);
+                              }
+                              if (movierViewModel.movier != null) {
+                                if (!mounted) return;
+                                Navigator.pop(context);
+                              }
                             }
                           },
                           child: Text(
@@ -125,9 +133,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         const Text("You have an account? "),
                         TextButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const LoginScreen(),
-                              ));
+                              Navigator.of(context).pop();
                             },
                             child: Text(
                               'Sign in here.',
