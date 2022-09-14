@@ -4,6 +4,7 @@ import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 
 import 'package:flutter_application_1/pages/signup_screen.dart';
+import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -84,9 +85,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               await movierViewModel.signinMovier(
                                   emailController.text,
                                   passwordController.text);
+                              if (errorMessage.isNotEmpty) {
+                                if (!mounted) return;
+                                buildShowModelBottomSheet(context);
+                              }
                             }
-                            if (!mounted) return;
-                            buildShowModelBottomSheet(context);
                           },
                           child: Text(
                             'Sign in',

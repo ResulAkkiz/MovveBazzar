@@ -55,10 +55,10 @@ class FirebaseAuthService extends AuthBase {
       debugPrint(ex.code);
       switch (ex.code) {
         case 'invalid-email':
-          errorMessage = 'Please insert valid email adress';
+          errorMessage = 'Please insert valid email adress.';
           break;
         case 'email-already-in-use':
-          errorMessage = 'Email is already used by another acount';
+          errorMessage = 'Email is already used by another acount.';
           break;
         default:
       }
