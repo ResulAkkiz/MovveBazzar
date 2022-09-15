@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/model/movier.dart';
+import 'package:flutter_application_1/core/model/movier.dart';
 import 'package:flutter_application_1/services/db_base.dart';
 
 class FirebaseDbService extends DbBase {

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/model/movier.dart';
+import 'package:flutter_application_1/core/model/movier.dart';
 import 'package:flutter_application_1/services/auth_base.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 

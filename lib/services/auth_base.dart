@@ -1,4 +1,4 @@
-import 'package:flutter_application_1/model/movier.dart';
+import 'package:flutter_application_1/core/model/movier.dart';
 
 abstract class AuthBase {
   Future<Movier?> currentMovier();

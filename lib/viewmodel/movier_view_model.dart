@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/model/movier.dart';
+import 'package:flutter_application_1/core/model/movier.dart';
 import 'package:flutter_application_1/services/auth_base.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/services/firebase_db_service.dart';

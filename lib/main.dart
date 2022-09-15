@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/custom_theme.dart';
+import 'package:flutter_application_1/core/service/firebase_service.dart';
+import 'package:flutter_application_1/core/service/iauth_service.dart';
+import 'package:flutter_application_1/core/widgets/auth_widget_builder.dart';
 import 'package:flutter_application_1/model/custom_theme_data.dart';
-import 'package:flutter_application_1/pages/landing_screen.dart';
+
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +14,11 @@ void main() async {
   await Firebase.initializeApp();
   runApp(MultiProvider(
     providers: [
+      Provider<IAuth>(
+        create: (context) {
+          return AuthService();
+        },
+      ),
       ChangeNotifierProvider(
         create: (BuildContext context) {
           return CustomThemeDataModal();
@@ -32,9 +40,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: lightTheme,
-        title: 'Material App',
-        home: const LandingScreen());
+      debugShowCheckedModeBanner: false,
+      theme: lightTheme,
+      title: 'Material App',
+      home: const AuthWidgetBuilder(),
+    );
   }
 }
