@@ -7,16 +7,26 @@ import 'package:provider/provider.dart';
 typedef MovierSnapshot = AsyncSnapshot<Movier?>;
 
 class AuthWidget extends StatelessWidget {
-  const AuthWidget({super.key});
+  const AuthWidget({super.key, required this.movierSnapshot});
+  final MovierSnapshot movierSnapshot;
   @override
   Widget build(BuildContext context) {
-    final MovierSnapshot snapshot = Provider.of<MovierSnapshot>(context);
+    var movier = Provider.of<Movier?>(context);
+    if (movier != null) {
+      debugPrint('movier dolu');
+    } else {
+      debugPrint('movier boş');
+    }
+
     // final userData = snapshot.data;
 
-    if (snapshot.connectionState == ConnectionState.active) {
-      return snapshot.hasData ? const HomePageView() : const SigninPageView();
+    if (movierSnapshot.connectionState == ConnectionState.active) {
+      return movierSnapshot.hasData
+          ? const HomePageView()
+          : const SigninPageView();
+    } else {
+      return const ErrorPage();
     }
-    return const ErrorPage();
   }
 }
 

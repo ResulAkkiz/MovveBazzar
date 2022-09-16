@@ -6,20 +6,24 @@ class UserViewModel extends IAuth {
   AuthService authService = AuthService();
 
   @override
-  Future<Movier> createUserWithEmailandPassword(String email, String password) {
-    throw UnimplementedError();
+  Future<Movier> createUserWithEmailandPassword(
+      String email, String password) async {
+    return await authService.createUserWithEmailandPassword(email, password);
   }
 
   @override
-  Stream<Movier?> get onAuthStateChange => throw UnimplementedError();
-
-  @override
-  Future<bool> signOut() {
-    throw UnimplementedError();
+  Stream<Movier?> get onAuthStateChange {
+    return authService.onAuthStateChange;
   }
 
   @override
-  Future<Movier> signinWithEmailandPassword(String email, String password) {
-    throw UnimplementedError();
+  Future<bool> signOut() async {
+    return await authService.signOut();
+  }
+
+  @override
+  Future<Movier> signinWithEmailandPassword(
+      String email, String password) async {
+    return await authService.signinWithEmailandPassword(email, password);
   }
 }

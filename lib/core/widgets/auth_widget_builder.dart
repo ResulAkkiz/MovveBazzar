@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/model/movier.dart';
+import 'package:flutter_application_1/core/service/firebase_service.dart';
 import 'package:flutter_application_1/core/service/iauth_service.dart';
 import 'package:flutter_application_1/core/widgets/auth_widget.dart';
 import 'package:provider/provider.dart';
@@ -11,14 +12,16 @@ class AuthWidgetBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<IAuth>(context);
     return StreamBuilder<Movier?>(
+      stream: authService.onAuthStateChange,
       builder: (context, AsyncSnapshot<Movier?> snapshot) {
-        //final userData = snapshot.data;
+        final movier = snapshot.data;
         return Provider.value(
-          value: snapshot,
-          child: const AuthWidget(),
+          value: movier,
+          child: AuthWidget(
+            movierSnapshot: snapshot,
+          ),
         );
       },
-      stream: authService.onAuthStateChange,
     );
   }
 }
