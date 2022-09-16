@@ -15,7 +15,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       Provider<IAuth>(
-        create: (context) {
+        create: (BuildContext context) {
           return AuthService();
         },
       ),

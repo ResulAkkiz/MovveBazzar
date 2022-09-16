@@ -11,14 +11,13 @@ class AuthWidget extends StatelessWidget {
   final MovierSnapshot movierSnapshot;
   @override
   Widget build(BuildContext context) {
-    var movier = Provider.of<Movier?>(context);
+    var movier = Provider.of<Movier?>(context, listen: false);
+
     if (movier != null) {
       debugPrint('movier dolu');
     } else {
       debugPrint('movier boş');
     }
-
-    // final userData = snapshot.data;
 
     if (movierSnapshot.connectionState == ConnectionState.active) {
       return movierSnapshot.hasData
