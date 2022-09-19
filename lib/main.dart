@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: lightTheme,
-        title: 'Material App',
+        title: 'Movve',
         home: const LandingScreen());
   }
 }

@@ -1,12 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/model/movier.dart';
+import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,30 +19,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late TextEditingController emailController;
-  late TextEditingController usernameController;
-  late TextEditingController phoneController;
-  late TextEditingController ageController;
-  late TextEditingController datecontroller;
+  late TextEditingController dateController = TextEditingController();
+  late TextEditingController emailController = TextEditingController();
+  late TextEditingController ageController = TextEditingController();
+  late TextEditingController userNameController = TextEditingController();
+  late TextEditingController phoneController = TextEditingController();
 
   @override
   void initState() {
-    emailController = TextEditingController();
-    usernameController = TextEditingController();
-    phoneController = TextEditingController();
-    ageController = TextEditingController();
-    datecontroller = TextEditingController();
+    getMovier();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    usernameController.dispose();
-    phoneController.dispose();
-    ageController.dispose();
-    datecontroller.dispose();
-    super.dispose();
   }
 
   Map<String, IconData> genderMap = {
@@ -49,137 +37,176 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'Other': Icons.transgender
   };
 
+  Movier? movier;
   DateTime dateTime = DateTime.now();
   ImagePicker imagePicker = ImagePicker();
   int choose = 0;
-  File? gamePhoto;
+  File? movierPhoto;
 
   @override
   Widget build(BuildContext context) {
     MovierViewModel movierViewModel = Provider.of<MovierViewModel>(context);
-    if (movierViewModel.movier != null) {
-      emailController.text = movierViewModel.movier!.movierEmail;
-      usernameController.text = movierViewModel.movier!.movierUsername;
-    }
-
-    return SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 90.0),
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                _buildClipPath(),
-                _buildCircleAvatar(),
-                _buildSignoutButton()
-              ],
-            ),
-            const SizedBox(
-              height: 35,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  buildLoginTextformField(
-                      keyboardType: TextInputType.emailAddress,
-                      hintText: 'Email',
-                      iconData: Icons.email,
-                      controller: emailController),
-                  buildLoginTextformField(
-                      hintText: 'Username',
-                      iconData: Icons.account_box,
-                      controller: usernameController),
-                  buildLoginTextformField(
-                      keyboardType: TextInputType.phone,
-                      hintText: 'Phone Number',
-                      iconData: Icons.phone_android,
-                      controller: phoneController),
-                  Row(
+    return movier != null
+        ? SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 90.0),
+            child: Column(
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    _buildClipPath(),
+                    _buildCircleAvatar(),
+                    _buildSignoutButton(),
+                  ],
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
                     children: [
-                      Flexible(
-                        flex: 1,
-                        child: buildLoginTextformField(
-                            keyboardType: TextInputType.number,
-                            hintText: 'Age',
-                            iconData: Icons.file_download_outlined,
-                            controller: ageController),
+                      buildLoginTextformField(
+                        textEditingController: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        hintText: 'Email',
+                        iconData: Icons.email,
                       ),
-                      Flexible(
-                        flex: 1,
-                        child: buildDateTimePicker(
-                            onSelected: (DateTime date) {
-                              setState(() {
-                                dateTime = date;
-                                debugPrint(dateTime.toString());
-                              });
-                            },
-                            controller: datecontroller,
-                            iconData: Icons.date_range,
-                            context: context),
-                      )
-                    ],
-                  ).separated(
-                    const SizedBox(
-                      width: 15,
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Select your gender',
-                        style: TextStyles.robotoRegular32Style,
+                      buildLoginTextformField(
+                        textEditingController: userNameController,
+                        hintText: 'Username',
+                        iconData: Icons.account_box,
+                      ),
+                      buildLoginTextformField(
+                        textEditingController: phoneController,
+                        keyboardType: TextInputType.phone,
+                        hintText: 'Phone Number',
+                        iconData: Icons.phone_android,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: genderMap.entries.map((entry) {
-                          int index =
-                              genderMap.values.toList().indexOf(entry.value);
-                          return Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  choose = index;
-                                });
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      entry.value,
-                                      color: choose == index
-                                          ? Theme.of(context).primaryColor
-                                          : Colors.white,
-                                      size: 45,
-                                    ),
-                                    Text(
-                                      entry.key,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: buildLoginTextformField(
+                              textEditingController: ageController,
+                              keyboardType: TextInputType.number,
+                              hintText: 'Age',
+                              iconData: Icons.file_download_outlined,
                             ),
-                          );
-                        }).toList(),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: buildDateTimePicker(
+                                onSelected: (DateTime date) {
+                                  setState(() {
+                                    dateTime = date;
+                                    debugPrint(dateTime.toString());
+                                  });
+                                },
+                                controller: dateController,
+                                iconData: Icons.date_range,
+                                context: context),
+                          )
+                        ],
+                      ).separated(
+                        const SizedBox(
+                          width: 15,
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            'Select your gender',
+                            style: TextStyles.robotoRegular32Style,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: genderMap.entries.map((entry) {
+                              int index = genderMap.values
+                                  .toList()
+                                  .indexOf(entry.value);
+                              return Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      choose = index;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          entry.value,
+                                          color: choose == index
+                                              ? Theme.of(context).primaryColor
+                                              : Colors.white,
+                                          size: 45,
+                                        ),
+                                        Text(
+                                          entry.key,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await movierViewModel.saveMovier(Movier(
+                              movierID: movierViewModel.movier!.movierID,
+                              movierEmail: emailController.text,
+                              movierUsername: userNameController.text,
+                              movierAge: ageController.text,
+                              movierPhoneNumber: phoneController.text,
+                              movierGender: genderMap.keys.elementAt(choose),
+                              movierBirthday: DateFormat('d/M/y')
+                                  .parse(dateController.text),
+                              movierPhotoUrl: await _uploadProfilePhoto()));
+                        },
+                        child: Text(
+                          'Save',
+                          style: TextStyles.robotoBold18Style,
+                        ),
                       ),
                     ],
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Save',
-                      style: TextStyles.robotoBold18Style,
-                    ),
-                  ),
-                ],
-              ).separated(const SizedBox(
-                height: 15,
-              )),
-            ),
-          ],
-        ));
+                  ).separated(const SizedBox(
+                    height: 15,
+                  )),
+                ),
+              ],
+            ))
+        : const SplashScreen();
+  }
+
+  Future<String> _uploadProfilePhoto() async {
+    MovierViewModel movierViewModel =
+        Provider.of<MovierViewModel>(context, listen: false);
+
+    return await movierViewModel.uploadFile(
+        movierViewModel.movier!.movierID, 'profilephoto', movierPhoto!);
+  }
+
+  void getMovier() async {
+    MovierViewModel movierViewModel =
+        Provider.of<MovierViewModel>(context, listen: false);
+    movier =
+        await movierViewModel.getMovierByID(movierViewModel.movier!.movierID);
+
+    setState(() {
+      emailController.text = movier!.movierEmail;
+      ageController.text = movier!.movierAge ?? '18';
+      userNameController.text = movier!.movierUsername;
+      phoneController.text = movier!.movierPhoneNumber ?? '0541 414 53 53';
+      String formattedDate = DateFormat('dd/MM/yyyy')
+          .format(movier?.movierBirthday ?? DateTime.now());
+      dateController.text = formattedDate;
+    });
   }
 
   Align _buildSignoutButton() {
@@ -253,9 +280,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               });
         },
         child: CircleAvatar(
-          backgroundImage: gamePhoto != null
-              ? FileImage(gamePhoto!) as ImageProvider
-              : AssetImage(ImageEnums.profilepicture.toPath),
+          backgroundImage:
+              (movier!.movierPhotoUrl != null && movierPhoto == null
+                      ? NetworkImage(movier!.movierPhotoUrl!)
+                      : movierPhoto != null
+                          ? FileImage(movierPhoto!)
+                          : AssetImage(ImageEnums.profilepicture.toPath))
+                  as ImageProvider,
           radius: 64,
         ),
       ),
@@ -266,14 +297,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     var yeniResim = await imagePicker.pickImage(source: ImageSource.camera);
 
     setState(() {
-      gamePhoto = (File(yeniResim!.path));
+      movierPhoto = (File(yeniResim!.path));
     });
   }
 
   void _galeridenSec() async {
     var yeniResim = await imagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
-      gamePhoto = (File(yeniResim!.path));
+      movierPhoto = (File(yeniResim!.path));
     });
   }
 }

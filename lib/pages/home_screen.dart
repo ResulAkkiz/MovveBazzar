@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
-  PageController _pageController = PageController();
+  late PageController _pageController;
   final List<Widget> _pages = [
     HomepageBody(),
     const BookMarkScreen(),

@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Movier {
   String movierID;
   String movierEmail;
   String movierUsername;
   String? movierAge;
   DateTime? movierBirthday;
+  String? movierGender;
   String? movierPhotoUrl;
   String? movierPhoneNumber;
 
@@ -13,6 +16,7 @@ class Movier {
     required this.movierUsername,
     this.movierAge,
     this.movierBirthday,
+    this.movierGender,
     this.movierPhotoUrl,
     this.movierPhoneNumber,
   });
@@ -25,6 +29,7 @@ class Movier {
       'movierAge': movierAge,
       'movierBirthday': movierBirthday?.millisecondsSinceEpoch,
       'movierPhotoUrl': movierPhotoUrl,
+      'movierGender': movierGender,
       'movierPhoneNumber': movierPhoneNumber,
     };
   }
@@ -36,8 +41,9 @@ class Movier {
       movierUsername: map['movierUsername'] as String,
       movierAge: map['movierAge'] != null ? map['movierAge'] as String : null,
       movierBirthday: map['movierBirthday'] != null
-          ? map['movierBirthday'] as DateTime
+          ? DateTime.fromMicrosecondsSinceEpoch(map['movierBirthday'] * 1000)
           : null,
+      movierGender: map['movierGender'],
       movierPhotoUrl: map['movierPhotoUrl'] != null
           ? map['movierPhotoUrl'] as String
           : null,

@@ -23,7 +23,6 @@ class FirebaseAuthService extends AuthBase {
       errorMessage = '';
       return userToMovier(userCredential.user);
     } on FirebaseAuthException catch (ex) {
-      debugPrint(ex.code);
       switch (ex.code) {
         case 'invalid-email':
           errorMessage = 'Please insert valid email adress.';
@@ -52,7 +51,6 @@ class FirebaseAuthService extends AuthBase {
       errorMessage = '';
       return userToMovier(userCredential.user);
     } on FirebaseAuthException catch (ex) {
-      debugPrint(ex.code);
       switch (ex.code) {
         case 'invalid-email':
           errorMessage = 'Please insert valid email adress.';

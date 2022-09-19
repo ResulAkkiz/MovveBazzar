@@ -24,21 +24,29 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Center _buildSplashLogo() {
     return Center(
-      child: RichText(
-        text: TextSpan(
-          children: <TextSpan>[
-            TextSpan(
-              text: 'Mov',
-              style: TextStyles.splashLogoStyle,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RichText(
+            text: TextSpan(
+              children: <TextSpan>[
+                TextSpan(
+                  text: 'Mov',
+                  style: TextStyles.splashLogoStyle,
+                ),
+                TextSpan(
+                  text: 've',
+                  style: TextStyles.splashLogoStyle.copyWith(
+                    color: const Color(0xFFE11A38),
+                  ),
+                ),
+              ],
             ),
-            TextSpan(
-              text: 've',
-              style: TextStyles.splashLogoStyle.copyWith(
-                color: const Color(0xFFE11A38),
-              ),
-            ),
-          ],
-        ),
+          ),
+          CircularProgressIndicator(
+            color: Theme.of(context).primaryColor,
+          )
+        ],
       ),
     );
   }
