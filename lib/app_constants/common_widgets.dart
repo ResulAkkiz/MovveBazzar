@@ -31,17 +31,18 @@ Container buildSigninContainer(
       child: IconButton(onPressed: onPressed, icon: svgPicture));
 }
 
-Widget buildLoginTextformField(
-    {required IconData iconData,
-    required String hintText,
-    TextInputType? keyboardType,
-    required TextEditingController controller}) {
+Widget buildLoginTextformField({
+  required IconData iconData,
+  required String hintText,
+  required TextEditingController textEditingController,
+  TextInputType? keyboardType,
+}) {
   return Stack(
     alignment: Alignment.centerLeft,
     children: [
       TextFormField(
+        controller: textEditingController,
         keyboardType: keyboardType,
-        controller: controller,
         cursorColor: Colors.red,
         decoration: InputDecoration(
             hintText: hintText,
