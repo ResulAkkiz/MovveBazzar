@@ -35,12 +35,14 @@ Widget buildLoginTextformField({
   required IconData iconData,
   required String hintText,
   required TextEditingController textEditingController,
+  bool readOnly = false,
   TextInputType? keyboardType,
 }) {
   return Stack(
     alignment: Alignment.centerLeft,
     children: [
       TextFormField(
+        readOnly: readOnly,
         controller: textEditingController,
         keyboardType: keyboardType,
         cursorColor: Colors.red,

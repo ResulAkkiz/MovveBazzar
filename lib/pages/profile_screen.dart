@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     MovierViewModel movierViewModel = Provider.of<MovierViewModel>(context);
     return movier != null
         ? SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 90.0),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 110.0),
             child: Column(
               children: [
                 Stack(
@@ -86,21 +86,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         children: [
                           Flexible(
-                            flex: 1,
+                            flex: 4,
                             child: buildLoginTextformField(
+                              readOnly: true,
                               textEditingController: ageController,
                               keyboardType: TextInputType.number,
                               hintText: 'Age',
-                              iconData: Icons.file_download_outlined,
+                              iconData: Icons.cake,
                             ),
                           ),
                           Flexible(
-                            flex: 1,
+                            flex: 6,
                             child: buildDateTimePicker(
                                 onSelected: (DateTime date) {
                                   setState(() {
                                     dateTime = date;
                                     debugPrint(dateTime.toString());
+                                    ageController.text =
+                                        yearsBetween(dateTime, DateTime.now())
+                                            .toString();
                                   });
                                 },
                                 controller: dateController,
@@ -110,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ).separated(
                         const SizedBox(
-                          width: 15,
+                          width: 10,
                         ),
                       ),
                       Column(
@@ -184,12 +188,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         : const SplashScreen();
   }
 
-  Future<String> _uploadProfilePhoto() async {
+  Future<String?> _uploadProfilePhoto() async {
     MovierViewModel movierViewModel =
         Provider.of<MovierViewModel>(context, listen: false);
-
-    return await movierViewModel.uploadFile(
-        movierViewModel.movier!.movierID, 'profilephoto', movierPhoto!);
+    if (movierPhoto != null) {
+      return await movierViewModel.uploadFile(
+          movierViewModel.movier!.movierID, 'profilephoto', movierPhoto!);
+    } else {
+      return movier?.movierPhotoUrl;
+    }
   }
 
   void getMovier() async {
@@ -200,12 +207,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     setState(() {
       emailController.text = movier!.movierEmail;
-      ageController.text = movier!.movierAge ?? '18';
+      ageController.text = movier!.movierAge ?? '';
       userNameController.text = movier!.movierUsername;
-      phoneController.text = movier!.movierPhoneNumber ?? '0541 414 53 53';
+      phoneController.text = movier!.movierPhoneNumber ?? '';
       String formattedDate = DateFormat('dd/MM/yyyy')
           .format(movier?.movierBirthday ?? DateTime.now());
-      dateController.text = formattedDate;
+      dateController.text = movier?.movierBirthday != null ? formattedDate : '';
     });
   }
 
@@ -239,6 +246,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+  int yearsBetween(DateTime from, DateTime to) {
+    from = DateTime(from.year, from.month, from.day);
+    to = DateTime(to.year, to.month, to.day);
+    int dayDifference = (to.difference(from).inHours / 24).round();
+    int yearDifference = (dayDifference / 365).round();
+    return yearDifference;
   }
 
   Widget _buildCircleAvatar() {
@@ -297,14 +312,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     var yeniResim = await imagePicker.pickImage(source: ImageSource.camera);
 
     setState(() {
-      movierPhoto = (File(yeniResim!.path));
+      if (yeniResim != null) {
+        movierPhoto = (File(yeniResim.path));
+      }
     });
   }
 
   void _galeridenSec() async {
     var yeniResim = await imagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
-      movierPhoto = (File(yeniResim!.path));
+      if (yeniResim != null) {
+        movierPhoto = (File(yeniResim.path));
+      }
     });
   }
 }
