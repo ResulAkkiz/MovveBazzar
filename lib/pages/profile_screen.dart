@@ -40,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Movier? movier;
   DateTime dateTime = DateTime.now();
   ImagePicker imagePicker = ImagePicker();
-  int choose = 0;
+  int? choose;
   File? movierPhoto;
 
   @override
@@ -168,7 +168,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               movierUsername: userNameController.text,
                               movierAge: ageController.text,
                               movierPhoneNumber: phoneController.text,
-                              movierGender: genderMap.keys.elementAt(choose),
+                              movierGender:
+                                  genderMap.keys.elementAt(choose ?? 1),
                               movierBirthday: DateFormat('d/M/y')
                                   .parse(dateController.text),
                               movierPhotoUrl: await _uploadProfilePhoto()));
@@ -210,6 +211,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ageController.text = movier!.movierAge ?? '';
       userNameController.text = movier!.movierUsername;
       phoneController.text = movier!.movierPhoneNumber ?? '';
+      switch (movier!.movierGender) {
+        case 'Male':
+          choose = 0;
+          break;
+        case 'Female':
+          choose = 1;
+          break;
+        default:
+          choose = 2;
+      }
       String formattedDate = DateFormat('dd/MM/yyyy')
           .format(movier?.movierBirthday ?? DateTime.now());
       dateController.text = movier?.movierBirthday != null ? formattedDate : '';

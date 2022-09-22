@@ -31,6 +31,25 @@ Container buildSigninContainer(
       child: IconButton(onPressed: onPressed, icon: svgPicture));
 }
 
+RichText buildAppBarLogo() {
+  return RichText(
+    text: TextSpan(
+      children: <TextSpan>[
+        TextSpan(
+          text: 'Mov',
+          style: TextStyles.appBarTitleStyle,
+        ),
+        TextSpan(
+          text: 've',
+          style: TextStyles.appBarTitleStyle.copyWith(
+            color: const Color(0xFFE11A38),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 Widget buildLoginTextformField({
   required IconData iconData,
   required String hintText,

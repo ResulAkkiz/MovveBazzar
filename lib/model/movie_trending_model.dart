@@ -1,10 +1,10 @@
 import 'package:flutter_application_1/model/base_trending_model.dart';
 
 class MovieTrending extends IBaseTrendingModel<MovieTrending> {
-  String? title;
-  String? originalTitle;
+  String? title; //name
+  String? originalTitle; //originalname
   bool? video;
-  DateTime? releaseDate;
+  DateTime? releaseDate; //fi
 
   MovieTrending(
       {this.title,
@@ -15,18 +15,22 @@ class MovieTrending extends IBaseTrendingModel<MovieTrending> {
       super.id,
       super.originalLanguage,
       super.overview,
+      super.date,
       super.posterPath,
       super.mediaType,
       super.genreIds,
       super.popularity,
+      super.mediaName,
       this.video,
       super.voteAverage,
       super.voteCount});
 
   factory MovieTrending.fromMap(Map<String, dynamic> json) => MovieTrending(
+        mediaName: json["title"],
         title: json["title"],
         originalTitle: json["original_title"],
         video: json["video"],
+        date: DateTime.parse(json["release_date"]),
         releaseDate: DateTime.parse(json["release_date"]),
         adult: json["adult"],
         backdropPath: json["backdrop_path"],

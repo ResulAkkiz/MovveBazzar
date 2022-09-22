@@ -1,5 +1,6 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/pages/bookmark_screen.dart';
@@ -57,25 +58,9 @@ class _HomePageState extends State<HomePage> {
     return SliverAppBar(
       floating: true,
       snap: true,
-      backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [IconButton(onPressed: () {}, icon: IconEnums.search.toImage)],
-      title: RichText(
-        text: TextSpan(
-          children: <TextSpan>[
-            TextSpan(
-              text: 'Mov',
-              style: TextStyles.appBarTitleStyle,
-            ),
-            TextSpan(
-              text: 've',
-              style: TextStyles.appBarTitleStyle.copyWith(
-                color: const Color(0xFFE11A38),
-              ),
-            ),
-          ],
-        ),
-      ),
+      title: buildAppBarLogo(),
     );
   }
 

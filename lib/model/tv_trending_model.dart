@@ -14,6 +14,7 @@ class TvTrending extends IBaseTrendingModel<TvTrending> {
       super.adult,
       super.backdropPath,
       super.id,
+      super.date,
       super.originalLanguage,
       super.overview,
       super.posterPath,
@@ -21,11 +22,14 @@ class TvTrending extends IBaseTrendingModel<TvTrending> {
       super.genreIds,
       super.popularity,
       super.voteAverage,
+      super.mediaName,
       super.voteCount});
 
   factory TvTrending.fromMap(Map<String, dynamic> json) => TvTrending(
+        mediaName: json["name"],
         name: json["name"],
         originalName: json["original_name"],
+        date: DateTime.parse(json["first_air_date"]),
         firstAirDate: DateTime.parse(json["first_air_date"]),
         originCountry: json["originCountry"],
         adult: json["adult"],

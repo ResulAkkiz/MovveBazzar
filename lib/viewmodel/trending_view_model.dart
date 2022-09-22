@@ -8,7 +8,7 @@ class TrendingViewModel extends ChangeNotifier {
   List<IBaseTrendingModel> popularModelList = [];
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
 
-  Future<void> getTrendingsV2({
+  Future<void> getTrendings({
     required String type,
     required String timeInterval,
     required String pageNumber,
