@@ -20,7 +20,7 @@ class MoreTrendScreen extends StatefulWidget {
 }
 
 class _MoreTrendScreenState extends State<MoreTrendScreen> {
-  late List<IBaseTrendingModel> trendingList;
+  List<IBaseTrendingModel> trendingList = [];
   int pageNumber = 1;
   final RefreshController refreshController =
       RefreshController(initialRefresh: false);

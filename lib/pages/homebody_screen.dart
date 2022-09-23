@@ -3,7 +3,6 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/pages/more_trends_screen.dart';
-import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/viewmodel/trending_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -16,80 +15,62 @@ class HomepageBody extends StatefulWidget {
 }
 
 class _HomepageBodyState extends State<HomepageBody> {
-  List<IBaseTrendingModel> trendingList = [];
   @override
   void initState() {
-    // trendingList=context
-    //     .read<TrendingViewModel>()
-    //     .getTrendings(type: 'all', timeInterval: 'day', pageNumber: '1');
-
+    context
+        .read<TrendingViewModel>()
+        .getTrendings(type: 'all', timeInterval: 'day', pageNumber: '1');
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final TrendingViewModel trendingViewModel =
-        Provider.of<TrendingViewModel>(context);
-    debugPrint(trendingViewModel.isLoading.toString());
-    getTrendings();
-    debugPrint(trendingList.length.toString());
-    return Selector<TrendingViewModel, bool>(
-        selector: (context, model) => model.isLoading,
-        builder: (context, value, child) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-              0,
-              15.0,
-              0,
-              MediaQuery.of(context).size.shortestSide * 0.3,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const BuildTopic(value: 'Popular Movie'),
-                _buildSampleListView(context),
-                const BuildTopic(value: 'Tv Show'),
-                _buildSampleListView(context),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const BuildTopic(value: 'Trends'),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.shortestSide * 0.1,
-                      child: TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => MoreTrendScreen(
-                                  items: trendingList,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            'see more...      ',
-                            style: TextStyles.robotoRegular10Style,
-                          )),
-                    )
-                  ],
-                ),
-                _buildSampleListView(context),
-                const BuildTopic(value: 'Trends'),
-                _buildSampleListView(context),
-              ],
-            ),
-          );
-        });
-  }
-
-  Future<void> getTrendings() async {
-    final TrendingViewModel trendingViewModel =
-        Provider.of<TrendingViewModel>(context);
-    trendingList = await trendingViewModel.getTrendings(
-        type: 'all', timeInterval: 'day', pageNumber: '1');
+    final trendingViewModel = Provider.of<TrendingViewModel>(context);
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        0,
+        15.0,
+        0,
+        MediaQuery.of(context).size.shortestSide * 0.3,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const BuildTopic(value: 'Popular Movie'),
+          _buildSampleListView(context),
+          const BuildTopic(value: 'Tv Show'),
+          _buildSampleListView(context),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const BuildTopic(value: 'Trends'),
+              SizedBox(
+                height: MediaQuery.of(context).size.shortestSide * 0.1,
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => MoreTrendScreen(
+                          items: trendingViewModel.trendingModelList,
+                        ),
+                      ));
+                    },
+                    child: Text(
+                      'see more...      ',
+                      style: TextStyles.robotoRegular10Style,
+                    )),
+              )
+            ],
+          ),
+          _buildSampleListView(context),
+          const BuildTopic(value: 'Trends'),
+          _buildSampleListView(context),
+        ],
+      ),
+    );
   }
 
   Padding _buildSampleListView(BuildContext context) {
+    final trendingViewModel = Provider.of<TrendingViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: SizedBox(
@@ -100,14 +81,18 @@ class _HomepageBodyState extends State<HomepageBody> {
             return false;
           },
           child: ListView.builder(
-              itemCount: trendingList.length,
+              itemCount: trendingViewModel.trendingModelList.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (BuildContext context, int index) {
-                IBaseTrendingModel currentMedia = trendingList[index];
+                debugPrint(
+                    trendingViewModel.trendingModelList.length.toString());
+                IBaseTrendingModel currentMedia =
+                    trendingViewModel.trendingModelList[index];
                 return Padding(
-                    padding: index == trendingList.length - 1
-                        ? const EdgeInsets.fromLTRB(12, 0, 12, 0)
-                        : const EdgeInsets.only(left: 12),
+                    padding:
+                        index == trendingViewModel.trendingModelList.length - 1
+                            ? const EdgeInsets.fromLTRB(12, 0, 12, 0)
+                            : const EdgeInsets.only(left: 12),
                     child: buildMediaClip(currentMedia));
               }),
         ),

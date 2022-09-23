@@ -4,7 +4,7 @@ import 'package:flutter_application_1/services/json_place_service.dart';
 
 class TrendingViewModel extends ChangeNotifier {
   bool isLoading = false;
-  // List<IBaseTrendingModel> trendingModelList = [];
+  List<IBaseTrendingModel> trendingModelList = [];
   List<IBaseTrendingModel> popularModelList = [];
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
 
@@ -14,14 +14,18 @@ class TrendingViewModel extends ChangeNotifier {
     required String pageNumber,
   }) async {
     isLoading = true;
-    var trendingModelList = await _jsonPlaceService.getTrendings(
+    final List<IBaseTrendingModel> tempTrendingModelList =
+        await _jsonPlaceService.getTrendings(
       type: type,
       timeInterval: timeInterval,
-      pageNumber: pageNumber,
+      pageNumber: '1',
     );
+    // if (pageNumber == "1") {
+    //   trendingModelList = tempTrendingModelList;
+    // }
     isLoading = false;
-    //notifyListeners();
-    return trendingModelList;
+    notifyListeners();
+    return tempTrendingModelList;
   }
 
   Future<void> getTvPopulars({required String pageNumber}) async {

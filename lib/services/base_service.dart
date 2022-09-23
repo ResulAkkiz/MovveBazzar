@@ -76,7 +76,7 @@ class BaseService {
             debugPrint('another type model pass here');
         }
       }
-      return list.take(4).toList();
+      return list;
     } else if (jsonBody is Map<String, dynamic>) {
       return _modelParser(jsonBody);
     } else {
