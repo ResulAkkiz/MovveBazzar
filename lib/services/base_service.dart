@@ -50,7 +50,8 @@ class BaseService {
     final String url =
         "$baseUrl/trending/$type/$timeInterval?api_key=$apiKey&page=$pageNumber";
     final response = await http.get(Uri.parse(url));
-
+    debugPrint(
+        "$baseUrl/trending/$type/$timeInterval?api_key=$apiKey&page=$pageNumber");
     switch (response.statusCode) {
       case HttpStatus.ok:
         return _jsonBodyParserV2(response.body);
@@ -75,7 +76,7 @@ class BaseService {
             debugPrint('another type model pass here');
         }
       }
-      return list;
+      return list.take(4).toList();
     } else if (jsonBody is Map<String, dynamic>) {
       return _modelParser(jsonBody);
     } else {
