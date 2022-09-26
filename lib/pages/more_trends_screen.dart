@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
@@ -20,8 +21,10 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
   late final TrendingViewModel trendingViewModel = context.read();
   List<IBaseTrendingModel> trendingList = [];
   int pageNumber = 1;
+  bool show = true;
   final RefreshController refreshController =
       RefreshController(initialRefresh: false);
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -58,88 +61,117 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
 
     return Scaffold(
       body: NestedScrollView(
+        controller: scrollController,
         floatHeaderSlivers: true,
-        headerSliverBuilder: (context, innerBoxIsScrolled) =>
-            [_buildSliverAppBar()],
-        body: SmartRefresher(
-          enablePullDown: false,
-          enablePullUp: true,
-          footer: ClassicFooter(
-            loadingText: 'Loading',
-            loadStyle: LoadStyle.ShowWhenLoading,
-            textStyle: TextStyles.robotoRegular19Style,
-            failedIcon: Icon(
-              Icons.error,
-              color: Theme.of(context).primaryColor,
-            ),
-            canLoadingIcon: Icon(
-              Icons.autorenew,
-              color: Theme.of(context).primaryColor,
-            ),
-            idleIcon: Icon(
-              Icons.arrow_upward,
-              color: Theme.of(context).primaryColor,
-            ),
-            loadingIcon: SizedBox.square(
-              dimension: 24.0,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          scrollListener() {
+            show = scrollController.position.userScrollDirection ==
+                ScrollDirection.forward;
+          }
+
+          scrollController.addListener(scrollListener);
+          return [_buildSliverAppBar()];
+        },
+        body: Column(
+          children: [
+            Visibility(
+              visible: show,
+              child: Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(36.0),
+                    color: Colors.amber),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [Text('asdasd'), Text('asdasd')],
+                ),
               ),
             ),
-            outerBuilder: (child) => SafeArea(
-              top: false,
-              child: child,
-            ),
-          ),
-          controller: refreshController,
-          onRefresh: onRefresh,
-          onLoading: onLoading,
-          child: GridView.builder(
-            padding: const EdgeInsets.all(10.0),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              maxCrossAxisExtent: maxCrossAxisExtent,
-              mainAxisExtent: (maxCrossAxisExtent / posterAspectRatio) + 24.0,
-            ),
-            itemCount: trendingList.length,
-            itemBuilder: (BuildContext context, int index) {
-              IBaseTrendingModel currentMedia = trendingList[index];
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: getImage(
-                        path: currentMedia.posterPath ?? '', size: 'w200'),
-                    imageBuilder: (context, imageProvider) => AspectRatio(
-                      aspectRatio: posterAspectRatio,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
+            Expanded(
+              child: SmartRefresher(
+                enablePullDown: false,
+                enablePullUp: true,
+                footer: ClassicFooter(
+                  loadingText: 'Loading',
+                  loadStyle: LoadStyle.ShowWhenLoading,
+                  textStyle: TextStyles.robotoRegular19Style,
+                  failedIcon: Icon(
+                    Icons.error,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  canLoadingIcon: Icon(
+                    Icons.autorenew,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  idleIcon: Icon(
+                    Icons.arrow_upward,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  loadingIcon: SizedBox.square(
+                    dimension: 24.0,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  outerBuilder: (child) => SafeArea(
+                    top: false,
+                    child: child,
+                  ),
+                ),
+                controller: refreshController,
+                onRefresh: onRefresh,
+                onLoading: onLoading,
+                child: GridView.builder(
+                  padding: const EdgeInsets.all(10.0),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    maxCrossAxisExtent: maxCrossAxisExtent,
+                    mainAxisExtent:
+                        (maxCrossAxisExtent / posterAspectRatio) + 24.0,
+                  ),
+                  itemCount: trendingList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    IBaseTrendingModel currentMedia = trendingList[index];
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: getImage(
+                              path: currentMedia.posterPath ?? '',
+                              size: 'w200'),
+                          imageBuilder: (context, imageProvider) => AspectRatio(
+                            aspectRatio: posterAspectRatio,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Flexible(
-                    child: Text(
-                      currentMedia.mediaName ?? 'UNKNOWN',
-                      style: TextStyles.robotoMedium12Style,
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      softWrap: false,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Flexible(
+                          child: Text(
+                            currentMedia.mediaName ?? 'UNKNOWN',
+                            style: TextStyles.robotoMedium12Style,
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -147,11 +179,22 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
 
   SliverAppBar _buildSliverAppBar() {
     return SliverAppBar(
-      centerTitle: true,
-      floating: true,
-      snap: true,
-      elevation: 0,
       title: buildAppBarLogo(),
+      centerTitle: true,
+      elevation: 0,
     );
   }
 }
+
+
+//  Column(
+//         children: [
+//           buildLogo(),
+//           DropdownButton(items: const [
+//             DropdownMenuItem(
+//               value: 'TR',
+//               child: Text('TR'),
+//             )
+//           ], onChanged: ((value) {}))
+//         ],
+//       ),
