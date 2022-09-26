@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
@@ -14,12 +15,12 @@ class BaseService {
       {required String type,
       required String pageNumber,
       required IBaseTrendingModel model}) async {
-    final String _url =
+    final String url =
         "$baseUrl/$type/popular?api_key=$apiKey&page=$pageNumber";
-    debugPrint(_url);
+    debugPrint(url);
 
-    final response = await http.get(Uri.parse(_url));
-    debugPrint(_url);
+    final response = await http.get(Uri.parse(url));
+    debugPrint(url);
 
     switch (response.statusCode) {
       case HttpStatus.ok:
@@ -45,7 +46,7 @@ class BaseService {
   Future<dynamic> getTrending<T extends IBaseTrendingModel>({
     required String type,
     required String timeInterval,
-    required String pageNumber,
+    required int pageNumber,
   }) async {
     final String url =
         "$baseUrl/trending/$type/$timeInterval?api_key=$apiKey&page=$pageNumber";

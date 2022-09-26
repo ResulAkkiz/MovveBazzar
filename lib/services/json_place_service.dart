@@ -7,7 +7,7 @@ class JsonPlaceService extends BaseService {
   Future<List<IBaseTrendingModel>> getTrendings({
     required String type,
     required String timeInterval,
-    required String pageNumber,
+    required int pageNumber,
   }) async {
     return await getTrending(
       type: type,

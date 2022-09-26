@@ -7,15 +7,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 RichText buildLogo() {
   return RichText(
     text: TextSpan(
-      children: <TextSpan>[
-        TextSpan(
-          text: 'Mov',
-          style: TextStyles.splashLogoStyle,
-        ),
+      text: 'Mov',
+      style: TextStyles.splashLogoStyle,
+      children: const [
         TextSpan(
           text: 've',
-          style: TextStyles.splashLogoStyle.copyWith(
-            color: const Color(0xFFE11A38),
+          style: TextStyle(
+            color: Color(0xFFE11A38),
           ),
         ),
       ],
@@ -34,15 +32,13 @@ Container buildSigninContainer(
 RichText buildAppBarLogo() {
   return RichText(
     text: TextSpan(
-      children: <TextSpan>[
-        TextSpan(
-          text: 'Mov',
-          style: TextStyles.appBarTitleStyle,
-        ),
+      text: 'Mov',
+      style: TextStyles.appBarTitleStyle,
+      children: const [
         TextSpan(
           text: 've',
-          style: TextStyles.appBarTitleStyle.copyWith(
-            color: const Color(0xFFE11A38),
+          style: TextStyle(
+            color: Color(0xFFE11A38),
           ),
         ),
       ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
-
 import 'package:flutter_application_1/pages/signup_screen.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
@@ -155,25 +154,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  RichText buildLogo() {
-    return RichText(
-      text: TextSpan(
-        children: <TextSpan>[
-          TextSpan(
-            text: 'Mov',
-            style: TextStyles.splashLogoStyle,
-          ),
-          TextSpan(
-            text: 've',
-            style: TextStyles.splashLogoStyle.copyWith(
-              color: const Color(0xFFE11A38),
-            ),
-          ),
-        ],
       ),
     );
   }

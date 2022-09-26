@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   late PageController _pageController;
   final List<Widget> _pages = [
-    HomepageBody(),
+    const HomepageBody(),
     const BookMarkScreen(),
     const ProfileScreen(),
   ];
@@ -39,11 +39,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        extendBody: true,
-        bottomNavigationBar: _buildNavbar(context),
-        body: NestedScrollView(
+    return Scaffold(
+      floatingActionButton: _buildNavbar(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      body: SafeArea(
+        bottom: false,
+        child: NestedScrollView(
           floatHeaderSlivers: true,
           body: _pages[_currentIndex],
           headerSliverBuilder:
@@ -66,9 +67,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildNavbar(BuildContext context) {
     return Container(
-      color: Colors.transparent,
-      margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.01, vertical: 40),
+      margin: const EdgeInsets.symmetric(
+        vertical: 20.0,
+      ),
       padding: const EdgeInsets.symmetric(
         horizontal: 20,
       ),
@@ -76,7 +77,7 @@ class _HomePageState extends State<HomePage> {
         borderRadius: const BorderRadius.all(Radius.circular(50)),
         child: BottomNavyBar(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          containerHeight: MediaQuery.of(context).size.height * 0.1,
+          containerHeight: 64.0,
           backgroundColor: const Color(0xFFDA1A37),
           selectedIndex: _currentIndex,
           animationDuration: const Duration(milliseconds: 300),
