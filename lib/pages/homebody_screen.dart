@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
@@ -15,86 +16,89 @@ class HomepageBody extends StatefulWidget {
 }
 
 class _HomepageBodyState extends State<HomepageBody> {
+  late final TrendingViewModel trendingViewModel = context.read();
+  final double posterAspectRatio = 10 / 16;
+
   @override
   void initState() {
-    context
-        .read<TrendingViewModel>()
-        .getTrendings(type: 'all', timeInterval: 'day', pageNumber: '1');
     super.initState();
+    trendingViewModel.getTrendings(
+      type: 'all',
+      timeInterval: 'day',
+      pageNumber: 1,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final trendingViewModel = Provider.of<TrendingViewModel>(context);
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(
-        0,
-        15.0,
-        0,
-        MediaQuery.of(context).size.shortestSide * 0.3,
+      padding: const EdgeInsets.only(
+        bottom: 64.0 + 20.0 + 15.0,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const BuildTopic(value: 'Popular Movie'),
-          _buildSampleListView(context),
-          const BuildTopic(value: 'Tv Show'),
-          _buildSampleListView(context),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const BuildTopic(value: 'Trends'),
-              SizedBox(
-                height: MediaQuery.of(context).size.shortestSide * 0.1,
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MoreTrendScreen(
-                          items: trendingViewModel.trendingModelList,
-                        ),
-                      ));
-                    },
-                    child: Text(
-                      'see more...      ',
-                      style: TextStyles.robotoRegular10Style,
-                    )),
-              )
-            ],
-          ),
-          _buildSampleListView(context),
-          const BuildTopic(value: 'Trends'),
-          _buildSampleListView(context),
-        ],
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const BuildTopic(value: 'Popular Movie'),
+            _buildSampleListView(),
+            const BuildTopic(value: 'Tv Show'),
+            _buildSampleListView(),
+            BuildTopic(
+              value: 'Trends',
+              trailingWidget: TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MoreTrendScreen(
+                      items: trendingViewModel.trendingModelList,
+                    ),
+                  ));
+                },
+                style: const ButtonStyle(
+                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: Text(
+                  'see more...',
+                  style: TextStyles.robotoRegular10Style,
+                ),
+              ),
+            ),
+            _buildSampleListView(),
+            const BuildTopic(value: 'Trends'),
+            _buildSampleListView(),
+          ],
+        ),
       ),
     );
   }
 
-  Padding _buildSampleListView(BuildContext context) {
+  Widget _buildSampleListView() {
     final trendingViewModel = Provider.of<TrendingViewModel>(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.shortestSide * 0.65,
-        child: NotificationListener<OverscrollIndicatorNotification>(
-          onNotification: (overScroll) {
-            overScroll.disallowIndicator();
-            return false;
+    return SizedBox(
+      height: (MediaQuery.of(context).size.shortestSide *
+              0.36 /
+              posterAspectRatio) +
+          64.0,
+      child: NotificationListener<OverscrollIndicatorNotification>(
+        onNotification: (overScroll) {
+          overScroll.disallowIndicator();
+          return false;
+        },
+        child: ListView.separated(
+          itemCount: trendingViewModel.trendingModelList.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int index) {
+            IBaseTrendingModel currentMedia =
+                trendingViewModel.trendingModelList[index];
+            return buildMediaClip(currentMedia);
           },
-          child: ListView.builder(
-              itemCount: trendingViewModel.trendingModelList.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) {
-                debugPrint(
-                    trendingViewModel.trendingModelList.length.toString());
-                IBaseTrendingModel currentMedia =
-                    trendingViewModel.trendingModelList[index];
-                return Padding(
-                    padding:
-                        index == trendingViewModel.trendingModelList.length - 1
-                            ? const EdgeInsets.fromLTRB(12, 0, 12, 0)
-                            : const EdgeInsets.only(left: 12),
-                    child: buildMediaClip(currentMedia));
-              }),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12.0,
+            vertical: 10.0,
+          ),
+          separatorBuilder: (context, index) => const SizedBox(
+            width: 12.0,
+          ),
         ),
       ),
     );
@@ -102,20 +106,28 @@ class _HomepageBodyState extends State<HomepageBody> {
 
   Widget buildMediaClip(IBaseTrendingModel<dynamic> currentMedia) {
     return SizedBox(
-      width: MediaQuery.of(context).size.shortestSide * 0.35,
+      width: MediaQuery.of(context).size.shortestSide * 0.36,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.shortestSide * 0.35,
-            height: MediaQuery.of(context).size.shortestSide * 0.5,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(
+          CachedNetworkImage(
+            imageUrl:
                 getImage(path: currentMedia.posterPath ?? '', size: 'w200'),
-                fit: BoxFit.fill,
+            imageBuilder: (context, imageProvider) => AspectRatio(
+              aspectRatio: posterAspectRatio,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
+          ),
+          const SizedBox(
+            height: 10.0,
           ),
           Flexible(
             child: Text(
@@ -125,11 +137,16 @@ class _HomepageBodyState extends State<HomepageBody> {
               maxLines: 2,
             ),
           ),
-          Text(
-            currentMedia.date == null
-                ? 'UNKNOWN'
-                : DateFormat.yMMMd().format(currentMedia.date!),
-            style: TextStyles.robotoRegularStyle,
+          const SizedBox(
+            height: 5.0,
+          ),
+          Flexible(
+            child: Text(
+              currentMedia.date == null
+                  ? 'UNKNOWN'
+                  : DateFormat.yMMMd().format(currentMedia.date!),
+              style: TextStyles.robotoRegularStyle,
+            ),
           ),
         ],
       ),
@@ -139,25 +156,33 @@ class _HomepageBodyState extends State<HomepageBody> {
 
 class BuildTopic extends StatelessWidget {
   final String value;
+  final Widget? trailingWidget;
+
   const BuildTopic({
     Key? key,
     required this.value,
+    this.trailingWidget,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: Text(
-        value,
-        style: TextStyles.robotoHeadlineStyle,
+      padding: const EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 0.0),
+      child: SizedBox(
+        height: TextStyles.robotoHeadlineStyle.fontSize! * 1.2,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Text(
+                value,
+                style: TextStyles.robotoHeadlineStyle,
+              ),
+            ),
+            if (trailingWidget != null) Flexible(child: trailingWidget!),
+          ],
+        ),
       ),
     );
   }
 }
-
-
-//  Text((currentMedia is MovieTrending? currentMedia.title :
-//               (currentMedia as TvTrending).name) ?? 'UNKNOWN',
-//               style: TextStyles.robotoMediumStyle,
-//             ),

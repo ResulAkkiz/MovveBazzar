@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
@@ -46,147 +47,149 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     MovierViewModel movierViewModel = Provider.of<MovierViewModel>(context);
-    return movier != null
-        ? SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 110.0),
-            child: Column(
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: <Widget>[
-                    _buildClipPath(),
-                    _buildCircleAvatar(),
-                    _buildSignoutButton(),
-                  ],
-                ),
-                const SizedBox(
-                  height: 35,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
+    if (movier == null) return const SplashScreen();
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(
+        bottom: 64.0 + 20.0 + 15.0,
+      ),
+      child: SafeArea(
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                _buildClipPath(),
+                _buildCircleAvatar(),
+                _buildSignoutButton(),
+              ],
+            ),
+            const SizedBox(
+              height: 35,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  buildLoginTextformField(
+                    textEditingController: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    hintText: 'Email',
+                    iconData: Icons.email,
+                  ),
+                  buildLoginTextformField(
+                    textEditingController: userNameController,
+                    hintText: 'Username',
+                    iconData: Icons.account_box,
+                  ),
+                  buildLoginTextformField(
+                    textEditingController: phoneController,
+                    keyboardType: TextInputType.phone,
+                    hintText: 'Phone Number',
+                    iconData: Icons.phone_android,
+                  ),
+                  Row(
                     children: [
-                      buildLoginTextformField(
-                        textEditingController: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        hintText: 'Email',
-                        iconData: Icons.email,
+                      Flexible(
+                        flex: 4,
+                        child: buildLoginTextformField(
+                          readOnly: true,
+                          textEditingController: ageController,
+                          keyboardType: TextInputType.number,
+                          hintText: 'Age',
+                          iconData: Icons.cake,
+                        ),
                       ),
-                      buildLoginTextformField(
-                        textEditingController: userNameController,
-                        hintText: 'Username',
-                        iconData: Icons.account_box,
-                      ),
-                      buildLoginTextformField(
-                        textEditingController: phoneController,
-                        keyboardType: TextInputType.phone,
-                        hintText: 'Phone Number',
-                        iconData: Icons.phone_android,
+                      Flexible(
+                        flex: 6,
+                        child: buildDateTimePicker(
+                            onSelected: (DateTime date) {
+                              setState(() {
+                                dateTime = date;
+                                debugPrint(dateTime.toString());
+                                ageController.text =
+                                    yearsBetween(dateTime, DateTime.now())
+                                        .toString();
+                              });
+                            },
+                            controller: dateController,
+                            iconData: Icons.date_range,
+                            context: context),
+                      )
+                    ],
+                  ).separated(
+                    const SizedBox(
+                      width: 10,
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Select your gender',
+                        style: TextStyles.robotoRegular32Style,
                       ),
                       Row(
-                        children: [
-                          Flexible(
-                            flex: 4,
-                            child: buildLoginTextformField(
-                              readOnly: true,
-                              textEditingController: ageController,
-                              keyboardType: TextInputType.number,
-                              hintText: 'Age',
-                              iconData: Icons.cake,
-                            ),
-                          ),
-                          Flexible(
-                            flex: 6,
-                            child: buildDateTimePicker(
-                                onSelected: (DateTime date) {
-                                  setState(() {
-                                    dateTime = date;
-                                    debugPrint(dateTime.toString());
-                                    ageController.text =
-                                        yearsBetween(dateTime, DateTime.now())
-                                            .toString();
-                                  });
-                                },
-                                controller: dateController,
-                                iconData: Icons.date_range,
-                                context: context),
-                          )
-                        ],
-                      ).separated(
-                        const SizedBox(
-                          width: 10,
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            'Select your gender',
-                            style: TextStyles.robotoRegular32Style,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: genderMap.entries.map((entry) {
-                              int index = genderMap.values
-                                  .toList()
-                                  .indexOf(entry.value);
-                              return Padding(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: genderMap.entries.map((entry) {
+                          int index =
+                              genderMap.values.toList().indexOf(entry.value);
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  choose = index;
+                                });
+                              },
+                              child: Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      choose = index;
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      children: [
-                                        Icon(
-                                          entry.value,
-                                          color: choose == index
-                                              ? Theme.of(context).primaryColor
-                                              : Colors.white,
-                                          size: 45,
-                                        ),
-                                        Text(
-                                          entry.key,
-                                        ),
-                                      ],
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      entry.value,
+                                      color: choose == index
+                                          ? Theme.of(context).primaryColor
+                                          : Colors.white,
+                                      size: 45,
                                     ),
-                                  ),
+                                    Text(
+                                      entry.key,
+                                    ),
+                                  ],
                                 ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          await movierViewModel.saveMovier(Movier(
-                              movierID: movierViewModel.movier!.movierID,
-                              movierEmail: emailController.text,
-                              movierUsername: userNameController.text,
-                              movierAge: ageController.text,
-                              movierPhoneNumber: phoneController.text,
-                              movierGender:
-                                  genderMap.keys.elementAt(choose ?? 1),
-                              movierBirthday: DateFormat('d/M/y')
-                                  .parse(dateController.text),
-                              movierPhotoUrl: await _uploadProfilePhoto()));
-                        },
-                        child: Text(
-                          'Save',
-                          style: TextStyles.robotoBold18Style,
-                        ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ],
-                  ).separated(const SizedBox(
-                    height: 15,
-                  )),
-                ),
-              ],
-            ))
-        : const SplashScreen();
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await movierViewModel.saveMovier(Movier(
+                          movierID: movierViewModel.movier!.movierID,
+                          movierEmail: emailController.text,
+                          movierUsername: userNameController.text,
+                          movierAge: ageController.text,
+                          movierPhoneNumber: phoneController.text,
+                          movierGender: genderMap.keys.elementAt(choose ?? 1),
+                          movierBirthday:
+                              DateFormat('d/M/y').parse(dateController.text),
+                          movierPhotoUrl: await _uploadProfilePhoto()));
+                    },
+                    child: Text(
+                      'Save',
+                      style: TextStyles.robotoBold18Style,
+                    ),
+                  ),
+                ],
+              ).separated(const SizedBox(
+                height: 15,
+              )),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<String?> _uploadProfilePhoto() async {

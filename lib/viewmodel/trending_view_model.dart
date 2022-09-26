@@ -11,18 +11,18 @@ class TrendingViewModel extends ChangeNotifier {
   Future<List<IBaseTrendingModel>> getTrendings({
     required String type,
     required String timeInterval,
-    required String pageNumber,
+    required int pageNumber,
   }) async {
     isLoading = true;
     final List<IBaseTrendingModel> tempTrendingModelList =
         await _jsonPlaceService.getTrendings(
       type: type,
       timeInterval: timeInterval,
-      pageNumber: '1',
+      pageNumber: pageNumber,
     );
-    // if (pageNumber == "1") {
-    //   trendingModelList = tempTrendingModelList;
-    // }
+    if (pageNumber == 1) {
+      trendingModelList = tempTrendingModelList;
+    }
     isLoading = false;
     notifyListeners();
     return tempTrendingModelList;

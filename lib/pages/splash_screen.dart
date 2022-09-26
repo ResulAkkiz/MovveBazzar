@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/app_constants/common_widgets.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,22 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RichText(
-            text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                  text: 'Mov',
-                  style: TextStyles.splashLogoStyle,
-                ),
-                TextSpan(
-                  text: 've',
-                  style: TextStyles.splashLogoStyle.copyWith(
-                    color: const Color(0xFFE11A38),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          buildLogo(),
           CircularProgressIndicator(
             color: Theme.of(context).primaryColor,
           )

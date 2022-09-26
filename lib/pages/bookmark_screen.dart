@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
-import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/app_constants/ticket_widget.dart';
+import 'package:flutter_application_1/app_constants/widget_extension.dart';
 
 class BookMarkScreen extends StatefulWidget {
   const BookMarkScreen({super.key});
@@ -66,15 +66,19 @@ class _BookMarkScreenState extends State<BookMarkScreen>
       required String filmImdbRate,
       required String filmDirector}) {
     return GridView.builder(
+      padding: EdgeInsets.only(
+        top: 10.0,
+        bottom: 64.0 + 20.0 + 10.0 + MediaQuery.of(context).padding.bottom,
+      ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
-        mainAxisExtent: 200,
+        mainAxisExtent: 208,
       ),
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
           child: TicketWidget(
-            width: (200 * 10 / 16) + 16,
+            width: (208 * 10 / 16) + 16,
             child: Row(
               children: [
                 Flexible(
