@@ -4,7 +4,7 @@ import 'package:flutter_application_1/app_constants/custom_theme.dart';
 import 'package:flutter_application_1/model/custom_theme_data.dart';
 import 'package:flutter_application_1/pages/landing_screen.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
-import 'package:flutter_application_1/viewmodel/trending_view_model.dart';
+import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -24,7 +24,7 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (BuildContext context) {
-          return TrendingViewModel();
+          return MediaViewModel();
         },
       )
     ],

@@ -6,6 +6,8 @@ import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/pages/bookmark_screen.dart';
 import 'package:flutter_application_1/pages/homebody_screen.dart';
 import 'package:flutter_application_1/pages/profile_screen.dart';
+import 'package:flutter_application_1/viewmodel/media_view_model.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -39,6 +41,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    //final trendingViewModel = Provider.of<TrendingViewModel>(context);
     return Scaffold(
       floatingActionButton: _buildNavbar(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

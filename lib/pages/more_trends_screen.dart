@@ -4,7 +4,7 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
-import 'package:flutter_application_1/viewmodel/trending_view_model.dart';
+import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -17,9 +17,13 @@ class MoreTrendScreen extends StatefulWidget {
 }
 
 class _MoreTrendScreenState extends State<MoreTrendScreen> {
-  late final TrendingViewModel trendingViewModel = context.read();
+  late final MediaViewModel mediaViewModel = context.read();
+  final ScrollController _controller = ScrollController();
   List<IBaseTrendingModel> trendingList = [];
   int pageNumber = 1;
+  String timeInterval = 'day';
+  String type = 'all';
+
   final RefreshController refreshController =
       RefreshController(initialRefresh: false);
 
@@ -39,9 +43,9 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
     pageNumber++;
     if (!mounted) return;
     trendingList.addAll(
-      await trendingViewModel.getTrendings(
-        type: 'all',
-        timeInterval: 'day',
+      await mediaViewModel.getTrendings(
+        type: type,
+        timeInterval: timeInterval,
         pageNumber: pageNumber,
       ),
     );
@@ -55,12 +59,18 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
     double maxCrossAxisExtent =
         (MediaQuery.of(context).size.shortestSide - 40.0) / 3;
     double posterAspectRatio = 10 / 16;
-
+    debugPrint(mediaViewModel.isLoading.toString());
     return Scaffold(
       body: NestedScrollView(
         floatHeaderSlivers: true,
-        headerSliverBuilder: (context, innerBoxIsScrolled) =>
-            [_buildSliverAppBar()],
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          _buildSliverAppBar(),
+          SliverPersistentHeader(
+            pinned: true,
+            floating: false,
+            delegate: Delegate(Colors.transparent, buildRowDropButton()),
+          )
+        ],
         body: SmartRefresher(
           enablePullDown: false,
           enablePullUp: true,
@@ -95,10 +105,11 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
           onRefresh: onRefresh,
           onLoading: onLoading,
           child: GridView.builder(
+            controller: _controller,
             padding: const EdgeInsets.all(10.0),
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              mainAxisSpacing: 30,
               maxCrossAxisExtent: maxCrossAxisExtent,
               mainAxisExtent: (maxCrossAxisExtent / posterAspectRatio) + 24.0,
             ),
@@ -147,11 +158,144 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
 
   SliverAppBar _buildSliverAppBar() {
     return SliverAppBar(
-      centerTitle: true,
-      floating: true,
-      snap: true,
-      elevation: 0,
       title: buildAppBarLogo(),
+      centerTitle: true,
+      elevation: 0,
     );
   }
+
+  Widget buildRowDropButton() {
+    return Center(
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        buildMoreTrendsDDB(
+            value: timeInterval,
+            items: const [
+              DropdownMenuItem(
+                value: 'day',
+                child: Text('Day'),
+              ),
+              DropdownMenuItem(
+                value: 'week',
+                child: Text('Week'),
+              ),
+            ],
+            onChanged: (String? value) async {
+              trendingList = [];
+              timeInterval = value!;
+              pageNumber = 1;
+
+              trendingList = await mediaViewModel.getTrendings(
+                  type: type,
+                  timeInterval: timeInterval,
+                  pageNumber: pageNumber);
+              setState(() {
+                _scrollUp();
+              });
+            }),
+        buildMoreTrendsDDB(
+            value: type,
+            items: const [
+              DropdownMenuItem(
+                value: 'all',
+                child: Text('All'),
+              ),
+              DropdownMenuItem(
+                value: 'tv',
+                child: Text('Tv'),
+              ),
+              DropdownMenuItem(
+                value: 'movie',
+                child: Text('Movie'),
+              ),
+            ],
+            onChanged: (String? value) async {
+              trendingList = [];
+              type = value!;
+              pageNumber = 1;
+
+              trendingList = await mediaViewModel.getTrendings(
+                  type: type,
+                  timeInterval: timeInterval,
+                  pageNumber: pageNumber);
+              setState(() {
+                _scrollUp();
+              });
+            }),
+      ],
+    ));
+  }
+
+  void _scrollUp() {
+    _controller.jumpTo(0);
+  }
 }
+
+class Delegate extends SliverPersistentHeaderDelegate {
+  final Color backgroundColor;
+  final Widget child;
+
+  Delegate(this.backgroundColor, this.child);
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => 60;
+
+  @override
+  double get minExtent => 0;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
+  }
+}
+
+
+//  DropdownButton(
+//                     items: const [
+//                       DropdownMenuItem(
+//                         value: 'day',
+//                         child: Text('day'),
+//                       ),
+//                       DropdownMenuItem(
+//                         value: 'week',
+//                         child: Text('week'),
+//                       ),
+//                     ],
+//                     onChanged: ((value) {}),
+//                   ),
+//                    DropdownButton(
+//                     items: const [
+//                       DropdownMenuItem(
+//                         value: 'all',
+//                         child: Text('all'),
+//                       ),
+//                        DropdownMenuItem(
+//                         value: 'tv',
+//                         child: Text('tv'),
+//                       ),
+//                        DropdownMenuItem(
+//                         value: 'movie',
+//                         child: Text('movie'),
+//                       ),
+//                     ],
+//                     onChanged: ((value) {}),
+//                   ),
+
+//  Column(
+//         children: [
+//           buildLogo(),
+//           DropdownButton(items: const [
+//             DropdownMenuItem(
+//               value: 'TR',
+//               child: Text('TR'),
+//             )
+//           ], onChanged: ((value) {}))
+//         ],
+//       ),

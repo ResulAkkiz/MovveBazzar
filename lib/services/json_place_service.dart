@@ -16,13 +16,13 @@ class JsonPlaceService extends BaseService {
     );
   }
 
-  Future<List<TvTrending>> getTvPopulars({required String pageNumber}) async {
+  Future<List<TvTrending>> getTvPopulars({required int pageNumber}) async {
     return await getPopulars<TvTrending>(
         type: 'tv', pageNumber: pageNumber, model: TvTrending());
   }
 
   Future<List<MovieTrending>> getMoviePopulars(
-      {required String pageNumber}) async {
+      {required int pageNumber}) async {
     return await getPopulars<MovieTrending>(
         type: 'movie', pageNumber: pageNumber, model: MovieTrending());
   }

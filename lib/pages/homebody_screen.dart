@@ -4,7 +4,7 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/pages/more_trends_screen.dart';
-import 'package:flutter_application_1/viewmodel/trending_view_model.dart';
+import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -16,21 +16,18 @@ class HomepageBody extends StatefulWidget {
 }
 
 class _HomepageBodyState extends State<HomepageBody> {
-  late final TrendingViewModel trendingViewModel = context.read();
+  late final MediaViewModel mediaViewModel = context.read();
   final double posterAspectRatio = 10 / 16;
 
   @override
   void initState() {
+    getStarted();
     super.initState();
-    trendingViewModel.getTrendings(
-      type: 'all',
-      timeInterval: 'day',
-      pageNumber: 1,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final MediaViewModel mediaViewModel = Provider.of<MediaViewModel>(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
         bottom: 64.0 + 20.0 + 15.0,
@@ -39,17 +36,13 @@ class _HomepageBodyState extends State<HomepageBody> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const BuildTopic(value: 'Popular Movie'),
-            _buildSampleListView(),
-            const BuildTopic(value: 'Tv Show'),
-            _buildSampleListView(),
             BuildTopic(
-              value: 'Trends',
+              value: 'Popular Movies',
               trailingWidget: TextButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => MoreTrendScreen(
-                      items: trendingViewModel.trendingModelList,
+                      items: mediaViewModel.trendingModelList,
                     ),
                   ));
                 },
@@ -63,17 +56,37 @@ class _HomepageBodyState extends State<HomepageBody> {
                 ),
               ),
             ),
-            _buildSampleListView(),
-            const BuildTopic(value: 'Trends'),
-            _buildSampleListView(),
+            buildMediaListView(mediaViewModel.popularMovieModelList),
+            const BuildTopic(value: 'Popular Tv Shows'),
+            buildMediaListView(mediaViewModel.popularTvModelList),
+            BuildTopic(
+              value: 'Trends',
+              trailingWidget: TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MoreTrendScreen(
+                      items: mediaViewModel.trendingModelList,
+                    ),
+                  ));
+                },
+                style: const ButtonStyle(
+                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: Text(
+                  'see more...',
+                  style: TextStyles.robotoRegular10Style,
+                ),
+              ),
+            ),
+            buildMediaListView(mediaViewModel.trendingModelList),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSampleListView() {
-    final trendingViewModel = Provider.of<TrendingViewModel>(context);
+  Widget buildMediaListView(List<IBaseTrendingModel<dynamic>> mediaList) {
     return SizedBox(
       height: (MediaQuery.of(context).size.shortestSide *
               0.36 /
@@ -85,11 +98,10 @@ class _HomepageBodyState extends State<HomepageBody> {
           return false;
         },
         child: ListView.separated(
-          itemCount: trendingViewModel.trendingModelList.length,
+          itemCount: mediaList.length,
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext context, int index) {
-            IBaseTrendingModel currentMedia =
-                trendingViewModel.trendingModelList[index];
+            IBaseTrendingModel currentMedia = mediaList[index];
             return buildMediaClip(currentMedia);
           },
           padding: const EdgeInsets.symmetric(
@@ -151,6 +163,16 @@ class _HomepageBodyState extends State<HomepageBody> {
         ],
       ),
     );
+  }
+
+  void getStarted() {
+    mediaViewModel.getTrendings(
+      type: 'all',
+      timeInterval: 'day',
+      pageNumber: 1,
+    );
+    mediaViewModel.getTvPopulars(pageNumber: 1);
+    mediaViewModel.getMoviePopulars(pageNumber: 1);
   }
 }
 

@@ -46,6 +46,28 @@ RichText buildAppBarLogo() {
   );
 }
 
+Widget buildMoreTrendsDDB(
+    {String? value,
+    required void Function(String?)? onChanged,
+    required List<DropdownMenuItem<String>>? items}) {
+  return DecoratedBox(
+    decoration: BoxDecoration(
+      color: Colors.transparent,
+      border: Border.all(color: Colors.red, width: 1),
+      borderRadius: BorderRadius.circular(30),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: DropdownButton<String>(
+          style: TextStyles.robotoMedium18Style,
+          value: value,
+          underline: const SizedBox(),
+          items: items,
+          onChanged: onChanged),
+    ),
+  );
+}
+
 Widget buildLoginTextformField({
   required IconData iconData,
   required String hintText,

@@ -17,7 +17,7 @@ final ThemeData lightTheme = ThemeData(
   primaryColor: const Color(0xFFDA1A37),
   primaryColorLight: const Color(0xffe1e1ea),
   primaryColorDark: const Color(0xff3f3f5a),
-  canvasColor: const Color(0xfffafafa),
+  canvasColor: const Color(0xFFDA1A37),
   scaffoldBackgroundColor: const Color(0xff171721),
   bottomAppBarColor: const Color(0xffffffff),
   cardColor: const Color(0xffffffff),

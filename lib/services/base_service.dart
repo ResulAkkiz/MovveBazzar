@@ -11,9 +11,11 @@ class BaseService {
   final baseUrl = 'https://api.themoviedb.org/3';
   final apiKey = '07f5723af6c9503db9c8ce9493c975ce';
 
+  //https://api.themoviedb.org/3/discover/movie?api_key=07f5723af6c9503db9c8ce9493c975ce&sort_by=popularity.desc&page=2&with_watch_monetization_types=flatrate
+  //https://api.themoviedb.org/3/discover/tv?api_key=07f5723af6c9503db9c8ce9493c975ce&page=2
   Future<dynamic> getPopulars<T extends IBaseTrendingModel>(
       {required String type,
-      required String pageNumber,
+      required int pageNumber,
       required IBaseTrendingModel model}) async {
     final String url =
         "$baseUrl/$type/popular?api_key=$apiKey&page=$pageNumber";
