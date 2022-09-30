@@ -1,14 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
+import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
 
 class MediaViewModel extends ChangeNotifier {
   bool isLoading = false;
   List<IBaseTrendingModel> trendingModelList = [];
+  List<IBaseTrendingModel> discoverTvModelList = [];
+  List<IBaseTrendingModel> discoverMovieModelList = [];
   List<TvTrending> popularTvModelList = [];
   List<MovieTrending> popularMovieModelList = [];
+  List<PeopleCast> peopleCastList = [];
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
 
   Future<List<IBaseTrendingModel>> getTrendings({
@@ -29,6 +34,30 @@ class MediaViewModel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     return tempTrendingModelList;
+  }
+
+  Future<void> getDiscovers({
+    required String type,
+    required int pageNumber,
+  }) async {
+    isLoading = true;
+    if (type == 'movie') {
+      discoverMovieModelList = await _jsonPlaceService.getDiscovers(
+        type: type,
+        pageNumber: pageNumber,
+      );
+      notifyListeners();
+      isLoading = false;
+      debugPrint('discoverMovieModelList: ${discoverMovieModelList.length}');
+    } else {
+      discoverTvModelList = await _jsonPlaceService.getDiscovers(
+        type: type,
+        pageNumber: pageNumber,
+      );
+      notifyListeners();
+      isLoading = false;
+      debugPrint('discoverTvModelList: ${discoverTvModelList.length}');
+    }
   }
 
   Future<List<TvTrending>> getTvPopulars({required int pageNumber}) async {
@@ -55,5 +84,14 @@ class MediaViewModel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     return tempPopularMovieModelList;
+  }
+
+  Future<Movie> getMoviebyID(int movieID) async {
+    return await _jsonPlaceService.getMoviebyID(movieID);
+  }
+
+  Future<void> getCastbyMovieIds(int movieID) async {
+    peopleCastList = await _jsonPlaceService.getCastbyMovieId(movieID);
+    notifyListeners();
   }
 }

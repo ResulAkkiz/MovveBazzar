@@ -10,6 +10,7 @@ enum IconEnums {
   backarrow,
   emptystar,
   fullstar,
+  halfstar,
   google,
   twitter,
   profilepicture,
@@ -21,7 +22,8 @@ enum ImageEnums {
   sampleimage2,
   samplebodyimage,
   samplecast,
-  profilepicture
+  profilepicture,
+  celebrity,
 }
 
 extension IconEnumsExtension on IconEnums {
@@ -47,7 +49,7 @@ extension ImageEnumsExtension on ImageEnums {
 
   Image get toImagewithBoxFit => Image.asset(
         toPath,
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       );
 
   String get toName {

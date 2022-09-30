@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/pages/movie_detail_screen.dart';
 import 'package:flutter_application_1/pages/more_trends_screen.dart';
+import 'package:flutter_application_1/services/base_service.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,7 @@ class HomepageBody extends StatefulWidget {
 }
 
 class _HomepageBodyState extends State<HomepageBody> {
+  BaseService baseService = BaseService();
   late final MediaViewModel mediaViewModel = context.read();
   final double posterAspectRatio = 10 / 16;
 
@@ -28,6 +31,7 @@ class _HomepageBodyState extends State<HomepageBody> {
   @override
   Widget build(BuildContext context) {
     final MediaViewModel mediaViewModel = Provider.of<MediaViewModel>(context);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
         bottom: 64.0 + 20.0 + 15.0,
@@ -57,7 +61,26 @@ class _HomepageBodyState extends State<HomepageBody> {
               ),
             ),
             buildMediaListView(mediaViewModel.popularMovieModelList),
-            const BuildTopic(value: 'Popular Tv Shows'),
+            BuildTopic(
+              value: 'Popular Tv Shows',
+              trailingWidget: TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MoreTrendScreen(
+                      items: mediaViewModel.trendingModelList,
+                    ),
+                  ));
+                },
+                style: const ButtonStyle(
+                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: Text(
+                  'see more...',
+                  style: TextStyles.robotoRegular10Style,
+                ),
+              ),
+            ),
             buildMediaListView(mediaViewModel.popularTvModelList),
             BuildTopic(
               value: 'Trends',
@@ -80,6 +103,10 @@ class _HomepageBodyState extends State<HomepageBody> {
               ),
             ),
             buildMediaListView(mediaViewModel.trendingModelList),
+            const BuildTopic(value: 'Discover Movies'),
+            buildMediaListView(mediaViewModel.discoverMovieModelList),
+            const BuildTopic(value: 'Discover Tv Shows'),
+            buildMediaListView(mediaViewModel.discoverTvModelList),
           ],
         ),
       ),
@@ -102,7 +129,14 @@ class _HomepageBodyState extends State<HomepageBody> {
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext context, int index) {
             IBaseTrendingModel currentMedia = mediaList[index];
-            return buildMediaClip(currentMedia);
+            return InkWell(
+                child: buildMediaClip(currentMedia),
+                onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            MovieDetailPage(mediaID: currentMedia.id!),
+                      ),
+                    ));
           },
           padding: const EdgeInsets.symmetric(
             horizontal: 12.0,
@@ -173,6 +207,9 @@ class _HomepageBodyState extends State<HomepageBody> {
     );
     mediaViewModel.getTvPopulars(pageNumber: 1);
     mediaViewModel.getMoviePopulars(pageNumber: 1);
+    mediaViewModel.getDiscovers(type: 'movie', pageNumber: 1);
+    mediaViewModel.getDiscovers(type: 'tv', pageNumber: 1);
+    baseService.getCastbyMovieId(5);
   }
 }
 
