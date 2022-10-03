@@ -11,13 +11,10 @@ class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MovierViewModel movierViewModel = Provider.of<MovierViewModel>(context);
-    debugPrint('Landing page içerisindeyiz');
-    debugPrint(movierViewModel.movier?.movierEmail);
 
     if (movierViewModel.movier == null) {
       return const LoginScreen();
     } else {
-      debugPrint('Go to homepage');
       return const HomePage();
     }
   }

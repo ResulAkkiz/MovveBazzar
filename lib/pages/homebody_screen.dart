@@ -209,7 +209,7 @@ class _HomepageBodyState extends State<HomepageBody> {
     mediaViewModel.getMoviePopulars(pageNumber: 1);
     mediaViewModel.getDiscovers(type: 'movie', pageNumber: 1);
     mediaViewModel.getDiscovers(type: 'tv', pageNumber: 1);
-    baseService.getCastbyMovieId(5);
+    baseService.getImagesbymediaID(5, "movie");
   }
 }
 

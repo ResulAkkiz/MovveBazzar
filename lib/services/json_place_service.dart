@@ -5,6 +5,7 @@ import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/people_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/base_service.dart';
+import 'package:flutter_application_1/services/media_images_model.dart';
 
 class JsonPlaceService extends BaseService {
   Future<List<IBaseTrendingModel>> getTrendings({
@@ -43,5 +44,17 @@ class JsonPlaceService extends BaseService {
 
   Future<List<PeopleCast>> getCastbyMovieIds(int movieID) async {
     return await getCastbyMovieId(movieID);
+  }
+
+  Future<List<MediaImage>?> getMovieImagebyMediaIDs(
+    int mediaID,
+  ) async {
+    return await getImagesbymediaID(mediaID, 'movie');
+  }
+
+  Future<List<MediaImage>?> getTvImagebyMediaIDs(
+    int mediaID,
+  ) async {
+    return await getImagesbymediaID(mediaID, 'tv');
   }
 }

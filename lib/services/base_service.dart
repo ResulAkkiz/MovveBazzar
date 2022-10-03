@@ -8,6 +8,7 @@ import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/people_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
+import 'package:flutter_application_1/services/media_images_model.dart';
 import 'package:http/http.dart' as http;
 
 class BaseService {
@@ -20,10 +21,7 @@ class BaseService {
       required IBaseTrendingModel model}) async {
     final String url =
         "$baseUrl/$type/popular?api_key=$apiKey&page=$pageNumber";
-    debugPrint(url);
-
     final response = await http.get(Uri.parse(url));
-    debugPrint(url);
 
     switch (response.statusCode) {
       case HttpStatus.ok:
@@ -54,8 +52,7 @@ class BaseService {
     final String url =
         "$baseUrl/trending/$type/$timeInterval?api_key=$apiKey&page=$pageNumber";
     final response = await http.get(Uri.parse(url));
-    debugPrint(
-        "$baseUrl/trending/$type/$timeInterval?api_key=$apiKey&page=$pageNumber");
+
     switch (response.statusCode) {
       case HttpStatus.ok:
         return _jsonBodyParserV2(response.body);
@@ -96,7 +93,7 @@ class BaseService {
     final String url =
         "$baseUrl/discover/$type?api_key=$apiKey&page=$pageNumber";
     final response = await http.get(Uri.parse(url));
-    debugPrint("$baseUrl/discover/$type?api_key=$apiKey&page=$pageNumber");
+
     switch (response.statusCode) {
       case HttpStatus.ok:
         return _jsonBodyParserV3(response.body, type);
@@ -144,7 +141,7 @@ class BaseService {
 
   Future<Movie> getMoviebyID<T>(int movieID) async {
     final String url = "$baseUrl/movie/$movieID?api_key=$apiKey";
-    debugPrint(url);
+
     final response = await http.get(Uri.parse(url));
     switch (response.statusCode) {
       case HttpStatus.ok:
@@ -169,8 +166,31 @@ class BaseService {
             peopleList.add(PeopleCast.fromMap(singleMap));
           }
         }
-        debugPrint(peopleList.length.toString());
+
         return peopleList;
+      default:
+        throw Exception(response.body);
+    }
+  }
+
+  Future<List<MediaImage>?> getImagesbymediaID(int mediaID, String type) async {
+    //https://api.themoviedb.org/3/tv/7/images?api_key=07f5723af6c9503db9c8ce9493c975ce
+    //https://api.themoviedb.org/3/movie/3/images?api_key=07f5723af6c9503db9c8ce9493c975ce
+
+    final String url = "$baseUrl/$type/$mediaID/images?api_key=$apiKey";
+    final response = await http.get(Uri.parse(url));
+    var jsonBody = jsonDecode(response.body)['backdrops'];
+
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        List<MediaImage> imageList = [];
+        if (jsonBody is List) {
+          for (var singleMap in jsonBody) {
+            imageList.add(MediaImage.fromMap(singleMap));
+          }
+        }
+
+        return imageList;
       default:
         throw Exception(response.body);
     }
@@ -183,36 +203,3 @@ class BaseService {
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Future<List<IBaseTrendingModel>> getTrending<T extends IBaseTrendingModel>({
-  //   required String type,
-  //   required String timeInterval,
-  //   required String pageNumber,
-  // }) async {
-  //   final String url =
-  //       "$baseUrl/trending/$type/$timeInterval?api_key=$apiKey&page=$pageNumber";
-  //   final response = await http.get(Uri.parse(url));
-
-  //   switch (response.statusCode) {
-  //     case HttpStatus.ok:
-  //       List<IBaseTrendingModel> list = [];
-  //       var jsonBody = (jsonDecode(response.body))['results'];
-  //       debugPrint(jsonBody);
-  //       if (jsonBody is List) {
-  //         for (Map<String, dynamic> singleMap in jsonBody) {
-  //           if (singleMap["media_type"] == "movie") {
-  //             list.add(MovieTrending.fromMap(singleMap));
-  //           } else if (singleMap["media_type"] == "tv") {
-  //             list.add(TvTrending.fromMap(singleMap));
-  //           } else {
-  //             debugPrint('singleMap["media_type"] == "else"');
-  //           }
-  //         }
-  //       }
-  //       return list;
-  //     default:
-  //       throw Exception(response.body);
-  //   }
-  // }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

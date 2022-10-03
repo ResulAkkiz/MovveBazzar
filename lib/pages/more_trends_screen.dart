@@ -59,7 +59,7 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
     double maxCrossAxisExtent =
         (MediaQuery.of(context).size.shortestSide - 40.0) / 3;
     double posterAspectRatio = 10 / 16;
-    debugPrint(mediaViewModel.isLoading.toString());
+
     return Scaffold(
       body: NestedScrollView(
         floatHeaderSlivers: true,

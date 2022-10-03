@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
+
 String generateRandomString(int len) {
   var r = Random();
   const chars =
@@ -7,5 +9,6 @@ String generateRandomString(int len) {
   return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
 }
 
-String getImage({required String path, required String size}) =>
-    'https://image.tmdb.org/t/p/$size$path';
+String getImage({required String path, required String size}) {
+  return 'https://image.tmdb.org/t/p/$size$path';
+}

@@ -5,6 +5,7 @@ import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
+import 'package:flutter_application_1/services/media_images_model.dart';
 
 class MediaViewModel extends ChangeNotifier {
   bool isLoading = false;
@@ -14,6 +15,7 @@ class MediaViewModel extends ChangeNotifier {
   List<TvTrending> popularTvModelList = [];
   List<MovieTrending> popularMovieModelList = [];
   List<PeopleCast> peopleCastList = [];
+  List<MediaImage>? mediaImageList = [];
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
 
   Future<List<IBaseTrendingModel>> getTrendings({
@@ -48,7 +50,6 @@ class MediaViewModel extends ChangeNotifier {
       );
       notifyListeners();
       isLoading = false;
-      debugPrint('discoverMovieModelList: ${discoverMovieModelList.length}');
     } else {
       discoverTvModelList = await _jsonPlaceService.getDiscovers(
         type: type,
@@ -56,7 +57,6 @@ class MediaViewModel extends ChangeNotifier {
       );
       notifyListeners();
       isLoading = false;
-      debugPrint('discoverTvModelList: ${discoverTvModelList.length}');
     }
   }
 
@@ -93,5 +93,21 @@ class MediaViewModel extends ChangeNotifier {
   Future<void> getCastbyMovieIds(int movieID) async {
     peopleCastList = await _jsonPlaceService.getCastbyMovieId(movieID);
     notifyListeners();
+  }
+
+  Future<void> getMediaImagebyMediaID(int mediaID, String type) async {
+    switch (type) {
+      case 'tv':
+        mediaImageList = await _jsonPlaceService.getTvImagebyMediaIDs(mediaID);
+        notifyListeners();
+        break;
+      case 'movie':
+        mediaImageList =
+            await _jsonPlaceService.getMovieImagebyMediaIDs(mediaID);
+        notifyListeners();
+        break;
+
+      default:
+    }
   }
 }

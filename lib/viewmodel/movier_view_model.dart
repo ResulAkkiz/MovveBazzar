@@ -37,7 +37,6 @@ class MovierViewModel with ChangeNotifier implements AuthBase, DbBase {
 
   @override
   Future<Movier?> signupMovier(String email, String password) async {
-    debugPrint('signupMovier fonk içindeyiz');
     _movier = await firebaseAuthService.signupMovier(email, password);
     notifyListeners();
     if (_movier != null) {
