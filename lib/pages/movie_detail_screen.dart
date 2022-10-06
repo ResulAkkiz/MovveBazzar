@@ -1,17 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/model/media_base_model.dart';
+import 'package:flutter_application_1/model/media_images_model.dart';
+import 'package:flutter_application_1/model/media_videos_model.dart';
 
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
-import 'package:flutter_application_1/model/people_model.dart';
+
 import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../app_constants/common_function.dart';
 
@@ -23,13 +27,11 @@ class MovieDetailPage extends StatefulWidget {
 }
 
 class _MovieDetailPageState extends State<MovieDetailPage> {
-  double posterAspectRatio = 6 / 5;
+  double posterAspectRatio = 7 / 6;
   @override
   void initState() {
     context.read<MediaViewModel>().getCastbyMovieIds(widget.mediaID);
-    context
-        .read<MediaViewModel>()
-        .getMediaImagebyMediaID(widget.mediaID, 'movie');
+    context.read<MediaViewModel>().getMovieMediasbyMediaID(widget.mediaID);
     super.initState();
   }
 
@@ -42,46 +44,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         builder: (context, AsyncSnapshot<Movie> snapshot) {
           if (snapshot.hasData) {
             Movie currentMovie = snapshot.data!;
-            List<Widget> imageWidgetList = [];
-
-            if (mediaViewModel.mediaImageList != null) {
-              for (var element in mediaViewModel.mediaImageList!) {
-                imageWidgetList.add(
-                  Center(
-                    child: CachedNetworkImage(
-                      placeholder: (context, url) {
-                        return Center(
-                          child: SizedBox(
-                            width: 250,
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        );
-                      },
-                      errorWidget: (context, url, error) => Icon(
-                          Icons.question_mark,
-                          size: 60,
-                          color: Theme.of(context).primaryColor),
-                      imageUrl: getImage(
-                          path: element.filePath ?? '', size: 'original'),
-                      imageBuilder: (context, imageProvider) => AspectRatio(
-                        aspectRatio: element.aspectRatio ?? 16 / 9,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }
-            }
             return Scaffold(
               extendBodyBehindAppBar: true,
               appBar: _buildDetailAppBar(),
@@ -222,15 +184,48 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                 .copyWith(color: Colors.white.withOpacity(0.5)),
                           ),
                         ),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 275,
-                          child: ListWheelScrollView(
-                            squeeze: 1.5,
-                            itemExtent: 275,
-                            children: imageWidgetList,
-                          ),
-                        ),
+                        mediaViewModel.mediaList != []
+                            ? SizedBox(
+                                width: double.infinity,
+                                height:
+                                    MediaQuery.of(context).size.shortestSide *
+                                        0.7,
+                                child: PageView.builder(
+                                  itemCount: mediaViewModel.mediaList?.length,
+                                  itemBuilder: (context, index) {
+                                    MediaBase currentMedia =
+                                        mediaViewModel.mediaList![index];
+                                    if (currentMedia is MediaImage) {
+                                      return SizedBox(
+                                        height: MediaQuery.of(context)
+                                                .size
+                                                .shortestSide *
+                                            0.7,
+                                        child: CachedNetworkImage(
+                                          imageUrl: getImage(
+                                              path: currentMedia.filePath!,
+                                              size: 'original'),
+                                        ),
+                                      );
+                                    } else if (currentMedia is MediaVideo) {
+                                      return SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .shortestSide *
+                                              0.7,
+                                          child: YoutubePlayer(
+                                            controller: YoutubePlayerController(
+                                                initialVideoId: YoutubePlayer
+                                                    .convertUrlToId(
+                                                        'https://www.youtube.com/watch?v=6JnN1DmbqoU&ab_channel=wright96d')!),
+                                          ));
+                                    } else {
+                                      return const SizedBox();
+                                    }
+                                  },
+                                ),
+                              )
+                            : const SizedBox(),
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           alignment: Alignment.centerLeft,

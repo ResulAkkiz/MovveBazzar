@@ -3,12 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/media_base_model.dart';
+import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/people_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
-import 'package:flutter_application_1/services/media_images_model.dart';
+import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:http/http.dart' as http;
 
 class BaseService {
@@ -173,12 +175,18 @@ class BaseService {
     }
   }
 
-  Future<List<MediaImage>?> getImagesbymediaID(int mediaID, String type) async {
+  Future<List<MediaImage>?> getImagesbymediaID(
+    int mediaID,
+    String type,
+  ) async {
     //https://api.themoviedb.org/3/tv/7/images?api_key=07f5723af6c9503db9c8ce9493c975ce
     //https://api.themoviedb.org/3/movie/3/images?api_key=07f5723af6c9503db9c8ce9493c975ce
+    //https://api.themoviedb.org/3/movie/3/videos?api_key=07f5723af6c9503db9c8ce9493c975ce
 
     final String url = "$baseUrl/$type/$mediaID/images?api_key=$apiKey";
+    debugPrint(url);
     final response = await http.get(Uri.parse(url));
+    List<MediaImage> imageList = [];
     var jsonBody = jsonDecode(response.body)['backdrops'];
 
     switch (response.statusCode) {
@@ -189,11 +197,39 @@ class BaseService {
             imageList.add(MediaImage.fromMap(singleMap));
           }
         }
-
-        return imageList;
+        break;
       default:
         throw Exception(response.body);
     }
+    return imageList;
+  }
+
+  Future<List<MediaVideo>?> getVideosbymediaID(
+    int mediaID,
+    String type,
+  ) async {
+    //https://api.themoviedb.org/3/tv/7/images?api_key=07f5723af6c9503db9c8ce9493c975ce
+    //https://api.themoviedb.org/3/movie/3/images?api_key=07f5723af6c9503db9c8ce9493c975ce
+    //https://api.themoviedb.org/3/movie/3/videos?api_key=07f5723af6c9503db9c8ce9493c975ce
+
+    final String url = "$baseUrl/$type/$mediaID/videos?api_key=$apiKey";
+    debugPrint(url);
+    final response = await http.get(Uri.parse(url));
+    List<MediaVideo> videoList = [];
+    var jsonBody = jsonDecode(response.body)['results'];
+
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        if (jsonBody is List) {
+          for (var singleMap in jsonBody) {
+            videoList.add(MediaVideo.fromMap(singleMap));
+          }
+        }
+        break;
+      default:
+        throw Exception(response.body);
+    }
+    return videoList;
   }
 }
 
@@ -203,3 +239,17 @@ class BaseService {
 
 
 
+//  var jsonBody = jsonDecode(response.body)['results'];
+
+//         switch (response.statusCode) {
+//           case HttpStatus.ok:
+//             if (jsonBody is List) {
+//               for (var singleMap in jsonBody) {
+//                 mediaList.add(MediaImage.fromMap(singleMap));
+//               }
+//             }
+//             break;
+//           default:
+//             throw Exception(response.body);
+//         }
+//         break;

@@ -1,4 +1,6 @@
-class MediaImage {
+import 'package:flutter_application_1/model/media_base_model.dart';
+
+class MediaImage implements MediaBase<MediaImage> {
   double? aspectRatio;
   int? height;
   dynamic iso6391;
@@ -6,18 +8,20 @@ class MediaImage {
   double? voteAverage;
   int? voteCount;
   int? width;
+  String? mediaType;
 
-  MediaImage({
-    this.aspectRatio,
-    this.height,
-    this.iso6391,
-    this.filePath,
-    this.voteAverage,
-    this.voteCount,
-    this.width,
-  });
+  MediaImage(
+      {this.aspectRatio,
+      this.height,
+      this.iso6391,
+      this.filePath,
+      this.voteAverage,
+      this.voteCount,
+      this.width,
+      this.mediaType});
 
   factory MediaImage.fromMap(Map<String, dynamic> json) => MediaImage(
+        mediaType: 'image',
         aspectRatio: json["aspect_ratio"].toDouble(),
         height: json["height"],
         iso6391: json["iso_639_1"],
@@ -36,4 +40,9 @@ class MediaImage {
         "vote_count": voteCount,
         "width": width,
       };
+
+  @override
+  MediaImage fromMap(Map<String, dynamic> json) {
+    return MediaImage.fromMap(json);
+  }
 }

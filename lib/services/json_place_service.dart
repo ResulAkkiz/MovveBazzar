@@ -1,11 +1,12 @@
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/people_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/base_service.dart';
-import 'package:flutter_application_1/services/media_images_model.dart';
+import 'package:flutter_application_1/model/media_images_model.dart';
 
 class JsonPlaceService extends BaseService {
   Future<List<IBaseTrendingModel>> getTrendings({
@@ -56,5 +57,17 @@ class JsonPlaceService extends BaseService {
     int mediaID,
   ) async {
     return await getImagesbymediaID(mediaID, 'tv');
+  }
+
+  Future<List<MediaVideo>?> getMovieVideobyMediaIDs(
+    int mediaID,
+  ) async {
+    return await getVideosbymediaID(mediaID, 'movie');
+  }
+
+  Future<List<MediaVideo>?> getTvVideobyMediaIDs(
+    int mediaID,
+  ) async {
+    return await getVideosbymediaID(mediaID, 'tv');
   }
 }
