@@ -9,6 +9,7 @@ import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/people_model.dart';
+import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:http/http.dart' as http;
@@ -179,10 +180,6 @@ class BaseService {
     int mediaID,
     String type,
   ) async {
-    //https://api.themoviedb.org/3/tv/7/images?api_key=07f5723af6c9503db9c8ce9493c975ce
-    //https://api.themoviedb.org/3/movie/3/images?api_key=07f5723af6c9503db9c8ce9493c975ce
-    //https://api.themoviedb.org/3/movie/3/videos?api_key=07f5723af6c9503db9c8ce9493c975ce
-
     final String url = "$baseUrl/$type/$mediaID/images?api_key=$apiKey";
     debugPrint(url);
     final response = await http.get(Uri.parse(url));
@@ -191,7 +188,6 @@ class BaseService {
 
     switch (response.statusCode) {
       case HttpStatus.ok:
-        List<MediaImage> imageList = [];
         if (jsonBody is List) {
           for (var singleMap in jsonBody) {
             imageList.add(MediaImage.fromMap(singleMap));
@@ -201,6 +197,7 @@ class BaseService {
       default:
         throw Exception(response.body);
     }
+
     return imageList;
   }
 
@@ -208,13 +205,9 @@ class BaseService {
     int mediaID,
     String type,
   ) async {
-    //https://api.themoviedb.org/3/tv/7/images?api_key=07f5723af6c9503db9c8ce9493c975ce
-    //https://api.themoviedb.org/3/movie/3/images?api_key=07f5723af6c9503db9c8ce9493c975ce
-    //https://api.themoviedb.org/3/movie/3/videos?api_key=07f5723af6c9503db9c8ce9493c975ce
-
     final String url = "$baseUrl/$type/$mediaID/videos?api_key=$apiKey";
-    debugPrint(url);
     final response = await http.get(Uri.parse(url));
+    debugPrint(url);
     List<MediaVideo> videoList = [];
     var jsonBody = jsonDecode(response.body)['results'];
 
@@ -231,7 +224,36 @@ class BaseService {
     }
     return videoList;
   }
+
+  Future<List<Review>> getReviewbyMediaID(
+    int mediaID,
+    int pageNumber,
+    String type,
+  ) async {
+    //https://api.themoviedb.org/3/movie/75/reviews?api_key=07f5723af6c9503db9c8ce9493c975ce&page=1
+
+    final String url =
+        "$baseUrl/$type/$mediaID/reviews?api_key=$apiKey&page=$pageNumber";
+    final response = await http.get(Uri.parse(url));
+    debugPrint(url);
+    List<Review> reviewList = [];
+    var jsonBody = jsonDecode(response.body)['results'];
+
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        if (jsonBody is List) {
+          for (var singleMap in jsonBody) {
+            reviewList.add(Review.fromMap(singleMap));
+          }
+        }
+        break;
+      default:
+        throw Exception(response.body);
+    }
+    return reviewList;
+  }
 }
+
 
 
 

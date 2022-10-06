@@ -5,6 +5,7 @@ import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
+import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
@@ -18,6 +19,7 @@ class MediaViewModel extends ChangeNotifier {
   List<MovieTrending> popularMovieModelList = [];
   List<PeopleCast> peopleCastList = [];
   List<MediaBase>? mediaList = [];
+  List<Review> reviewList = [];
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
 
   Future<List<IBaseTrendingModel>> getTrendings({
@@ -101,13 +103,26 @@ class MediaViewModel extends ChangeNotifier {
     mediaList = [];
     List<MediaVideo>? videoList =
         await _jsonPlaceService.getMovieVideobyMediaIDs(mediaID);
+
     if (videoList != null) {
+      debugPrint('video list: ${videoList.length}');
       mediaList!.addAll(videoList);
     }
     List<MediaImage>? imageList =
         await _jsonPlaceService.getMovieImagebyMediaIDs(mediaID);
-    mediaList!.addAll(imageList!);
+    debugPrint('image list: ${imageList!.length}');
+    mediaList!.addAll(imageList);
+    debugPrint('media list: ${mediaList!.length}');
+    notifyListeners();
+  }
 
+  Future<void> getReviewsbyMediaID(
+    int mediaID,
+    int pageNumber,
+    String type,
+  ) async {
+    reviewList =
+        await _jsonPlaceService.getReviewsbyMediaID(mediaID, pageNumber, type);
     notifyListeners();
   }
 }

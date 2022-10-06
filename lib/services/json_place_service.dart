@@ -4,6 +4,7 @@ import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/people_model.dart';
+import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/base_service.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
@@ -69,5 +70,17 @@ class JsonPlaceService extends BaseService {
     int mediaID,
   ) async {
     return await getVideosbymediaID(mediaID, 'tv');
+  }
+
+  Future<List<Review>> getReviewsbyMediaID(
+    int mediaID,
+    int pageNumber,
+    String type,
+  ) async {
+    return await getReviewsbyMediaID(
+      mediaID,
+      pageNumber,
+      type,
+    );
   }
 }
