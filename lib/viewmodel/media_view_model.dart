@@ -6,6 +6,7 @@ import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
+import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
@@ -20,6 +21,8 @@ class MediaViewModel extends ChangeNotifier {
   List<PeopleCast> peopleCastList = [];
   List<MediaBase>? mediaList = [];
   List<Review> reviewList = [];
+  List<MovieTrending> similiarMovieList = [];
+  List<TvTrending> similiarTvList = [];
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
 
   Future<List<IBaseTrendingModel>> getTrendings({
@@ -91,28 +94,33 @@ class MediaViewModel extends ChangeNotifier {
   }
 
   Future<Movie> getMoviebyID(int movieID) async {
-    return await _jsonPlaceService.getMoviebyID(movieID);
+    return await _jsonPlaceService.getMoviebyIDs(movieID);
   }
 
-  Future<void> getCastbyMovieIds(int movieID) async {
-    peopleCastList = await _jsonPlaceService.getCastbyMovieId(movieID);
+  Future<Tv> getTvbyID(int tvID) async {
+    return await _jsonPlaceService.getTvbyIDs(tvID);
+  }
+
+  Future<void> getCastbyMediaIDs(int movieID, String type) async {
+    peopleCastList = await _jsonPlaceService.getCastbyMediaIDs(movieID, type);
     notifyListeners();
   }
 
-  Future<void> getMovieMediasbyMediaID(int mediaID) async {
+  Future<void> getMediasbyMediaID(int mediaID, String type) async {
     mediaList = [];
-    List<MediaVideo>? videoList =
-        await _jsonPlaceService.getMovieVideobyMediaIDs(mediaID);
+
+    List<MediaVideo>? videoList = type == 'tv'
+        ? await _jsonPlaceService.getTvVideobyMediaIDs(mediaID)
+        : await _jsonPlaceService.getMovieVideobyMediaIDs(mediaID);
 
     if (videoList != null) {
-      debugPrint('video list: ${videoList.length}');
       mediaList!.addAll(videoList);
     }
-    List<MediaImage>? imageList =
-        await _jsonPlaceService.getMovieImagebyMediaIDs(mediaID);
-    debugPrint('image list: ${imageList!.length}');
-    mediaList!.addAll(imageList);
-    debugPrint('media list: ${mediaList!.length}');
+    List<MediaImage>? imageList = type != 'tv'
+        ? await _jsonPlaceService.getMovieImagebyMediaIDs(mediaID)
+        : await _jsonPlaceService.getTvImagebyMediaIDs(mediaID);
+    mediaList!.addAll(imageList!);
+
     notifyListeners();
   }
 
@@ -123,6 +131,17 @@ class MediaViewModel extends ChangeNotifier {
   ) async {
     reviewList =
         await _jsonPlaceService.getReviewsbyMediaID(mediaID, pageNumber, type);
+    notifyListeners();
+  }
+
+  Future<void> getSimilarMoviebyMovieIDs(int movieID) async {
+    similiarMovieList =
+        await _jsonPlaceService.getSimilarMoviebyMovieIDs(movieID);
+    notifyListeners();
+  }
+
+  Future<void> getSimilarTvbyTvIDs(int tvID) async {
+    similiarTvList = await _jsonPlaceService.getSimilarTvbyTvIDs(tvID);
     notifyListeners();
   }
 }

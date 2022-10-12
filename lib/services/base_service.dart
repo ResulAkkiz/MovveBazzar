@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
-import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
-import 'package:flutter_application_1/model/people_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
+import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:http/http.dart' as http;
@@ -142,7 +140,7 @@ class BaseService {
     }
   }
 
-  Future<Movie> getMoviebyID<T>(int movieID) async {
+  Future<Movie> getMoviebyID(int movieID) async {
     final String url = "$baseUrl/movie/$movieID?api_key=$apiKey";
 
     final response = await http.get(Uri.parse(url));
@@ -154,9 +152,62 @@ class BaseService {
     }
   }
 
-  Future<List<PeopleCast>> getCastbyMovieId(int movieID) async {
+  Future<Tv> getTvbyID(int tvID) async {
+    final String url = "$baseUrl/tv/$tvID?api_key=$apiKey";
+
+    final response = await http.get(Uri.parse(url));
+
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        return Tv.fromMap(jsonDecode(response.body));
+      default:
+        throw Exception(response.body);
+    }
+  }
+
+  Future<List<MovieTrending>> getSimilarMoviebyMovieID(int movieID) async {
+    //https: //api.themoviedb.org/3/movie/760161/similar?api_key=07f5723af6c9503db9c8ce9493c975ce
+    final String url = "$baseUrl/movie/$movieID/similar?api_key=$apiKey";
+
+    final response = await http.get(Uri.parse(url));
+    var jsonBody = (jsonDecode(response.body))['results'];
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        List<MovieTrending> similarMovieList = [];
+        if (jsonBody is List) {
+          for (Map<String, dynamic> singleMap in jsonBody) {
+            similarMovieList.add(MovieTrending.fromMap(singleMap));
+          }
+        }
+        return similarMovieList;
+      default:
+        throw Exception(response.body);
+    }
+  }
+
+  Future<List<TvTrending>> getSimilarTvbyTvID(int tvID) async {
+    //https: //api.themoviedb.org/3/movie/760161/similar?api_key=07f5723af6c9503db9c8ce9493c975ce
+    final String url = "$baseUrl/tv/$tvID/similar?api_key=$apiKey";
+
+    final response = await http.get(Uri.parse(url));
+    var jsonBody = (jsonDecode(response.body))['results'];
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        List<TvTrending> similarTvList = [];
+        if (jsonBody is List) {
+          for (Map<String, dynamic> singleMap in jsonBody) {
+            similarTvList.add(TvTrending.fromMap(singleMap));
+          }
+        }
+        return similarTvList;
+      default:
+        throw Exception(response.body);
+    }
+  }
+
+  Future<List<PeopleCast>> getCastbyMediaID(int mediaID, String type) async {
     //https://api.themoviedb.org/3/movie/2/credits?api_key=07f5723af6c9503db9c8ce9493c975ce
-    final String url = "$baseUrl/movie/$movieID/credits?api_key=$apiKey";
+    final String url = "$baseUrl/$type/$mediaID/credits?api_key=$apiKey";
 
     final response = await http.get(Uri.parse(url));
     var jsonBody = (jsonDecode(response.body))['cast'];
@@ -206,8 +257,10 @@ class BaseService {
     String type,
   ) async {
     final String url = "$baseUrl/$type/$mediaID/videos?api_key=$apiKey";
-    final response = await http.get(Uri.parse(url));
+
     debugPrint(url);
+    final response = await http.get(Uri.parse(url));
+
     List<MediaVideo> videoList = [];
     var jsonBody = jsonDecode(response.body)['results'];
 

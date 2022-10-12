@@ -12,6 +12,8 @@ import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
+import 'package:flutter_application_1/model/tv_model.dart';
+import 'package:flutter_application_1/model/tv_trending_model.dart';
 
 import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
@@ -22,25 +24,38 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../app_constants/common_function.dart';
 
-class MovieDetailPage extends StatefulWidget {
-  const MovieDetailPage({super.key, required this.mediaID});
+class TvDetailPage extends StatefulWidget {
+  const TvDetailPage({super.key, required this.mediaID});
   final int mediaID;
   @override
-  State<MovieDetailPage> createState() => _MovieDetailPageState();
+  State<TvDetailPage> createState() => _TvDetailPageState();
 }
 
-class _MovieDetailPageState extends State<MovieDetailPage> {
+class _TvDetailPageState extends State<TvDetailPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation _animation;
+  AnimationStatus _animationStatus = AnimationStatus.dismissed;
   double posterAspectRatio = 7 / 6;
   double filmAspectRatio = 10 / 16;
+  int expandedIndex = 0;
   @override
   void initState() {
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 350));
+    _animation = Tween<double>(end: 1, begin: 0).animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        _animationStatus = status;
+      });
     debugPrint(widget.mediaID.toString());
-    context.read<MediaViewModel>().getCastbyMediaIDs(widget.mediaID, 'movie');
-    context.read<MediaViewModel>().getMediasbyMediaID(widget.mediaID, 'movie');
-    context.read<MediaViewModel>().getSimilarMoviebyMovieIDs(widget.mediaID);
-    context
-        .read<MediaViewModel>()
-        .getReviewsbyMediaID(widget.mediaID, 1, 'movie');
+    context.read<MediaViewModel>().getCastbyMediaIDs(widget.mediaID, 'tv');
+    context.read<MediaViewModel>().getMediasbyMediaID(widget.mediaID, 'tv');
+    context.read<MediaViewModel>().getSimilarTvbyTvIDs(widget.mediaID);
+    context.read<MediaViewModel>().getReviewsbyMediaID(widget.mediaID, 1, 'tv');
+
     super.initState();
   }
 
@@ -48,10 +63,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Widget build(BuildContext context) {
     final mediaViewModel = Provider.of<MediaViewModel>(context);
     return FutureBuilder(
-        future: context.read<MediaViewModel>().getMoviebyID(widget.mediaID),
-        builder: (context, AsyncSnapshot<Movie> snapshot) {
+        future: context.read<MediaViewModel>().getTvbyID(widget.mediaID),
+        builder: (context, AsyncSnapshot<Tv> snapshot) {
           if (snapshot.hasData) {
-            Movie currentMovie = snapshot.data!;
+            Tv currentTv = snapshot.data!;
             return Scaffold(
               extendBodyBehindAppBar: true,
               appBar: _buildDetailAppBar(),
@@ -61,7 +76,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     Stack(
                       alignment: AlignmentDirectional.bottomCenter,
                       children: [
-                        buildBackDropImage(currentMovie),
+                        buildBackDropImage(currentTv),
                         Positioned(
                           bottom: -2,
                           child: Container(
@@ -85,16 +100,26 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    currentMovie.title ?? 'UNKNOWN',
+                                    currentTv.name ?? 'UNKNOWN',
                                     style: TextStyles.robotoBoldStyle,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
-                                Text(
-                                  '${currentMovie.releaseDate!.year} , Runtime: ${currentMovie.runtime} min',
-                                  style: TextStyles.robotoRegular16Style,
+                                Wrap(
+                                  children: [
+                                    Text(
+                                      '${currentTv.firstAirDate!.year}',
+                                      style: TextStyles.robotoRegular16Style,
+                                    ),
+                                    if (currentTv.episodeRunTime != null &&
+                                        currentTv.episodeRunTime!.isNotEmpty)
+                                      Text(
+                                        ', Runtime: ${currentTv.episodeRunTime?.first} min',
+                                        style: TextStyles.robotoRegular16Style,
+                                      ),
+                                  ],
                                 ),
-                                buildRatingBar(currentMovie),
+                                buildRatingBar(currentTv),
                               ],
                             ).separated(
                               const SizedBox(
@@ -105,129 +130,145 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.shortestSide * 0.15,
+                    buildGenresList(context, currentTv),
+                    buildOverview(currentTv),
+                    mediaViewModel.mediaList != []
+                        ? SizedBox(
+                            width: double.infinity,
+                            height:
+                                MediaQuery.of(context).size.shortestSide * 0.7,
+                            child: PageView.builder(
+                              itemCount: mediaViewModel.mediaList?.length,
+                              itemBuilder: (context, index) {
+                                MediaBase currentMedia =
+                                    mediaViewModel.mediaList![index];
+                                if (currentMedia is MediaImage) {
+                                  return SizedBox(
+                                    height: MediaQuery.of(context)
+                                            .size
+                                            .shortestSide *
+                                        0.7,
+                                    child: CachedNetworkImage(
+                                      placeholder: (context, url) => Center(
+                                        child: SizedBox(
+                                          width: 175,
+                                          child: CircularProgressIndicator(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                      imageUrl: getImage(
+                                          path: currentMedia.filePath!,
+                                          size: 'original'),
+                                    ),
+                                  );
+                                } else if (currentMedia is MediaVideo) {
+                                  return SizedBox(
+                                      height: MediaQuery.of(context)
+                                              .size
+                                              .shortestSide *
+                                          0.7,
+                                      child: YoutubePlayer(
+                                        controller: YoutubePlayerController(
+                                            flags: const YoutubePlayerFlags(
+                                                autoPlay: true,
+                                                mute: true,
+                                                disableDragSeek: true),
+                                            initialVideoId:
+                                                YoutubePlayer.convertUrlToId(
+                                                    'https://www.youtube.com/watch?v=${currentMedia.key}')!),
+                                      ));
+                                } else {
+                                  return const Center(
+                                      child: SizedBox.square(
+                                          dimension: 50,
+                                          child: Icon(Icons.warning)));
+                                }
+                              },
+                            ),
+                          )
+                        : const SizedBox(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      alignment: Alignment.centerLeft,
+                      child:
+                          Text('Cast', style: TextStyles.robotoMedium30Style),
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      height: MediaQuery.of(context).size.shortestSide / 3.3,
                       child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemExtent: 80,
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        itemCount: currentMovie.genres!.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Chip(
-                              label: Text(
-                                currentMovie.genres![index].name ?? '',
-                              ),
-                              backgroundColor: Theme.of(context).primaryColor,
-                            ),
-                          );
+                        itemCount: mediaViewModel.peopleCastList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return _buildCastColumn(
+                                  mediaViewModel.peopleCastList[index])
+                              .separated(const SizedBox(
+                            height: 5,
+                          ));
                         },
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            currentMovie.overview ?? 'UNKNOWN OVERVIEW',
-                            style: TextStyles.robotoRegular19Style
-                                .copyWith(color: Colors.white.withOpacity(0.5)),
-                          ),
-                        ),
-                        mediaViewModel.mediaList != []
-                            ? SizedBox(
-                                width: double.infinity,
-                                height:
-                                    MediaQuery.of(context).size.shortestSide *
-                                        0.7,
-                                child: PageView.builder(
-                                  itemCount: mediaViewModel.mediaList?.length,
-                                  itemBuilder: (context, index) {
-                                    MediaBase currentMedia =
-                                        mediaViewModel.mediaList![index];
-                                    if (currentMedia is MediaImage) {
-                                      return SizedBox(
-                                        height: MediaQuery.of(context)
-                                                .size
-                                                .shortestSide *
-                                            0.7,
-                                        child: CachedNetworkImage(
-                                          placeholder: (context, url) => Center(
-                                            child: SizedBox(
-                                              width: 175,
-                                              child: CircularProgressIndicator(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                              ),
-                                            ),
-                                          ),
-                                          imageUrl: getImage(
-                                              path: currentMedia.filePath!,
-                                              size: 'original'),
-                                        ),
-                                      );
-                                    } else if (currentMedia is MediaVideo) {
-                                      return SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .shortestSide *
-                                              0.7,
-                                          child: YoutubePlayer(
-                                            controller: YoutubePlayerController(
-                                                flags: const YoutubePlayerFlags(
-                                                    autoPlay: true,
-                                                    mute: true,
-                                                    disableDragSeek: true),
-                                                initialVideoId: YoutubePlayer
-                                                    .convertUrlToId(
-                                                        'https://www.youtube.com/watch?v=${currentMedia.key}')!),
-                                          ));
-                                    } else {
-                                      return const Center(
-                                          child: SizedBox.square(
-                                              dimension: 50,
-                                              child: Icon(Icons.warning)));
-                                    }
-                                  },
+                    buildReviewPart(context),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      alignment: Alignment.centerLeft,
+                      child: Text('Similar Themes',
+                          style: TextStyles.robotoMedium30Style),
+                    ),
+                    buildMediaListView(mediaViewModel.similiarTvList),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      alignment: Alignment.centerLeft,
+                      child: Text('Seasons',
+                          style: TextStyles.robotoMedium30Style),
+                    ),
+                    Center(
+                      child: Transform(
+                        alignment: FractionalOffset.center,
+                        transform: Matrix4.identity()
+                          ..setEntry(3, 2, 0.002)
+                          ..rotateY(3.14 * _animation.value),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_animationStatus == AnimationStatus.dismissed) {
+                              _animationController.forward();
+                            } else {
+                              _animationController.reverse();
+                            }
+                          },
+                          child: _animation.value <= 0.5
+                              ? Container(
+                                  color: Colors.blueAccent,
+                                  width: 200,
+                                  height: 200,
+                                  child: const Icon(
+                                    Icons.ac_unit,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                )
+                              : Container(
+                                  color: Colors.red,
+                                  width: 200,
+                                  height: 200,
+                                  child: const Icon(
+                                    Icons.ac_unit,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
                                 ),
-                              )
-                            : const SizedBox(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          alignment: Alignment.centerLeft,
-                          child: Text('Cast',
-                              style: TextStyles.robotoMedium30Style),
                         ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          height:
-                              MediaQuery.of(context).size.shortestSide / 3.3,
-                          child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            itemExtent: 80,
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: mediaViewModel.peopleCastList.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return _buildCastColumn(
-                                      mediaViewModel.peopleCastList[index])
-                                  .separated(const SizedBox(
-                                height: 5,
-                              ));
-                            },
-                          ),
-                        ),
-                        buildReviewPart(context),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          alignment: Alignment.centerLeft,
-                          child: Text('Similar Themes',
-                              style: TextStyles.robotoMedium30Style),
-                        ),
-                        buildMediaListView(mediaViewModel.similiarMovieList)
-                      ],
-                    )
+                      ),
+                    ),
+                    if (currentTv.seasons != [])
+                      buildSeasons(currentTv)
+                    else
+                      const SizedBox(),
                   ],
                 ),
               ),
@@ -242,7 +283,76 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         });
   }
 
-  Widget buildMediaListView(List<MovieTrending> similiarMovieList) {
+  SizedBox buildSeasons(Tv currentTv) {
+    return SizedBox(
+      height: 250,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: currentTv.seasons?.length,
+          itemBuilder: (context, index) {
+            var currentSeason = currentTv.seasons![index];
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    expandedIndex = index;
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: 250,
+                  width: expandedIndex == index ? 150 : 35,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(15.0)),
+                  clipBehavior: Clip.antiAlias,
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: getImage(
+                        path: currentSeason.posterPath ?? '', size: 'original'),
+                  ),
+                ),
+              ),
+            );
+          }),
+    );
+  }
+
+  Padding buildOverview(Tv currentTv) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        currentTv.overview ?? 'UNKNOWN OVERVIEW',
+        style: TextStyles.robotoRegular19Style
+            .copyWith(color: Colors.white.withOpacity(0.5)),
+      ),
+    );
+  }
+
+  SizedBox buildGenresList(BuildContext context, Tv currentTv) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.shortestSide * 0.15,
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: currentTv.genres!.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Chip(
+              label: Text(
+                currentTv.genres![index].name ?? '',
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildMediaListView(List<TvTrending> similiarTvList) {
     return SizedBox(
       height:
           (MediaQuery.of(context).size.shortestSide * 0.36 / filmAspectRatio) +
@@ -253,16 +363,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           return false;
         },
         child: ListView.separated(
-          itemCount: similiarMovieList.length,
+          itemCount: similiarTvList.length,
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext context, int index) {
-            var currentMedia = similiarMovieList[index];
+            var currentMedia = similiarTvList[index];
             return InkWell(
                 child: buildMediaClip(currentMedia),
                 onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) =>
-                            MovieDetailPage(mediaID: currentMedia.id!),
+                            TvDetailPage(mediaID: currentMedia.id!),
                       ),
                     ));
           },
@@ -278,7 +388,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  Widget buildMediaClip(MovieTrending currentMedia) {
+  Widget buildMediaClip(TvTrending currentMedia) {
     return SizedBox(
       width: MediaQuery.of(context).size.shortestSide * 0.36,
       child: Column(
@@ -305,7 +415,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           ),
           Flexible(
             child: Text(
-              currentMedia.title ?? 'UNKNOWN',
+              currentMedia.name ?? 'UNKNOWN',
               style: TextStyles.robotoMediumStyle,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -316,9 +426,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           ),
           Flexible(
             child: Text(
-              currentMedia.releaseDate == null
+              currentMedia.firstAirDate == null
                   ? 'UNKNOWN'
-                  : DateFormat.yMMMd().format(currentMedia.releaseDate!),
+                  : DateFormat.yMMMd().format(currentMedia.firstAirDate!),
               style: TextStyles.robotoRegularStyle,
             ),
           ),
@@ -381,34 +491,29 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                       AspectRatio(
                                           aspectRatio: 1,
                                           child: CachedNetworkImage(
-                                              errorWidget:
-                                                  (context, url, error) {
-                                                return const Icon(
-                                                  Icons.dangerous,
-                                                );
-                                              },
-                                              imageUrl: currentReview
-                                                          .authorDetails!
-                                                          .avatarPath !=
-                                                      null
-                                                  ? (currentReview
-                                                          .authorDetails!
-                                                          .avatarPath!
-                                                          .startsWith(
-                                                              '/https://www')
-                                                      ? currentReview
-                                                          .authorDetails!
-                                                          .avatarPath!
-                                                          .substring(1)
-                                                      : getImage(
-                                                          path: currentReview
-                                                              .authorDetails!
-                                                              .avatarPath!,
-                                                          size: 'original'))
-                                                  : getImage(
-                                                      path:
-                                                          'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=1060&t=st=1665151999~exp=1665152599~hmac=7ed5078bf5502eaefe2f23995ac6a2004ee9c97a62a98084e2e094cdf6178abd',
-                                                      size: ''))),
+                                            errorWidget: (context, url, error) {
+                                              return const Icon(
+                                                Icons.dangerous,
+                                              );
+                                            },
+                                            imageUrl: currentReview.authorDetails!
+                                                        .avatarPath !=
+                                                    null
+                                                ? (currentReview.authorDetails!
+                                                        .avatarPath!
+                                                        .startsWith(
+                                                            '/https://www')
+                                                    ? currentReview
+                                                        .authorDetails!
+                                                        .avatarPath!
+                                                        .substring(1)
+                                                    : getImage(
+                                                        path: currentReview
+                                                            .authorDetails!
+                                                            .avatarPath!,
+                                                        size: 'original'))
+                                                : 'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=1060&t=st=1665151999~exp=1665152599~hmac=7ed5078bf5502eaefe2f23995ac6a2004ee9c97a62a98084e2e094cdf6178abd',
+                                          )),
                                       Text(
                                         currentReview.author ?? '',
                                         style: TextStyles.robotoBold18Style
@@ -458,7 +563,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         : const SizedBox();
   }
 
-  CachedNetworkImage buildBackDropImage(Movie currentMovie) {
+  CachedNetworkImage buildBackDropImage(Tv currentTv) {
     return CachedNetworkImage(
       placeholder: (context, url) {
         return SizedBox(
@@ -469,8 +574,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           ),
         );
       },
-      imageUrl:
-          getImage(path: currentMovie.backdropPath ?? '', size: 'original'),
+      imageUrl: getImage(path: currentTv.backdropPath ?? '', size: 'original'),
       imageBuilder: (context, imageProvider) {
         return AspectRatio(
             aspectRatio: posterAspectRatio,
@@ -487,19 +591,19 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  Row buildRatingBar(Movie currentMovie) {
+  Row buildRatingBar(Tv currentTv) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          currentMovie.voteAverage!.toStringAsFixed(1),
+          currentTv.voteAverage!.toStringAsFixed(1),
           style: TextStyles.robotoMedium18Style
               .copyWith(color: const Color(0xFFFDC432)),
         ),
         RatingBar(
           ignoreGestures: true,
           itemSize: 20,
-          initialRating: currentMovie.voteAverage! / 2,
+          initialRating: currentTv.voteAverage! / 2,
           direction: Axis.horizontal,
           allowHalfRating: true,
           itemCount: 5,
@@ -512,7 +616,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           ),
         ),
         Text(
-          '(${currentMovie.voteCount!.toStringAsFixed(1)})',
+          '(${currentTv.voteCount!.toStringAsFixed(1)})',
           style: TextStyles.robotoRegular10Style.copyWith(
             color: Colors.white.withOpacity(0.4),
           ),
@@ -561,7 +665,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     return AppBar(
       leading: IconButton(
         icon: IconEnums.backarrow.toImage,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).maybePop();
+        },
       ),
       backgroundColor: Colors.transparent,
       elevation: 0,

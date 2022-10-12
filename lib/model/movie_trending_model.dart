@@ -38,7 +38,7 @@ class MovieTrending extends IBaseTrendingModel<MovieTrending> {
         originalLanguage: json["original_language"],
         overview: json["overview"],
         posterPath: json["poster_path"],
-        mediaType: json["media_type"],
+        mediaType: json["media_type"] ?? 'movie',
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
         popularity: json["popularity"].toDouble(),
         voteAverage: json["vote_average"].toDouble(),

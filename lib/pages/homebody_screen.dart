@@ -5,6 +5,7 @@ import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/pages/movie_detail_screen.dart';
 import 'package:flutter_application_1/pages/more_trends_screen.dart';
+import 'package:flutter_application_1/pages/tv_detail_screen.dart';
 import 'package:flutter_application_1/services/base_service.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:intl/intl.dart';
@@ -131,12 +132,17 @@ class _HomepageBodyState extends State<HomepageBody> {
             IBaseTrendingModel currentMedia = mediaList[index];
             return InkWell(
                 child: buildMediaClip(currentMedia),
-                onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            MovieDetailPage(mediaID: currentMedia.id!),
-                      ),
-                    ));
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return currentMedia.mediaType == 'tv'
+                            ? TvDetailPage(mediaID: currentMedia.id!)
+                            : MovieDetailPage(mediaID: currentMedia.id!);
+                      },
+                    ),
+                  );
+                });
           },
           padding: const EdgeInsets.symmetric(
             horizontal: 12.0,
