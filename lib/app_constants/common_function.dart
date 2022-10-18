@@ -9,6 +9,9 @@ String generateRandomString(int len) {
   return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
 }
 
-String getImage({required String path, required String size}) {
-  return 'https://image.tmdb.org/t/p/$size$path';
+String getImage({required String? path, required String size}) {
+  debugPrint(path);
+  return path != null
+      ? 'https://image.tmdb.org/t/p/$size$path'
+      : 'https://cdn-icons-png.flaticon.com/512/3286/3286282.png';
 }

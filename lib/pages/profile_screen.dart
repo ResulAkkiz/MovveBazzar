@@ -105,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onSelected: (DateTime date) {
                               setState(() {
                                 dateTime = date;
-                                debugPrint(dateTime.toString());
+
                                 ageController.text =
                                     yearsBetween(dateTime, DateTime.now())
                                         .toString();

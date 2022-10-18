@@ -29,8 +29,12 @@ class TvTrending extends IBaseTrendingModel<TvTrending> {
         mediaName: json["name"],
         name: json["name"],
         originalName: json["original_name"],
-        date: DateTime.parse(json["first_air_date"]),
-        firstAirDate: DateTime.parse(json["first_air_date"]),
+        date: json["first_air_date"] != ""
+            ? DateTime.parse(json["first_air_date"])
+            : DateTime.now(),
+        firstAirDate: json["first_air_date"] != ""
+            ? DateTime.parse(json["first_air_date"])
+            : DateTime.now(),
         originCountry: json["originCountry"],
         adult: json["adult"],
         backdropPath: json["backdrop_path"],

@@ -163,8 +163,7 @@ class _HomepageBodyState extends State<HomepageBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CachedNetworkImage(
-            imageUrl:
-                getImage(path: currentMedia.posterPath ?? '', size: 'w200'),
+            imageUrl: getImage(path: currentMedia.posterPath, size: 'w200'),
             imageBuilder: (context, imageProvider) => AspectRatio(
               aspectRatio: posterAspectRatio,
               child: DecoratedBox(

@@ -1,5 +1,11 @@
+import 'dart:math';
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/palette_function.dart';
 
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
@@ -19,6 +25,7 @@ import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -31,26 +38,23 @@ class TvDetailPage extends StatefulWidget {
   State<TvDetailPage> createState() => _TvDetailPageState();
 }
 
-class _TvDetailPageState extends State<TvDetailPage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation _animation;
-  AnimationStatus _animationStatus = AnimationStatus.dismissed;
+class _TvDetailPageState extends State<TvDetailPage> {
   double posterAspectRatio = 7 / 6;
   double filmAspectRatio = 10 / 16;
   int expandedIndex = 0;
+  bool isBack = false;
+  double angle = 0;
+  List<PaletteColor> colors = [PaletteColor(Colors.red, 2)];
+
+  void _flip() {
+    angle = (angle + pi) % (2 * pi);
+  }
+
   @override
   void initState() {
-    _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 350));
-    _animation = Tween<double>(end: 1, begin: 0).animate(_animationController)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        _animationStatus = status;
-      });
     debugPrint(widget.mediaID.toString());
+    colors = [];
+
     context.read<MediaViewModel>().getCastbyMediaIDs(widget.mediaID, 'tv');
     context.read<MediaViewModel>().getMediasbyMediaID(widget.mediaID, 'tv');
     context.read<MediaViewModel>().getSimilarTvbyTvIDs(widget.mediaID);
@@ -101,7 +105,8 @@ class _TvDetailPageState extends State<TvDetailPage>
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                     currentTv.name ?? 'UNKNOWN',
-                                    style: TextStyles.robotoBoldStyle,
+                                    style: TextStyles.robotoBoldStyle
+                                        .copyWith(fontSize: 30),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -227,44 +232,6 @@ class _TvDetailPageState extends State<TvDetailPage>
                       child: Text('Seasons',
                           style: TextStyles.robotoMedium30Style),
                     ),
-                    Center(
-                      child: Transform(
-                        alignment: FractionalOffset.center,
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.002)
-                          ..rotateY(3.14 * _animation.value),
-                        child: GestureDetector(
-                          onTap: () {
-                            if (_animationStatus == AnimationStatus.dismissed) {
-                              _animationController.forward();
-                            } else {
-                              _animationController.reverse();
-                            }
-                          },
-                          child: _animation.value <= 0.5
-                              ? Container(
-                                  color: Colors.blueAccent,
-                                  width: 200,
-                                  height: 200,
-                                  child: const Icon(
-                                    Icons.ac_unit,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
-                                )
-                              : Container(
-                                  color: Colors.red,
-                                  width: 200,
-                                  height: 200,
-                                  child: const Icon(
-                                    Icons.ac_unit,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ),
                     if (currentTv.seasons != [])
                       buildSeasons(currentTv)
                     else
@@ -291,27 +258,97 @@ class _TvDetailPageState extends State<TvDetailPage>
           itemCount: currentTv.seasons?.length,
           itemBuilder: (context, index) {
             var currentSeason = currentTv.seasons![index];
+            ImageProvider imageProvider = CachedNetworkImageProvider(getImage(
+              path: currentSeason.posterPath,
+              size: 'original',
+            ));
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
                 onTap: () {
-                  setState(() {
+                  if (expandedIndex == index) {
+                    _flip();
+                    isBack = !isBack;
+                  } else {
                     expandedIndex = index;
-                  });
+                    isBack = false;
+                    angle = 0;
+                  }
+                  if (mounted) {
+                    setState(() {});
+                  }
                 },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: 250,
-                  width: expandedIndex == index ? 150 : 35,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(15.0)),
-                  clipBehavior: Clip.antiAlias,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    imageUrl: getImage(
-                        path: currentSeason.posterPath ?? '', size: 'original'),
+                child: TweenAnimationBuilder(
+                  tween: Tween<double>(
+                    begin: 0,
+                    end: expandedIndex == index && isBack ? angle : 0,
                   ),
+                  duration: const Duration(seconds: 1),
+                  builder: (BuildContext context, double val, __) {
+                    return Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.identity()
+                        ..setEntry(3, 2, 0.001)
+                        ..rotateY(val),
+                      child: val >= (pi / 2)
+                          ? Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()..rotateY(pi),
+                              child: Container(
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .primaryColor
+                                      .withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: SingleChildScrollView(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 15),
+                                  child: Column(
+                                    children: [
+                                      Chip(
+                                        backgroundColor: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                        label: Text(
+                                            currentSeason.name.toString(),
+                                            style:
+                                                TextStyles.robotoMedium16Style),
+                                      ),
+                                      Text(
+                                        currentSeason.overview ?? 'UNKNOWN',
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.white),
+                                      ),
+                                      Text(
+                                        'Episode Count:${currentSeason.episodeCount}',
+                                        style: const TextStyle(
+                                            fontSize: 9, color: Colors.white),
+                                      ),
+                                      Text(
+                                        'First Air Date: ${DateFormat('dd-MM-yyyy').format(currentSeason.airDate ?? DateTime.now())}',
+                                        style: TextStyles.robotoRegular10Style,
+                                      ),
+                                    ],
+                                  ).separated(const SizedBox(
+                                    height: 6,
+                                  )),
+                                ),
+                              ))
+                          : AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: expandedIndex == index ? 150 : 35,
+                              decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(15.0)),
+                              clipBehavior: Clip.antiAlias,
+                              child: Image(
+                                fit: BoxFit.cover,
+                                image: imageProvider,
+                              ),
+                            ),
+                    );
+                  },
                 ),
               ),
             );
@@ -395,8 +432,7 @@ class _TvDetailPageState extends State<TvDetailPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CachedNetworkImage(
-            imageUrl:
-                getImage(path: currentMedia.posterPath ?? '', size: 'w200'),
+            imageUrl: getImage(path: currentMedia.posterPath, size: 'w200'),
             imageBuilder: (context, imageProvider) => AspectRatio(
               aspectRatio: filmAspectRatio,
               child: DecoratedBox(

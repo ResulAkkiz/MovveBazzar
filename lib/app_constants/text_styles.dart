@@ -109,7 +109,7 @@ class TextStyles extends TextStyle {
 
   static TextStyle robotoBoldStyle = const TextStyle(
     fontFamily: 'Roboto',
-    fontSize: 36,
+    fontSize: 30,
     fontWeight: FontWeight.w500,
     color: Colors.white,
   );
