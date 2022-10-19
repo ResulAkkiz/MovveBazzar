@@ -7,6 +7,7 @@ import 'package:flutter_application_1/pages/movie_detail_screen.dart';
 import 'package:flutter_application_1/pages/more_trends_screen.dart';
 import 'package:flutter_application_1/pages/tv_detail_screen.dart';
 import 'package:flutter_application_1/services/base_service.dart';
+import 'package:flutter_application_1/services/firebase_db_service.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -210,6 +211,8 @@ class _HomepageBodyState extends State<HomepageBody> {
       timeInterval: 'day',
       pageNumber: 1,
     );
+    FirebaseDbService firebaseDbService = FirebaseDbService();
+    firebaseDbService.getBookMarks('VL4rbNj93caIzdDBY3CNDm859Yl2');
     mediaViewModel.getTvPopulars(pageNumber: 1);
     mediaViewModel.getMoviePopulars(pageNumber: 1);
     mediaViewModel.getDiscovers(type: 'movie', pageNumber: 1);

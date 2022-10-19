@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 
 import 'package:flutter_application_1/pages/splash_screen.dart';
+import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
@@ -54,7 +56,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             Movie currentMovie = snapshot.data!;
             return Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: _buildDetailAppBar(),
+              appBar: _buildDetailAppBar(currentMovie),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -556,7 +558,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  AppBar _buildDetailAppBar() {
+  AppBar _buildDetailAppBar(Movie currentMovie) {
+    BookmarkViewModel bookmarkViewModel =
+        Provider.of<BookmarkViewModel>(context);
     return AppBar(
       leading: IconButton(
         icon: IconEnums.backarrow.toImage,
@@ -565,7 +569,20 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-        IconButton(onPressed: () {}, icon: IconEnums.bookmark.toImage),
+        IconButton(
+            onPressed: () {
+              bookmarkViewModel.saveBookMarks(
+                BookMark(
+                    runtime: currentMovie.runtime,
+                    date: currentMovie.releaseDate,
+                    mediaType: 'movie',
+                    mediaVote: currentMovie.voteAverage,
+                    mediaID: currentMovie.id,
+                    mediaName: currentMovie.title ?? '',
+                    imagePath: currentMovie.posterPath ?? ''),
+              );
+            },
+            icon: IconEnums.bookmark.toImage),
       ],
     );
   }

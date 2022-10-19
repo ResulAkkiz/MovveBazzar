@@ -9,7 +9,7 @@ import 'package:flutter_application_1/services/firabase_storage_service.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/services/firebase_db_service.dart';
 
-class MovierViewModel with ChangeNotifier implements AuthBase, DbBase {
+class MovierViewModel with ChangeNotifier implements AuthBase {
   Movier? _movier;
   FirebaseAuthService firebaseAuthService = FirebaseAuthService();
   FirebaseDbService firebaseDbService = FirebaseDbService();
@@ -65,19 +65,15 @@ class MovierViewModel with ChangeNotifier implements AuthBase, DbBase {
     await firebaseAuthService.updateEmail(email);
   }
 
-  @override
   Future<bool> saveMovier(Movier movier) async {
     return await firebaseDbService.saveMovier(movier);
   }
 
-  @override
   Future<Movier?> getMovierByID(String movierID) async {
     return await firebaseDbService.getMovierByID(movierID);
   }
 
-  @override
   Future<bool> updateMovier(Movier movier) {
-    // TODO: implement updateMovier
     throw UnimplementedError();
   }
 

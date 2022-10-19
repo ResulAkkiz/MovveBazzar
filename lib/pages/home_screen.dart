@@ -1,12 +1,14 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/model/movier.dart';
 import 'package:flutter_application_1/pages/bookmark_screen.dart';
 import 'package:flutter_application_1/pages/homebody_screen.dart';
 import 'package:flutter_application_1/pages/profile_screen.dart';
-import 'package:flutter_application_1/viewmodel/media_view_model.dart';
+import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,11 +21,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  late Movier? movier = context.read<MovierViewModel>().movier;
 
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   late PageController _pageController;
-  final List<Widget> _pages = [
+  late final List<Widget> _pages = [
     const HomepageBody(),
-    const BookMarkScreen(),
+    BookMarkScreen(
+      userID: movier!.movierID,
+    ),
     const ProfileScreen(),
   ];
 

@@ -30,7 +30,7 @@ final ThemeData lightTheme = ThemeData(
   secondaryHeaderColor: const Color(0xfff0f0f5),
   backgroundColor: const Color(0xffc3c3d5),
   dialogBackgroundColor: const Color(0xffffffff),
-  indicatorColor: const Color(0xff696996),
+  indicatorColor: const Color(0xFFDA1A37),
   hintColor: const Color(0x8a000000),
   errorColor: const Color(0xffd32f2f),
   textSelectionTheme: const TextSelectionThemeData(

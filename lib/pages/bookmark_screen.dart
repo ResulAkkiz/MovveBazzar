@@ -1,11 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/ticket_widget.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/model/bookmark_model.dart';
+import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class BookMarkScreen extends StatefulWidget {
-  const BookMarkScreen({super.key});
+  final String userID;
+  const BookMarkScreen({super.key, required this.userID});
 
   @override
   State<BookMarkScreen> createState() => _BookMarkScreenState();
@@ -14,9 +21,9 @@ class BookMarkScreen extends StatefulWidget {
 class _BookMarkScreenState extends State<BookMarkScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
   @override
   void initState() {
+    context.read<BookmarkViewModel>().getBookMarks(widget.userID);
     super.initState();
     _tabController = TabController(vsync: this, length: 2);
   }
@@ -43,16 +50,8 @@ class _BookMarkScreenState extends State<BookMarkScreen>
           child: TabBarView(
             controller: _tabController,
             children: [
-              _buildBookmarkGrid(
-                  filmName: 'Pasific Rim The Black',
-                  filmStarRate: '8.9',
-                  filmDirector: 'Resul Akkız',
-                  filmImdbRate: '9.3'),
-              _buildBookmarkGrid(
-                  filmName: 'Last Air Bender',
-                  filmStarRate: '9.3',
-                  filmDirector: 'Recep Öztürk',
-                  filmImdbRate: '9.3'),
+              _buildBookmarkGrid('movie'),
+              _buildBookmarkGrid('tv'),
             ],
           ),
         ),
@@ -60,11 +59,10 @@ class _BookMarkScreenState extends State<BookMarkScreen>
     );
   }
 
-  GridView _buildBookmarkGrid(
-      {required String filmName,
-      required String filmStarRate,
-      required String filmImdbRate,
-      required String filmDirector}) {
+  GridView _buildBookmarkGrid(String type) {
+    final bookmarkViewModel = Provider.of<BookmarkViewModel>(context);
+    List<BookMark> bookmarkList = (bookmarkViewModel.bookmarkList
+        .where((element) => element.mediaType == type)).toList();
     return GridView.builder(
       padding: EdgeInsets.only(
         top: 10.0,
@@ -74,77 +72,100 @@ class _BookMarkScreenState extends State<BookMarkScreen>
         crossAxisCount: 1,
         mainAxisExtent: 208,
       ),
+      itemCount: bookmarkList.length,
       itemBuilder: (context, index) {
+        BookMark currentBookmark = bookmarkList[index];
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-          child: TicketWidget(
-            width: (208 * 10 / 16) + 16,
-            child: Row(
-              children: [
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: AspectRatio(
-                      aspectRatio: 10 / 16,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: ImageEnums.sampleimage2.toImagewithBoxFit),
+          child: Stack(
+            alignment: AlignmentDirectional.topEnd,
+            children: [
+              TicketWidget(
+                width: (208 * 10 / 16) + 16,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: AspectRatio(
+                          aspectRatio: 10 / 16,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: CachedNetworkImage(
+                                imageUrl: getImage(
+                                    path: currentBookmark.imagePath,
+                                    size: 'original'),
+                              )),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 25.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          filmName,
-                          style: TextStyles.robotoRegularBold24Style,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 25.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                SizedBox.square(
-                                    dimension: 20,
-                                    child: IconEnums.fullstar.toImage),
-                                Text(
-                                  filmStarRate,
-                                  style: TextStyles.robotoBold18Style
-                                      .copyWith(color: Colors.amber),
-                                ),
-                              ],
-                            ).separated(
-                              const SizedBox(
-                                width: 5,
-                              ),
+                            Text(
+                              currentBookmark.mediaName,
+                              style: TextStyles.robotoRegularBold24Style,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            Chip(
-                                backgroundColor: Colors.amber.shade600,
-                                label: Text(
-                                  'IMDB $filmImdbRate',
-                                  style: TextStyles.robotoRegular14Style
-                                      .copyWith(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500),
-                                ))
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (currentBookmark.mediaVote != null)
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      SizedBox.square(
+                                          dimension: 20,
+                                          child: IconEnums.fullstar.toImage),
+                                      Text(
+                                        currentBookmark.mediaVote!
+                                            .toStringAsFixed(1),
+                                        style: TextStyles.robotoBold18Style
+                                            .copyWith(color: Colors.amber),
+                                      ),
+                                    ],
+                                  ).separated(
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                  ),
+                                Chip(
+                                    backgroundColor: Colors.amber.shade600,
+                                    label: Text(
+                                      DateFormat('dd/MM/yyyy').format(
+                                          currentBookmark.date ??
+                                              DateTime.now()),
+                                      style: TextStyles.robotoRegular12Style
+                                          .copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500),
+                                    ))
+                              ],
+                            ),
+                            Text(
+                              'Runtime: ${currentBookmark.runtime} min',
+                              style: TextStyles.robotoMedium12Style,
+                            )
                           ],
                         ),
-                        Text(filmDirector)
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.close),
+                splashColor: Colors.transparent,
+              ),
+            ],
           ),
         );
       },

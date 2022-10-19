@@ -1,27 +1,23 @@
 import 'dart:math';
-import 'dart:async';
-import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/app_constants/palette_function.dart';
 
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 
-import 'package:flutter_application_1/model/movie_model.dart';
-import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 
 import 'package:flutter_application_1/pages/splash_screen.dart';
+import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
@@ -73,7 +69,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
             Tv currentTv = snapshot.data!;
             return Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: _buildDetailAppBar(),
+              appBar: _buildDetailAppBar(currentTv),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -697,7 +693,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
     );
   }
 
-  AppBar _buildDetailAppBar() {
+  AppBar _buildDetailAppBar(Tv currentTv) {
+    BookmarkViewModel bookmarkViewModel =
+        Provider.of<BookmarkViewModel>(context);
     return AppBar(
       leading: IconButton(
         icon: IconEnums.backarrow.toImage,
@@ -708,7 +706,20 @@ class _TvDetailPageState extends State<TvDetailPage> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-        IconButton(onPressed: () {}, icon: IconEnums.bookmark.toImage),
+        IconButton(
+            onPressed: () {
+              bookmarkViewModel.saveBookMarks(
+                BookMark(
+                    runtime: currentTv.episodeRunTime!.first,
+                    date: currentTv.firstAirDate,
+                    mediaType: 'tv',
+                    mediaID: currentTv.id ?? 1,
+                    mediaVote: currentTv.voteAverage,
+                    mediaName: currentTv.name ?? '',
+                    imagePath: currentTv.posterPath ?? ''),
+              );
+            },
+            icon: IconEnums.bookmark.toImage),
       ],
     );
   }
