@@ -25,8 +25,10 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../app_constants/common_function.dart';
 
 class MovieDetailPage extends StatefulWidget {
-  const MovieDetailPage({super.key, required this.mediaID});
+  const MovieDetailPage(
+      {super.key, required this.mediaID, required this.movierID});
   final int mediaID;
+  final String movierID;
   @override
   State<MovieDetailPage> createState() => _MovieDetailPageState();
 }
@@ -37,6 +39,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   @override
   void initState() {
     debugPrint(widget.mediaID.toString());
+    context.read<BookmarkViewModel>().getBookMarks(widget.movierID);
     context.read<MediaViewModel>().getCastbyMediaIDs(widget.mediaID, 'movie');
     context.read<MediaViewModel>().getMediasbyMediaID(widget.mediaID, 'movie');
     context.read<MediaViewModel>().getSimilarMoviebyMovieIDs(widget.mediaID);
@@ -263,8 +266,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 child: buildMediaClip(currentMedia),
                 onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) =>
-                            MovieDetailPage(mediaID: currentMedia.id!),
+                        builder: (context) => MovieDetailPage(
+                          mediaID: currentMedia.id!,
+                          movierID: widget.movierID,
+                        ),
                       ),
                     ));
           },

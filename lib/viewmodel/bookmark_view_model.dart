@@ -25,4 +25,14 @@ class BookmarkViewModel extends ChangeNotifier {
       debugPrint('Error in saving Bookmarks : ${e.toString()}');
     }
   }
+
+  Future<bool> deleteBookmark(String movierID, int mediaID) async {
+    try {
+      firebaseDbService.deleteBookmark(movierID, mediaID);
+      return true;
+    } catch (e) {
+      debugPrint('Error in deleting bookmark');
+      return false;
+    }
+  }
 }

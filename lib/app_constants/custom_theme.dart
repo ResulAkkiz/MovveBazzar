@@ -29,7 +29,7 @@ final ThemeData lightTheme = ThemeData(
   toggleableActiveColor: const Color(0xff545478),
   secondaryHeaderColor: const Color(0xfff0f0f5),
   backgroundColor: const Color(0xffc3c3d5),
-  dialogBackgroundColor: const Color(0xffffffff),
+  dialogBackgroundColor: const Color(0xFFDA1A37),
   indicatorColor: const Color(0xFFDA1A37),
   hintColor: const Color(0x8a000000),
   errorColor: const Color(0xffd32f2f),

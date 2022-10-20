@@ -28,8 +28,10 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../app_constants/common_function.dart';
 
 class TvDetailPage extends StatefulWidget {
-  const TvDetailPage({super.key, required this.mediaID});
+  const TvDetailPage(
+      {super.key, required this.mediaID, required this.movierID});
   final int mediaID;
+  final String movierID;
   @override
   State<TvDetailPage> createState() => _TvDetailPageState();
 }
@@ -39,7 +41,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
   double filmAspectRatio = 10 / 16;
   int expandedIndex = 0;
   bool isBack = false;
+  bool isInclude = false;
   double angle = 0;
+
   List<PaletteColor> colors = [PaletteColor(Colors.red, 2)];
 
   void _flip() {
@@ -50,13 +54,32 @@ class _TvDetailPageState extends State<TvDetailPage> {
   void initState() {
     debugPrint(widget.mediaID.toString());
     colors = [];
-
+    // searchingBookmark();
     context.read<MediaViewModel>().getCastbyMediaIDs(widget.mediaID, 'tv');
     context.read<MediaViewModel>().getMediasbyMediaID(widget.mediaID, 'tv');
     context.read<MediaViewModel>().getSimilarTvbyTvIDs(widget.mediaID);
     context.read<MediaViewModel>().getReviewsbyMediaID(widget.mediaID, 1, 'tv');
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    searchingBookmark();
+    super.didChangeDependencies();
+  }
+
+  void searchingBookmark() async {
+    final bookmarkViewModel = Provider.of<BookmarkViewModel>(context);
+
+    List<BookMark> tempBookmarkList = bookmarkViewModel.bookmarkList;
+
+    tempBookmarkList.firstWhere((e) {
+      isInclude = e.mediaID == widget.mediaID;
+
+      setState(() {});
+      return isInclude;
+    });
   }
 
   @override
@@ -404,8 +427,10 @@ class _TvDetailPageState extends State<TvDetailPage> {
                 child: buildMediaClip(currentMedia),
                 onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) =>
-                            TvDetailPage(mediaID: currentMedia.id!),
+                        builder: (context) => TvDetailPage(
+                          mediaID: currentMedia.id!,
+                          movierID: widget.movierID,
+                        ),
                       ),
                     ));
           },
@@ -708,18 +733,23 @@ class _TvDetailPageState extends State<TvDetailPage> {
       actions: [
         IconButton(
             onPressed: () {
-              bookmarkViewModel.saveBookMarks(
-                BookMark(
-                    runtime: currentTv.episodeRunTime!.first,
-                    date: currentTv.firstAirDate,
-                    mediaType: 'tv',
-                    mediaID: currentTv.id ?? 1,
-                    mediaVote: currentTv.voteAverage,
-                    mediaName: currentTv.name ?? '',
-                    imagePath: currentTv.posterPath ?? ''),
-              );
+              !isInclude
+                  ? bookmarkViewModel.saveBookMarks(
+                      BookMark(
+                          runtime: currentTv.episodeRunTime!.first,
+                          date: currentTv.firstAirDate,
+                          mediaType: 'tv',
+                          mediaID: currentTv.id ?? 1,
+                          mediaVote: currentTv.voteAverage,
+                          mediaName: currentTv.name ?? '',
+                          imagePath: currentTv.posterPath ?? ''),
+                    )
+                  : bookmarkViewModel.deleteBookmark(
+                      widget.movierID, currentTv.id!);
             },
-            icon: IconEnums.bookmark.toImage),
+            icon: isInclude
+                ? const Icon(Icons.bookmark_outlined)
+                : const Icon(Icons.bookmark_border)),
       ],
     );
   }

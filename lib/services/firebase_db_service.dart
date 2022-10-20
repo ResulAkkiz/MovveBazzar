@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
 
 import 'package:flutter_application_1/model/movier.dart';
 import 'package:flutter_application_1/services/db_base.dart';
 
-class FirebaseDbService extends DbBase {
+class FirebaseDbService implements DbBase {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   @override
@@ -50,11 +49,20 @@ class FirebaseDbService extends DbBase {
     List<BookMark> bookmarkList = [];
     if (bookmarkMap != null) {
       for (var element in bookmarkMap.values) {
-        debugPrint(element.toString());
         bookmarkList.add(BookMark.fromMap(element));
       }
     }
 
     return bookmarkList;
+  }
+
+  @override
+  Future<bool> deleteBookmark(String movierID, int mediaID) async {
+    firestore
+        .collection('bookmarks')
+        .doc(movierID)
+        .update({mediaID.toString(): FieldValue.delete()});
+
+    return true;
   }
 }
