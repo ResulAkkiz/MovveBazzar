@@ -46,6 +46,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     context
         .read<MediaViewModel>()
         .getReviewsbyMediaID(widget.mediaID, 1, 'movie');
+    context.read<BookmarkViewModel>().searchingBookmark(widget.mediaID);
     super.initState();
   }
 
@@ -576,18 +577,23 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       actions: [
         IconButton(
             onPressed: () {
-              bookmarkViewModel.saveBookMarks(
-                BookMark(
-                    runtime: currentMovie.runtime,
-                    date: currentMovie.releaseDate,
-                    mediaType: 'movie',
-                    mediaVote: currentMovie.voteAverage,
-                    mediaID: currentMovie.id,
-                    mediaName: currentMovie.title ?? '',
-                    imagePath: currentMovie.posterPath ?? ''),
-              );
+              bookmarkViewModel.isBookmarked
+                  ? bookmarkViewModel.deleteBookmark(
+                      widget.movierID, currentMovie.id)
+                  : bookmarkViewModel.saveBookMarks(
+                      BookMark(
+                          runtime: currentMovie.runtime,
+                          date: currentMovie.releaseDate,
+                          mediaType: 'movie',
+                          mediaID: currentMovie.id,
+                          mediaVote: currentMovie.voteAverage,
+                          mediaName: currentMovie.title ?? '',
+                          imagePath: currentMovie.posterPath ?? ''),
+                    );
             },
-            icon: IconEnums.bookmark.toImage),
+            icon: bookmarkViewModel.isBookmarked
+                ? const Icon(Icons.bookmark_outlined)
+                : const Icon(Icons.bookmark_border)),
       ],
     );
   }

@@ -14,7 +14,8 @@ enum IconEnums {
   google,
   twitter,
   profilepicture,
-  danger
+  danger,
+  shake
 }
 
 enum ImageEnums {
@@ -29,7 +30,16 @@ enum ImageEnums {
 extension IconEnumsExtension on IconEnums {
   String get toPath => 'assets/icons/ic_$name.svg';
 
-  SvgPicture get toImage => SvgPicture.asset(toPath);
+  SvgPicture get toImage => SvgPicture.asset(
+        toPath,
+      );
+
+  SvgPicture get toImageWH => SvgPicture.asset(
+        toPath,
+        width: 20,
+        height: 30,
+        color: Colors.white,
+      );
 
   String get toName {
     return name.capitalize();

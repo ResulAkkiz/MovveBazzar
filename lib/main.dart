@@ -10,6 +10,7 @@ import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 
 ThemeData _theme = lightTheme;
+final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(
@@ -56,9 +57,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: _theme,
-        title: 'Movve',
-        home: const LandingScreen());
+      debugShowCheckedModeBanner: false,
+      theme: _theme,
+      title: 'Movve',
+      home: const LandingScreen(),
+      navigatorObservers: [routeObserver],
+    );
   }
 }

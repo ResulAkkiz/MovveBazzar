@@ -714,8 +714,6 @@ class _TvDetailPageState extends State<TvDetailPage> {
       actions: [
         IconButton(
             onPressed: () {
-              debugPrint(
-                  '////////////////////${bookmarkViewModel.isBookmarked}/////////////////////');
               bookmarkViewModel.isBookmarked
                   ? bookmarkViewModel.deleteBookmark(
                       widget.movierID, currentTv.id!)
@@ -729,6 +727,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
                           mediaName: currentTv.name ?? '',
                           imagePath: currentTv.posterPath ?? ''),
                     );
+              showCoolerDialog(context);
             },
             icon: bookmarkViewModel.isBookmarked
                 ? const Icon(Icons.bookmark_outlined)
