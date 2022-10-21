@@ -1,5 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cool_alert/cool_alert.dart';
+import 'package:cool_alert/src/constants/images.dart';
+import 'package:cool_alert/src/utils/animate.dart';
+import 'package:cool_alert/src/utils/single_loop_controller.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
@@ -7,8 +16,6 @@ import 'package:flutter_application_1/app_constants/ticket_widget.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class BookMarkScreen extends StatefulWidget {
   final String userID;
@@ -161,7 +168,19 @@ class _BookMarkScreenState extends State<BookMarkScreen>
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  bool? isSuccess = await bookmarkViewModel.deleteBookmark(
+                      widget.userID, currentBookmark.mediaID);
+
+                  bookmarkViewModel.getBookMarks(widget.userID);
+                  if (mounted) {
+                    if (isSuccess) {
+                      showCoolerDialog(context, types: CoolAlertType.success);
+                    } else {
+                      showCoolerDialog(context, types: CoolAlertType.error);
+                    }
+                  }
+                },
                 icon: const Icon(Icons.close),
                 splashColor: Colors.transparent,
               ),
@@ -169,6 +188,92 @@ class _BookMarkScreenState extends State<BookMarkScreen>
           ),
         );
       },
+    );
+  }
+
+  void showCoolerDialog(
+    BuildContext context, {
+    int? seconds = 2,
+    CoolAlertType types = CoolAlertType.success,
+  }) {
+    if (seconds != null) {
+      Future.delayed(Duration(seconds: seconds), () {
+        Navigator.of(context, rootNavigator: true).pop();
+      });
+    }
+
+    Widget buildHeader(context) {
+      CoolAlertType type = types;
+
+      String? anim = AppAnim.success;
+
+      switch (type) {
+        case CoolAlertType.success:
+          anim = AppAnim.success;
+          break;
+        case CoolAlertType.error:
+          anim = AppAnim.error;
+          break;
+        case CoolAlertType.warning:
+          anim = AppAnim.warning;
+          break;
+        case CoolAlertType.confirm:
+          anim = AppAnim.info;
+          break;
+        case CoolAlertType.info:
+          anim = AppAnim.info;
+          break;
+        case CoolAlertType.loading:
+          anim = AppAnim.loading;
+          break;
+        default:
+          anim = AppAnim.info;
+      }
+
+      return Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        child: SizedBox(
+          height: 200,
+          width: 200,
+          child: FlareActor(
+            anim,
+            animation: type == CoolAlertType.loading ? 'play' : null,
+            controller: type == CoolAlertType.loading
+                ? null
+                : SingleLoopController(
+                    'play',
+                    1,
+                  ),
+            //color: Colors.black, we'll use this line for loading situation.
+          ),
+        ),
+      );
+    }
+
+    showGeneralDialog(
+      transitionBuilder: (context, anim1, __, widget) {
+        return Animate.scale(
+          child: AlertDialog(
+            backgroundColor: Colors.transparent,
+            contentPadding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            content: buildHeader(context),
+          ),
+          animation: anim1,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200),
+      barrierDismissible: false,
+      barrierLabel: '',
+      context: context,
+      pageBuilder: (context, _, __) => Container(),
     );
   }
 }

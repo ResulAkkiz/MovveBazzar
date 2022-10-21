@@ -52,6 +52,8 @@ dependencies:
   youtube_player_flutter: ^8.1.0
   image: ^3.2.0
   palette_generator: ^0.3.3+2
+  cool_alert: ^1.1.0
+  collection: ^1.16.0
 
 
 dev_dependencies:

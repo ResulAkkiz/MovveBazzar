@@ -8,7 +8,9 @@ import 'package:flutter_application_1/pages/more_trends_screen.dart';
 import 'package:flutter_application_1/pages/tv_detail_screen.dart';
 import 'package:flutter_application_1/services/base_service.dart';
 import 'package:flutter_application_1/services/firebase_db_service.dart';
+import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
+import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +24,8 @@ class HomepageBody extends StatefulWidget {
 class _HomepageBodyState extends State<HomepageBody> {
   BaseService baseService = BaseService();
   late final MediaViewModel mediaViewModel = context.read();
+  late final BookmarkViewModel bookmarkViewModel = context.read();
+  late final MovierViewModel movierViewModel = context.read();
   final double posterAspectRatio = 10 / 16;
 
   @override
@@ -116,6 +120,8 @@ class _HomepageBodyState extends State<HomepageBody> {
   }
 
   Widget buildMediaListView(List<IBaseTrendingModel<dynamic>> mediaList) {
+    final MovierViewModel movierViewModel =
+        Provider.of<MovierViewModel>(context);
     return SizedBox(
       height: (MediaQuery.of(context).size.shortestSide *
               0.36 /
@@ -138,8 +144,14 @@ class _HomepageBodyState extends State<HomepageBody> {
                     MaterialPageRoute(
                       builder: (context) {
                         return currentMedia.mediaType == 'tv'
-                            ? TvDetailPage(mediaID: currentMedia.id!)
-                            : MovieDetailPage(mediaID: currentMedia.id!);
+                            ? TvDetailPage(
+                                mediaID: currentMedia.id!,
+                                movierID: movierViewModel.movier!.movierID,
+                              )
+                            : MovieDetailPage(
+                                mediaID: currentMedia.id!,
+                                movierID: movierViewModel.movier!.movierID,
+                              );
                       },
                     ),
                   );
@@ -211,8 +223,12 @@ class _HomepageBodyState extends State<HomepageBody> {
       timeInterval: 'day',
       pageNumber: 1,
     );
-    FirebaseDbService firebaseDbService = FirebaseDbService();
-    firebaseDbService.getBookMarks('VL4rbNj93caIzdDBY3CNDm859Yl2');
+    // FirebaseDbService firebaseDbService = FirebaseDbService();
+    debugPrint(
+        'Önceki bookmarklist boyutu : ${bookmarkViewModel.bookmarkList.length}');
+    bookmarkViewModel.getBookMarks(movierViewModel.movier!.movierID);
+    debugPrint(
+        'Bookmarklist boyutu : ${bookmarkViewModel.bookmarkList.length}');
     mediaViewModel.getTvPopulars(pageNumber: 1);
     mediaViewModel.getMoviePopulars(pageNumber: 1);
     mediaViewModel.getDiscovers(type: 'movie', pageNumber: 1);

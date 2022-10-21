@@ -4,7 +4,10 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/pages/movie_detail_screen.dart';
+import 'package:flutter_application_1/pages/tv_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
+import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -56,6 +59,8 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final MovierViewModel movierViewModel =
+        Provider.of<MovierViewModel>(context);
     double maxCrossAxisExtent =
         (MediaQuery.of(context).size.shortestSide - 40.0) / 3;
     double posterAspectRatio = 10 / 16;
@@ -116,38 +121,57 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
             itemCount: trendingList.length,
             itemBuilder: (BuildContext context, int index) {
               IBaseTrendingModel currentMedia = trendingList[index];
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: getImage(
-                        path: currentMedia.posterPath ?? '', size: 'w200'),
-                    imageBuilder: (context, imageProvider) => AspectRatio(
-                      aspectRatio: posterAspectRatio,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return currentMedia.mediaType == 'tv'
+                            ? TvDetailPage(
+                                mediaID: currentMedia.id!,
+                                movierID: movierViewModel.movier!.movierID,
+                              )
+                            : MovieDetailPage(
+                                mediaID: currentMedia.id!,
+                                movierID: movierViewModel.movier!.movierID,
+                              );
+                      },
+                    ),
+                  );
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl:
+                          getImage(path: currentMedia.posterPath, size: 'w200'),
+                      imageBuilder: (context, imageProvider) => AspectRatio(
+                        aspectRatio: posterAspectRatio,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Flexible(
-                    child: Text(
-                      currentMedia.mediaName ?? 'UNKNOWN',
-                      style: TextStyles.robotoMedium12Style,
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      softWrap: false,
+                    const SizedBox(
+                      height: 10.0,
                     ),
-                  ),
-                ],
+                    Flexible(
+                      child: Text(
+                        currentMedia.mediaName ?? 'UNKNOWN',
+                        style: TextStyles.robotoMedium12Style,
+                        overflow: TextOverflow.fade,
+                        maxLines: 1,
+                        softWrap: false,
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),
@@ -255,47 +279,3 @@ class Delegate extends SliverPersistentHeaderDelegate {
     return true;
   }
 }
-
-
-//  DropdownButton(
-//                     items: const [
-//                       DropdownMenuItem(
-//                         value: 'day',
-//                         child: Text('day'),
-//                       ),
-//                       DropdownMenuItem(
-//                         value: 'week',
-//                         child: Text('week'),
-//                       ),
-//                     ],
-//                     onChanged: ((value) {}),
-//                   ),
-//                    DropdownButton(
-//                     items: const [
-//                       DropdownMenuItem(
-//                         value: 'all',
-//                         child: Text('all'),
-//                       ),
-//                        DropdownMenuItem(
-//                         value: 'tv',
-//                         child: Text('tv'),
-//                       ),
-//                        DropdownMenuItem(
-//                         value: 'movie',
-//                         child: Text('movie'),
-//                       ),
-//                     ],
-//                     onChanged: ((value) {}),
-//                   ),
-
-//  Column(
-//         children: [
-//           buildLogo(),
-//           DropdownButton(items: const [
-//             DropdownMenuItem(
-//               value: 'TR',
-//               child: Text('TR'),
-//             )
-//           ], onChanged: ((value) {}))
-//         ],
-//       ),

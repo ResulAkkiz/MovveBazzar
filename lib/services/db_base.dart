@@ -7,4 +7,5 @@ abstract class DbBase {
   Future<Movier?> getMovierByID(String movierID);
   Future<bool> saveBookMark(BookMark bookmarkMedia);
   Future<List<BookMark>> getBookMarks(String movierID);
+  Future<bool> deleteBookmark(String movierID, int mediaID);
 }
