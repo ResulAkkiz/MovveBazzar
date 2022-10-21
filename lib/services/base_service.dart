@@ -232,7 +232,7 @@ class BaseService {
     String type,
   ) async {
     final String url = "$baseUrl/$type/$mediaID/images?api_key=$apiKey";
-    debugPrint(url);
+
     final response = await http.get(Uri.parse(url));
     List<MediaImage> imageList = [];
     var jsonBody = jsonDecode(response.body)['backdrops'];
@@ -258,7 +258,6 @@ class BaseService {
   ) async {
     final String url = "$baseUrl/$type/$mediaID/videos?api_key=$apiKey";
 
-    debugPrint(url);
     final response = await http.get(Uri.parse(url));
 
     List<MediaVideo> videoList = [];
@@ -288,7 +287,7 @@ class BaseService {
     final String url =
         "$baseUrl/$type/$mediaID/reviews?api_key=$apiKey&page=$pageNumber";
     final response = await http.get(Uri.parse(url));
-    debugPrint(url);
+
     List<Review> reviewList = [];
     var jsonBody = jsonDecode(response.body)['results'];
 

@@ -41,7 +41,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
   double filmAspectRatio = 10 / 16;
   int expandedIndex = 0;
   bool isBack = false;
-  bool isInclude = false;
+
   double angle = 0;
 
   List<PaletteColor> colors = [PaletteColor(Colors.red, 2)];
@@ -54,32 +54,13 @@ class _TvDetailPageState extends State<TvDetailPage> {
   void initState() {
     debugPrint(widget.mediaID.toString());
     colors = [];
-    // searchingBookmark();
+
     context.read<MediaViewModel>().getCastbyMediaIDs(widget.mediaID, 'tv');
     context.read<MediaViewModel>().getMediasbyMediaID(widget.mediaID, 'tv');
     context.read<MediaViewModel>().getSimilarTvbyTvIDs(widget.mediaID);
     context.read<MediaViewModel>().getReviewsbyMediaID(widget.mediaID, 1, 'tv');
-
+    context.read<BookmarkViewModel>().searchingBookmark(widget.mediaID);
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    searchingBookmark();
-    super.didChangeDependencies();
-  }
-
-  void searchingBookmark() async {
-    final bookmarkViewModel = Provider.of<BookmarkViewModel>(context);
-
-    List<BookMark> tempBookmarkList = bookmarkViewModel.bookmarkList;
-
-    tempBookmarkList.firstWhere((e) {
-      isInclude = e.mediaID == widget.mediaID;
-
-      setState(() {});
-      return isInclude;
-    });
   }
 
   @override
@@ -733,8 +714,12 @@ class _TvDetailPageState extends State<TvDetailPage> {
       actions: [
         IconButton(
             onPressed: () {
-              !isInclude
-                  ? bookmarkViewModel.saveBookMarks(
+              debugPrint(
+                  '////////////////////${bookmarkViewModel.isBookmarked}/////////////////////');
+              bookmarkViewModel.isBookmarked
+                  ? bookmarkViewModel.deleteBookmark(
+                      widget.movierID, currentTv.id!)
+                  : bookmarkViewModel.saveBookMarks(
                       BookMark(
                           runtime: currentTv.episodeRunTime!.first,
                           date: currentTv.firstAirDate,
@@ -743,11 +728,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
                           mediaVote: currentTv.voteAverage,
                           mediaName: currentTv.name ?? '',
                           imagePath: currentTv.posterPath ?? ''),
-                    )
-                  : bookmarkViewModel.deleteBookmark(
-                      widget.movierID, currentTv.id!);
+                    );
             },
-            icon: isInclude
+            icon: bookmarkViewModel.isBookmarked
                 ? const Icon(Icons.bookmark_outlined)
                 : const Icon(Icons.bookmark_border)),
       ],
