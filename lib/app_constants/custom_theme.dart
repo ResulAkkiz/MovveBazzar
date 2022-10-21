@@ -21,7 +21,7 @@ final ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: const Color(0xff171721),
   bottomAppBarColor: const Color(0xffffffff),
   cardColor: const Color(0xffffffff),
-  dividerColor: const Color(0x1f000000),
+  dividerColor: const Color(0x99FFFFFF),
   highlightColor: const Color(0x66bcbcbc),
   splashColor: const Color(0x66c8c8c8),
   unselectedWidgetColor: const Color(0x8a000000),

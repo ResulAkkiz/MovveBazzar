@@ -104,11 +104,27 @@ class _LoginScreenState extends State<LoginScreen> {
                           0, MediaQuery.of(context).size.height * 0.07, 0, 0),
                       child: Column(
                         children: [
-                          Text(
-                            '---------------Or sign in with---------------',
-                            style: TextStyles.robotoRegular16Style.copyWith(
-                                color: Colors.white.withOpacity(0.6),
-                                letterSpacing: 0.8),
+                          Row(
+                            children: [
+                              const Expanded(
+                                child: Divider(
+                                  indent: 15.0,
+                                  endIndent: 15.0,
+                                ),
+                              ),
+                              Text(
+                                'Or sign in with',
+                                style: TextStyles.robotoRegular16Style.copyWith(
+                                    color: Colors.white.withOpacity(0.6),
+                                    letterSpacing: 0.8),
+                              ),
+                              const Expanded(
+                                child: Divider(
+                                  indent: 15.0,
+                                  endIndent: 15.0,
+                                ),
+                              ),
+                            ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

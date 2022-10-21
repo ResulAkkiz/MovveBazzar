@@ -3,7 +3,6 @@ import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
-import 'package:flutter_application_1/pages/login_screen.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
@@ -99,11 +98,27 @@ class _SignupScreenState extends State<SignupScreen> {
                           0, MediaQuery.of(context).size.height * 0.10, 0, 0),
                       child: Column(
                         children: [
-                          Text(
-                            '---------------Or sign up with---------------',
-                            style: TextStyles.robotoRegular16Style.copyWith(
-                                color: Colors.white.withOpacity(0.6),
-                                letterSpacing: 0.8),
+                          Row(
+                            children: [
+                              const Expanded(
+                                child: Divider(
+                                  indent: 15.0,
+                                  endIndent: 15.0,
+                                ),
+                              ),
+                              Text(
+                                'Or sign up with',
+                                style: TextStyles.robotoRegular16Style.copyWith(
+                                    color: Colors.white.withOpacity(0.6),
+                                    letterSpacing: 0.8),
+                              ),
+                              const Expanded(
+                                child: Divider(
+                                  indent: 15.0,
+                                  endIndent: 15.0,
+                                ),
+                              ),
+                            ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
