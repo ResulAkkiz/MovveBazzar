@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/pages/tv/season_card_widget.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class SeasonsListView extends StatefulWidget {
-  final List<PaletteGenerator?> palette;
+  final Palettes palettes;
   final List<ImageProvider> images;
   final List<Season>? seasons;
 
   const SeasonsListView({
     Key? key,
-    required this.palette,
+    required this.palettes,
     required this.images,
     this.seasons,
   }) : super(key: key);
@@ -27,16 +28,14 @@ class _SeasonsListViewState extends State<SeasonsListView> {
 
   @override
   Widget build(BuildContext context) {
-    List<PaletteGenerator?> palette = widget.palette;
+    Palettes palettes = widget.palettes;
 
-    List<Color?> dominantColors = List.filled(widget.images.length, null);
-    List<Color?> bodyTextColors = List.filled(widget.images.length, null);
+    List<PaletteColor?> dominantColors =
+        List.filled(widget.images.length, null);
 
-    if (palette.isNotEmpty) {
-      dominantColors = List.generate(images.length,
-          (index) => palette.elementAt(index)?.dominantColor?.color);
-      bodyTextColors = List.generate(images.length,
-          (index) => palette.elementAt(index)?.dominantColor?.bodyTextColor);
+    if (palettes.isNotEmpty) {
+      dominantColors = List.generate(
+          images.length, (index) => palettes.elementAt(index)?.dominantColor);
     }
 
     return ListView.builder(
@@ -44,14 +43,15 @@ class _SeasonsListViewState extends State<SeasonsListView> {
       itemCount: seasons?.length,
       itemBuilder: (context, index) {
         Season season = seasons![index];
+        ImageProvider image = images[index];
+        PaletteColor? dominantColor = dominantColors[index];
 
         return SeasonCardWidget(
           index: index,
           expandedIndex: expandedIndex,
           season: season,
-          image: images[index],
-          dominantColor: dominantColors[index],
-          bodyTextColor: bodyTextColors[index],
+          image: image,
+          dominantColor: dominantColor,
           onTap: () {
             expandedIndex = index;
             if (mounted) {

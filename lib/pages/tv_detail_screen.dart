@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
@@ -18,11 +19,8 @@ import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
-import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
-import '../app_constants/common_function.dart';
 
 class TvDetailPage extends StatefulWidget {
   const TvDetailPage(
@@ -37,12 +35,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
   double posterAspectRatio = 7 / 6;
   double filmAspectRatio = 10 / 16;
 
-  List<PaletteColor> colors = [PaletteColor(Colors.red, 2)];
-
   @override
   void initState() {
     debugPrint(widget.mediaID.toString());
-    colors = [];
 
     context.read<MediaViewModel>().getCastbyMediaIDs(widget.mediaID, 'tv');
     context.read<MediaViewModel>().getMediasbyMediaID(widget.mediaID, 'tv');
@@ -153,31 +148,36 @@ class _TvDetailPageState extends State<TvDetailPage> {
                                         ),
                                       ),
                                       imageUrl: getImage(
-                                          path: currentMedia.filePath!,
-                                          size: 'original'),
+                                        path: currentMedia.filePath!,
+                                        size: 'original',
+                                      ),
                                     ),
                                   );
                                 } else if (currentMedia is MediaVideo) {
                                   return SizedBox(
-                                      height: MediaQuery.of(context)
-                                              .size
-                                              .shortestSide *
-                                          0.7,
-                                      child: YoutubePlayer(
-                                        controller: YoutubePlayerController(
-                                            flags: const YoutubePlayerFlags(
-                                                autoPlay: true,
-                                                mute: true,
-                                                disableDragSeek: true),
-                                            initialVideoId:
-                                                YoutubePlayer.convertUrlToId(
-                                                    'https://www.youtube.com/watch?v=${currentMedia.key}')!),
-                                      ));
+                                    height: MediaQuery.of(context)
+                                            .size
+                                            .shortestSide *
+                                        0.7,
+                                    child: YoutubePlayer(
+                                      controller: YoutubePlayerController(
+                                        flags: const YoutubePlayerFlags(
+                                            autoPlay: true,
+                                            mute: true,
+                                            disableDragSeek: true),
+                                        initialVideoId:
+                                            YoutubePlayer.convertUrlToId(
+                                                'https://www.youtube.com/watch?v=${currentMedia.key}')!,
+                                      ),
+                                    ),
+                                  );
                                 } else {
                                   return const Center(
-                                      child: SizedBox.square(
-                                          dimension: 50,
-                                          child: Icon(Icons.warning)));
+                                    child: SizedBox.square(
+                                      dimension: 50,
+                                      child: Icon(Icons.warning),
+                                    ),
+                                  );
                                 }
                               },
                             ),
@@ -260,11 +260,12 @@ class _TvDetailPageState extends State<TvDetailPage> {
           images,
           size: const Size(125, 75),
         ),
-        builder: (context, AsyncSnapshot<List<PaletteGenerator?>> snapshot) {
+        initialData: Palettes.empty(),
+        builder: (context, AsyncSnapshot<Palettes> snapshot) {
           return SeasonsListView(
             images: images,
             seasons: seasons,
-            palette: snapshot.hasData ? snapshot.data! : [],
+            palettes: snapshot.hasData ? snapshot.data! : Palettes.empty(),
           );
         },
       ),

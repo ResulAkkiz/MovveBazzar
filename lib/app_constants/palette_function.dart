@@ -1,21 +1,27 @@
 import 'package:flutter/rendering.dart';
 import 'package:palette_generator/palette_generator.dart';
 
-Future<List<PaletteGenerator?>> paletteGenerator(
+typedef Palettes = List<PaletteGenerator?>;
+
+Future<Palettes> paletteGenerator(
   List<ImageProvider> images, {
   Size? size,
 }) async {
-  List<PaletteGenerator?> palette = [];
+  Palettes palettes = [];
 
-  for (ImageProvider image in images) {
-    PaletteGenerator? paletteGenerator =
-        await PaletteGenerator.fromImageProvider(
-      image,
-      size: size,
-      // maximumColorCount: 8,
-    );
-    palette.add(paletteGenerator);
+  try {
+    for (ImageProvider image in images) {
+      PaletteGenerator? paletteGenerator =
+          await PaletteGenerator.fromImageProvider(
+        image,
+        size: size,
+        // maximumColorCount: 8,
+      );
+      palettes.add(paletteGenerator);
+    }
+  } catch (e) {
+    debugPrint(e.toString());
   }
 
-  return palette;
+  return palettes;
 }
