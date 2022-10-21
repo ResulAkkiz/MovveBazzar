@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
@@ -15,6 +13,7 @@ import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/pages/splash_screen.dart';
+import 'package:flutter_application_1/pages/tv/seasons_list_view.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -37,16 +36,8 @@ class TvDetailPage extends StatefulWidget {
 class _TvDetailPageState extends State<TvDetailPage> {
   double posterAspectRatio = 7 / 6;
   double filmAspectRatio = 10 / 16;
-  int expandedIndex = 0;
-  bool isBack = false;
-
-  double angle = 0;
 
   List<PaletteColor> colors = [PaletteColor(Colors.red, 2)];
-
-  void _flip() {
-    angle = (angle + pi) % (2 * pi);
-  }
 
   @override
   void initState() {
@@ -249,139 +240,34 @@ class _TvDetailPageState extends State<TvDetailPage> {
   }
 
   SizedBox buildSeasons(Tv currentTv) {
+    List<ImageProvider> images = [];
+    List<Season>? seasons = currentTv.seasons;
+
+    if (seasons != null) {
+      for (var season in seasons) {
+        String url = getImage(
+          path: season.posterPath,
+          size: 'original',
+        );
+        images.add(CachedNetworkImageProvider(url));
+      }
+    }
+
     return SizedBox(
       height: 250,
-      child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: currentTv.seasons?.length,
-          itemBuilder: (context, index) {
-            var currentSeason = currentTv.seasons![index];
-            ImageProvider imageProvider = CachedNetworkImageProvider(getImage(
-              path: currentSeason.posterPath,
-              size: 'original',
-            ));
-
-            return FutureBuilder(
-                future: paletteGenerator(
-                  imageProvider,
-                  size: const Size(125, 75),
-                ),
-                builder: (context, AsyncSnapshot<PaletteGenerator?> snapshot) {
-                  Color? dominantColor;
-                  Color? bodyTextColor;
-                  if (snapshot.hasData) {
-                    dominantColor = snapshot.data?.dominantColor?.color;
-                    bodyTextColor = snapshot.data?.dominantColor?.bodyTextColor;
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        if (expandedIndex == index) {
-                          _flip();
-                          isBack = !isBack;
-                        } else {
-                          expandedIndex = index;
-                          isBack = false;
-                          angle = 0;
-                        }
-                        if (mounted) {
-                          setState(() {});
-                        }
-                      },
-                      child: TweenAnimationBuilder(
-                        tween: Tween<double>(
-                          begin: 0,
-                          end: expandedIndex == index && isBack ? angle : 0,
-                        ),
-                        duration: const Duration(seconds: 1),
-                        builder: (BuildContext context, double val, __) {
-                          return Transform(
-                            alignment: Alignment.center,
-                            transform: Matrix4.identity()
-                              ..setEntry(3, 2, 0.001)
-                              ..rotateY(val),
-                            child: val >= (pi / 2)
-                                ? Transform(
-                                    alignment: Alignment.center,
-                                    transform: Matrix4.identity()..rotateY(pi),
-                                    child: Container(
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        color: dominantColor ??
-                                            Theme.of(context)
-                                                .primaryColor
-                                                .withOpacity(0.8),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ),
-                                      child: SingleChildScrollView(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10, horizontal: 15),
-                                        child: Column(
-                                          children: [
-                                            Chip(
-                                              backgroundColor: Theme.of(context)
-                                                  .scaffoldBackgroundColor,
-                                              label: Text(
-                                                  currentSeason.name.toString(),
-                                                  style: TextStyles
-                                                      .robotoMedium16Style),
-                                            ),
-                                            Text(
-                                              currentSeason.overview ??
-                                                  'UNKNOWN',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: bodyTextColor ??
-                                                    Colors.white,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Episode Count:${currentSeason.episodeCount}',
-                                              style: TextStyle(
-                                                fontSize: 9,
-                                                color: bodyTextColor ??
-                                                    Colors.white,
-                                              ),
-                                            ),
-                                            Text(
-                                              'First Air Date: ${DateFormat('dd-MM-yyyy').format(currentSeason.airDate ?? DateTime.now())}',
-                                              style: TextStyles
-                                                  .robotoRegular10Style
-                                                  .copyWith(
-                                                color: bodyTextColor ??
-                                                    Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ).separated(const SizedBox(
-                                          height: 6,
-                                        )),
-                                      ),
-                                    ))
-                                : AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    width: expandedIndex == index ? 150 : 35,
-                                    decoration: BoxDecoration(
-                                        color:
-                                            dominantColor ?? Colors.transparent,
-                                        borderRadius:
-                                            BorderRadius.circular(15.0)),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: Image(
-                                      fit: BoxFit.cover,
-                                      image: imageProvider,
-                                    ),
-                                  ),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                });
-          }),
+      child: FutureBuilder(
+        future: paletteGenerator(
+          images,
+          size: const Size(125, 75),
+        ),
+        builder: (context, AsyncSnapshot<List<PaletteGenerator?>> snapshot) {
+          return SeasonsListView(
+            images: images,
+            seasons: seasons,
+            palette: snapshot.hasData ? snapshot.data! : [],
+          );
+        },
+      ),
     );
   }
 
