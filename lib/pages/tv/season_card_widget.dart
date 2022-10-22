@@ -12,7 +12,7 @@ class SeasonCardWidget extends StatefulWidget {
   final int expandedIndex;
   final Season season;
   final ImageProvider image;
-  final PaletteColor? dominantColor;
+  final PaletteGenerator? palette;
   final VoidCallback? onTap;
 
   const SeasonCardWidget({
@@ -21,7 +21,7 @@ class SeasonCardWidget extends StatefulWidget {
     required this.expandedIndex,
     required this.season,
     required this.image,
-    this.dominantColor,
+    this.palette,
     this.onTap,
   }) : super(key: key);
 
@@ -30,32 +30,31 @@ class SeasonCardWidget extends StatefulWidget {
 }
 
 class _SeasonCardWidgetState extends State<SeasonCardWidget> {
-  double angle = 0;
   bool isBack = false;
 
-  void flip() {
-    if (widget.expandedIndex == widget.index) {
-      angle = (angle + pi) % (2 * pi);
-      isBack = !isBack;
-    } else {
+  @override
+  void didUpdateWidget(covariant SeasonCardWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.expandedIndex != widget.expandedIndex) {
       isBack = false;
-      angle = 0;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    PaletteGenerator? palette = widget.palette;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          flip();
+          isBack = !isBack;
           widget.onTap?.call();
         },
         child: TweenAnimationBuilder(
           tween: Tween<double>(
             begin: 0,
-            end: widget.expandedIndex == widget.index && isBack ? angle : 0,
+            end: isBack ? pi : 0,
           ),
           duration: const Duration(seconds: 1),
           builder: (BuildContext context, double val, _) {
@@ -67,12 +66,12 @@ class _SeasonCardWidgetState extends State<SeasonCardWidget> {
               child: val >= (pi / 2)
                   ? Transform(
                       alignment: Alignment.center,
-                      transform: Matrix4.identity()..rotateY(pi),
+                      transform: Matrix4.rotationY(val),
                       child: Container(
                         width: 150,
                         decoration: BoxDecoration(
-                          color: widget.dominantColor?.color ??
-                              Theme.of(context).primaryColor.withOpacity(0.8),
+                          color: palette?.dominantColor?.color ??
+                              Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: SingleChildScrollView(
@@ -85,30 +84,35 @@ class _SeasonCardWidgetState extends State<SeasonCardWidget> {
                               Chip(
                                 backgroundColor:
                                     Theme.of(context).scaffoldBackgroundColor,
-                                label: Text(widget.season.name.toString(),
-                                    style: TextStyles.robotoMedium16Style),
+                                label: Text(
+                                  widget.season.name.toString(),
+                                  style: TextStyles.robotoMedium16Style,
+                                ),
                               ),
                               Text(
                                 widget.season.overview ?? 'UNKNOWN',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: widget.dominantColor?.bodyTextColor ??
-                                      Colors.white,
+                                  color:
+                                      palette?.dominantColor?.bodyTextColor ??
+                                          Colors.white,
                                 ),
                               ),
                               Text(
                                 'Episode Count:${widget.season.episodeCount}',
                                 style: TextStyle(
                                   fontSize: 9,
-                                  color: widget.dominantColor?.bodyTextColor ??
-                                      Colors.white,
+                                  color:
+                                      palette?.dominantColor?.bodyTextColor ??
+                                          Colors.white,
                                 ),
                               ),
                               Text(
                                 'First Air Date: ${DateFormat('dd-MM-yyyy').format(widget.season.airDate ?? DateTime.now())}',
                                 style: TextStyles.robotoRegular10Style.copyWith(
-                                  color: widget.dominantColor?.bodyTextColor ??
-                                      Colors.white,
+                                  color:
+                                      palette?.dominantColor?.bodyTextColor ??
+                                          Colors.white,
                                 ),
                               ),
                             ],
@@ -122,7 +126,7 @@ class _SeasonCardWidgetState extends State<SeasonCardWidget> {
                       duration: const Duration(milliseconds: 200),
                       width: widget.expandedIndex == widget.index ? 150 : 35,
                       decoration: BoxDecoration(
-                        color: widget.dominantColor?.color,
+                        color: palette?.dominantColor?.color,
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       clipBehavior: Clip.antiAlias,

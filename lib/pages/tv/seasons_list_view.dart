@@ -5,14 +5,14 @@ import 'package:flutter_application_1/pages/tv/season_card_widget.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class SeasonsListView extends StatefulWidget {
-  final Palettes palettes;
   final List<ImageProvider> images;
+  final Palettes? palettes;
   final List<Season>? seasons;
 
   const SeasonsListView({
     Key? key,
-    required this.palettes,
     required this.images,
+    this.palettes,
     this.seasons,
   }) : super(key: key);
 
@@ -28,15 +28,7 @@ class _SeasonsListViewState extends State<SeasonsListView> {
 
   @override
   Widget build(BuildContext context) {
-    Palettes palettes = widget.palettes;
-
-    List<PaletteColor?> dominantColors =
-        List.filled(widget.images.length, null);
-
-    if (palettes.isNotEmpty) {
-      dominantColors = List.generate(
-          images.length, (index) => palettes.elementAt(index)?.dominantColor);
-    }
+    Palettes palettes = widget.palettes ?? Palettes.empty();
 
     return ListView.builder(
       scrollDirection: Axis.horizontal,
@@ -44,14 +36,14 @@ class _SeasonsListViewState extends State<SeasonsListView> {
       itemBuilder: (context, index) {
         Season season = seasons![index];
         ImageProvider image = images[index];
-        PaletteColor? dominantColor = dominantColors[index];
+        PaletteGenerator? palette = palettes.isEmpty ? null : palettes[index];
 
         return SeasonCardWidget(
           index: index,
           expandedIndex: expandedIndex,
           season: season,
           image: image,
-          dominantColor: dominantColor,
+          palette: palette,
           onTap: () {
             expandedIndex = index;
             if (mounted) {
