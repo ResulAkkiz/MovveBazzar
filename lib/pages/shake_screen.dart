@@ -1,5 +1,12 @@
+import 'dart:math';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/common_widgets.dart';
+import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:intl/intl.dart';
 import 'package:shake/shake.dart';
 
 class ShakeScreen extends StatefulWidget {
@@ -12,10 +19,11 @@ class ShakeScreen extends StatefulWidget {
 class _ShakeScreenState extends State<ShakeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
+  bool isDone = false;
   @override
   void initState() {
     controller = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
+        duration: const Duration(milliseconds: 2000), vsync: this);
     ShakeDetector detector = ShakeDetector.autoStart(
       onPhoneShake: () {
         controller.forward(from: 0.0);
@@ -30,50 +38,98 @@ class _ShakeScreenState extends State<ShakeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 36.0)
-        .chain(CurveTween(curve: Curves.elasticIn))
+    final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 4 * pi)
+        .chain(CurveTween(curve: Curves.bounceIn))
         .animate(controller)
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          controller.reverse();
+          isDone = true;
         }
       });
-    return Center(
-      child: AnimatedBuilder(
-        builder: (context, widget) {
-          debugPrint('Value :${offsetAnimation.value}');
-          return Container(
-            margin: EdgeInsets.only(
-                left: offsetAnimation.value + 36.0,
-                right: 36.0 - offsetAnimation.value),
-            height: MediaQuery.of(context).size.longestSide * 0.6,
-            width: MediaQuery.of(context).size.shortestSide * 0.7,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Theme.of(context).primaryColor),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.question_mark_outlined,
-                  size: 150,
-                ),
-                Text(
-                  'Try your chance.',
-                  style: TextStyles.robotoMedium16Style,
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Text(
-                  'Shake me!!',
-                  style: TextStyles.appBarTitleStyle,
-                ),
-              ],
-            ),
-          );
-        },
-        animation: offsetAnimation,
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 90),
+        child: AnimatedBuilder(
+          builder: (context, widget) {
+            return Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(offsetAnimation.value),
+                child: isDone
+                    ? Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Theme.of(context)
+                                .primaryColorDark
+                                .withOpacity(0.6)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl:
+                                    'https://image.tmdb.org/t/p/original/pFlaoHTZeyNkG83vxsAJiGzfSsa.jpg',
+                                imageBuilder: (context, imageProvider) =>
+                                    AspectRatio(
+                                  aspectRatio: 0.8,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                'Black Adam',
+                                style: TextStyles.robotoBoldStyle
+                                    .copyWith(fontSize: 25),
+                              ),
+                              buildRatingBar(voteAverage: 7.8, voteCount: 150),
+                              buildGenreList(context,
+                                  ['Science Fiction', 'Drama', 'Action'])
+                            ],
+                          ).separated(const SizedBox(
+                            height: 5,
+                          )),
+                        ),
+                      )
+                    : Container(
+                        height: MediaQuery.of(context).size.longestSide * 0.6,
+                        width: MediaQuery.of(context).size.shortestSide * 0.7,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Theme.of(context)
+                                .primaryColorDark
+                                .withOpacity(0.6)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.question_mark_outlined,
+                              size: 150,
+                            ),
+                            Text(
+                              'Try your chance.',
+                              style: TextStyles.robotoMedium16Style,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              'Shake me!!',
+                              style: TextStyles.appBarTitleStyle,
+                            ),
+                          ],
+                        ),
+                      ));
+          },
+          animation: offsetAnimation,
+        ),
       ),
     );
   }
