@@ -20,7 +20,7 @@ class MoreTrendScreen extends StatefulWidget {
 }
 
 class _MoreTrendScreenState extends State<MoreTrendScreen> {
-  late final MediaViewModel mediaViewModel = context.read();
+  late final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
   final ScrollController _controller = ScrollController();
   List<IBaseTrendingModel> trendingList = [];
   int pageNumber = 1;
@@ -59,8 +59,7 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final MovierViewModel movierViewModel =
-        Provider.of<MovierViewModel>(context);
+    final MovierViewModel movierViewModel = context.read<MovierViewModel>();
     double maxCrossAxisExtent =
         (MediaQuery.of(context).size.shortestSide - 40.0) / 3;
     double posterAspectRatio = 10 / 16;
@@ -95,11 +94,9 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
               Icons.arrow_upward,
               color: Theme.of(context).primaryColor,
             ),
-            loadingIcon: SizedBox.square(
+            loadingIcon: const SizedBox.square(
               dimension: 24.0,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
+              child: CircularProgressIndicator(),
             ),
             outerBuilder: (child) => SafeArea(
               top: false,

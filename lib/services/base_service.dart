@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
@@ -9,7 +11,6 @@ import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
-import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:http/http.dart' as http;
 
 class BaseService {
@@ -210,10 +211,10 @@ class BaseService {
     final String url = "$baseUrl/$type/$mediaID/credits?api_key=$apiKey";
 
     final response = await http.get(Uri.parse(url));
-    var jsonBody = (jsonDecode(response.body))['cast'];
 
     switch (response.statusCode) {
       case HttpStatus.ok:
+        var jsonBody = (jsonDecode(response.body))['cast'];
         List<PeopleCast> peopleList = [];
         if (jsonBody is List) {
           for (Map<String, dynamic> singleMap in jsonBody) {
@@ -235,10 +236,10 @@ class BaseService {
 
     final response = await http.get(Uri.parse(url));
     List<MediaImage> imageList = [];
-    var jsonBody = jsonDecode(response.body)['backdrops'];
 
     switch (response.statusCode) {
       case HttpStatus.ok:
+        var jsonBody = jsonDecode(response.body)['backdrops'];
         if (jsonBody is List) {
           for (var singleMap in jsonBody) {
             imageList.add(MediaImage.fromMap(singleMap));
@@ -261,10 +262,10 @@ class BaseService {
     final response = await http.get(Uri.parse(url));
 
     List<MediaVideo> videoList = [];
-    var jsonBody = jsonDecode(response.body)['results'];
 
     switch (response.statusCode) {
       case HttpStatus.ok:
+        var jsonBody = jsonDecode(response.body)['results'];
         if (jsonBody is List) {
           for (var singleMap in jsonBody) {
             videoList.add(MediaVideo.fromMap(singleMap));

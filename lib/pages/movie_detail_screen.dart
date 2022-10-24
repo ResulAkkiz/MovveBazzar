@@ -1,22 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
+import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
-
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
-
 import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
+import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -158,13 +156,12 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                                 .shortestSide *
                                             0.7,
                                         child: CachedNetworkImage(
-                                          placeholder: (context, url) => Center(
+                                          placeholder: (context, url) =>
+                                              const Center(
                                             child: SizedBox(
                                               width: 175,
-                                              child: CircularProgressIndicator(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                              ),
+                                              child:
+                                                  CircularProgressIndicator(),
                                             ),
                                           ),
                                           imageUrl: getImage(
@@ -564,12 +561,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   AppBar _buildDetailAppBar(Movie currentMovie) {
-    BookmarkViewModel bookmarkViewModel =
-        Provider.of<BookmarkViewModel>(context);
+    final BookmarkViewModel bookmarkViewModel =
+        context.watch<BookmarkViewModel>();
+    final MovierViewModel movierViewModel = context.read<MovierViewModel>();
+
     return AppBar(
       leading: IconButton(
         icon: IconEnums.backarrow.toImage,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).maybePop();
+        },
       ),
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -577,6 +578,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         IconButton(
             onPressed: () {
               bookmarkViewModel.saveBookMarks(
+                movierViewModel.movier!.movierID,
                 BookMark(
                     runtime: currentMovie.runtime,
                     date: currentMovie.releaseDate,

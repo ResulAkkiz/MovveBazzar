@@ -262,4 +262,7 @@ final ThemeData lightTheme = ThemeData(
     ),
     borderRadius: BorderRadius.all(Radius.circular(0.0)),
   )),
+  progressIndicatorTheme: const ProgressIndicatorThemeData(
+    color: Color(0xFFDA1A37),
+  ),
 );

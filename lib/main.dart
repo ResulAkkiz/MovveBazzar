@@ -56,9 +56,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: _theme,
-        title: 'Movve',
-        home: const LandingScreen());
+      debugShowCheckedModeBanner: false,
+      theme: _theme,
+      title: 'Movve',
+      home: const LandingScreen(),
+    );
   }
 }
