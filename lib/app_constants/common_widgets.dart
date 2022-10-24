@@ -194,7 +194,6 @@ Widget buildGenreList(BuildContext context, List<String> genres) {
   return SizedBox(
     height: MediaQuery.of(context).size.shortestSide * 0.10,
     child: ListView.builder(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
       shrinkWrap: true,
       scrollDirection: Axis.horizontal,
       itemCount: genres.length,
@@ -217,7 +216,7 @@ Widget buildGenreList(BuildContext context, List<String> genres) {
   );
 }
 
-Row buildRatingBar({required double voteAverage, required int voteCount}) {
+Row buildRatingBar({required double voteAverage, required num voteCount}) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
