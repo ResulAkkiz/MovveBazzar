@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 RichText buildLogo() {
@@ -187,6 +188,66 @@ Future<dynamic> buildShowModelBottomSheet(BuildContext context) {
           ),
         );
       });
+}
+
+Widget buildGenreList(BuildContext context, List<String> genres) {
+  return SizedBox(
+    height: MediaQuery.of(context).size.shortestSide * 0.10,
+    child: ListView.builder(
+      shrinkWrap: true,
+      scrollDirection: Axis.horizontal,
+      itemCount: genres.length,
+      itemBuilder: (context, index) {
+        return Container(
+          alignment: Alignment.center,
+          margin: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7),
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          child: Text(
+            genres[index],
+            style: TextStyles.robotoMedium12Style,
+          ),
+        );
+      },
+    ),
+  );
+}
+
+Row buildRatingBar({required double voteAverage, required num voteCount}) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text(
+        voteAverage.toStringAsFixed(1),
+        style: TextStyles.robotoMedium18Style
+            .copyWith(color: const Color(0xFFFDC432)),
+      ),
+      RatingBar(
+        ignoreGestures: true,
+        itemSize: 20,
+        initialRating: voteAverage / 2,
+        direction: Axis.horizontal,
+        allowHalfRating: true,
+        itemCount: 5,
+        itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+        onRatingUpdate: (rating) {},
+        ratingWidget: RatingWidget(
+          full: IconEnums.fullstar.toImage,
+          half: IconEnums.halfstar.toImage,
+          empty: IconEnums.emptystar.toImage,
+        ),
+      ),
+      Text(
+        '(${voteCount.toStringAsFixed(1)})',
+        style: TextStyles.robotoRegular10Style.copyWith(
+          color: Colors.white.withOpacity(0.4),
+        ),
+      ),
+    ],
+  );
 }
 
 Widget buildDateTimePicker(

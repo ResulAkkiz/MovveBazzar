@@ -26,8 +26,8 @@ class _HomepageBodyState extends State<HomepageBody> {
 
   @override
   void initState() {
-    getStarted();
     super.initState();
+    getStarted();
   }
 
   @override
@@ -225,11 +225,8 @@ class _HomepageBodyState extends State<HomepageBody> {
       pageNumber: 1,
     );
     // FirebaseDbService firebaseDbService = FirebaseDbService();
-    debugPrint(
-        'Önceki bookmarklist boyutu : ${bookmarkViewModel.bookmarkList.length}');
+
     bookmarkViewModel.getBookMarks(movierViewModel.movier!.movierID);
-    debugPrint(
-        'Bookmarklist boyutu : ${bookmarkViewModel.bookmarkList.length}');
     mediaViewModel.getTvPopulars(pageNumber: 1);
     mediaViewModel.getMoviePopulars(pageNumber: 1);
     mediaViewModel.getDiscovers(type: 'movie', pageNumber: 1);

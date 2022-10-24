@@ -7,6 +7,7 @@ import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/pages/bookmark_screen.dart';
 import 'package:flutter_application_1/pages/homebody_screen.dart';
 import 'package:flutter_application_1/pages/profile_screen.dart';
+import 'package:flutter_application_1/pages/shake_screen.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
     BookMarkScreen(
       userID: context.read<MovierViewModel>().movier!.movierID,
     ),
+    ShakeScreen(),
     const ProfileScreen(),
   ];
 
@@ -105,6 +107,9 @@ class _HomePageState extends State<HomePage> {
               imageEnum: IconEnums.bookmark,
             ),
             _buildNavyBarItem(
+              imageEnum: IconEnums.shake,
+            ),
+            _buildNavyBarItem(
               imageEnum: IconEnums.profile,
             ),
           ],
@@ -117,7 +122,7 @@ class _HomePageState extends State<HomePage> {
     required IconEnums imageEnum,
   }) {
     return BottomNavyBarItem(
-      icon: imageEnum.toImage,
+      icon: imageEnum.toImageWH,
       title: Text(imageEnum.toName, style: TextStyles.navbarItemStyle),
       activeColor: const Color(0xFF420b0b),
     );

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
@@ -43,6 +45,23 @@ class MediaViewModel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     return tempTrendingModelList;
+  }
+
+  Future<IBaseTrendingModel?> getRandomTrendingMedia() async {
+    int randomPage = Random().nextInt(20);
+    int randomIndex = Random().nextInt(20);
+    try {
+      final List<IBaseTrendingModel> tempTrendingModelList =
+          await _jsonPlaceService.getTrendings(
+        type: 'all',
+        timeInterval: 'day',
+        pageNumber: randomPage,
+      );
+      return tempTrendingModelList[randomIndex];
+    } on Exception catch (e) {
+      debugPrint('Error in getting random media : ${e.toString()}');
+      return null;
+    }
   }
 
   Future<void> getDiscovers({
