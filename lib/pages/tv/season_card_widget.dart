@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
@@ -44,15 +45,6 @@ class _SeasonCardWidgetState extends State<SeasonCardWidget> {
   Widget build(BuildContext context) {
     PaletteGenerator? palette = widget.palette;
 
-    Color? backgroundColor =
-        palette?.dominantColor?.color == palette?.darkMutedColor?.color
-            ? palette?.darkVibrantColor?.color
-            : palette?.dominantColor?.color;
-    Color? foregroundColor =
-        palette?.dominantColor?.color == palette?.darkMutedColor?.color
-            ? palette?.darkVibrantColor?.bodyTextColor
-            : palette?.dominantColor?.bodyTextColor;
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -79,8 +71,8 @@ class _SeasonCardWidgetState extends State<SeasonCardWidget> {
                       child: Container(
                         width: 150,
                         decoration: BoxDecoration(
-                          color:
-                              backgroundColor ?? Theme.of(context).primaryColor,
+                          color: palette?.primaryColor?.color ??
+                              Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: SingleChildScrollView(
@@ -96,27 +88,34 @@ class _SeasonCardWidgetState extends State<SeasonCardWidget> {
                                     Theme.of(context).scaffoldBackgroundColor,
                                 label: Text(
                                   widget.season.name.toString(),
-                                  style: TextStyles.robotoMedium16Style,
+                                  style:
+                                      TextStyles.robotoMedium16Style.copyWith(
+                                    color:
+                                        palette?.darkMutedColor?.bodyTextColor,
+                                  ),
                                 ),
                               ),
                               Text(
                                 widget.season.overview ?? 'UNKNOWN',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: foregroundColor ?? Colors.white,
+                                  color: palette?.primaryColor?.bodyTextColor ??
+                                      Colors.white,
                                 ),
                               ),
                               Text(
                                 'Episode Count:${widget.season.episodeCount}',
                                 style: TextStyle(
                                   fontSize: 9,
-                                  color: foregroundColor ?? Colors.white,
+                                  color: palette?.primaryColor?.bodyTextColor ??
+                                      Colors.white,
                                 ),
                               ),
                               Text(
                                 'First Air Date: ${DateFormat('dd-MM-yyyy').format(widget.season.airDate ?? DateTime.now())}',
                                 style: TextStyles.robotoRegular10Style.copyWith(
-                                  color: foregroundColor ?? Colors.white,
+                                  color: palette?.primaryColor?.bodyTextColor ??
+                                      Colors.white,
                                 ),
                               ),
                             ],
@@ -130,7 +129,8 @@ class _SeasonCardWidgetState extends State<SeasonCardWidget> {
                       duration: const Duration(milliseconds: 200),
                       width: widget.expandedIndex == widget.index ? 150 : 35,
                       decoration: BoxDecoration(
-                        color: palette?.dominantColor?.color,
+                        color: palette?.primaryColor?.color ??
+                            Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       clipBehavior: Clip.antiAlias,

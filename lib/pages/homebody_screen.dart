@@ -22,9 +22,6 @@ class HomepageBody extends StatefulWidget {
 
 class _HomepageBodyState extends State<HomepageBody> {
   BaseService baseService = BaseService();
-  late final MediaViewModel mediaViewModel = context.read();
-  late final BookmarkViewModel bookmarkViewModel = context.read();
-  late final MovierViewModel movierViewModel = context.read();
   final double posterAspectRatio = 10 / 16;
 
   @override
@@ -35,7 +32,7 @@ class _HomepageBodyState extends State<HomepageBody> {
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = Provider.of<MediaViewModel>(context);
+    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
@@ -119,8 +116,8 @@ class _HomepageBodyState extends State<HomepageBody> {
   }
 
   Widget buildMediaListView(List<IBaseTrendingModel<dynamic>> mediaList) {
-    final MovierViewModel movierViewModel =
-        Provider.of<MovierViewModel>(context);
+    final MovierViewModel movierViewModel = context.read<MovierViewModel>();
+
     return SizedBox(
       height: (MediaQuery.of(context).size.shortestSide *
               0.36 /
@@ -217,6 +214,11 @@ class _HomepageBodyState extends State<HomepageBody> {
   }
 
   void getStarted() {
+    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
+    final BookmarkViewModel bookmarkViewModel =
+        context.read<BookmarkViewModel>();
+    final MovierViewModel movierViewModel = context.read<MovierViewModel>();
+
     mediaViewModel.getTrendings(
       type: 'all',
       timeInterval: 'day',

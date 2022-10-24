@@ -224,3 +224,17 @@ Widget buildDateTimePicker(
     ),
   );
 }
+
+Widget buildTitle(String title) {
+  return Container(
+    padding: const EdgeInsets.symmetric(
+      vertical: 10,
+      horizontal: 10,
+    ),
+    alignment: Alignment.centerLeft,
+    child: Text(
+      title,
+      style: TextStyles.robotoMedium30Style,
+    ),
+  );
+}

@@ -28,9 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           buildLogo(),
-          CircularProgressIndicator(
-            color: Theme.of(context).primaryColor,
-          )
+          const CircularProgressIndicator(),
         ],
       ),
     );
