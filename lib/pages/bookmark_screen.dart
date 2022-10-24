@@ -2,10 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cool_alert/cool_alert.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
@@ -13,6 +9,8 @@ import 'package:flutter_application_1/app_constants/ticket_widget.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class BookMarkScreen extends StatefulWidget {
   final String userID;
@@ -64,7 +62,8 @@ class _BookMarkScreenState extends State<BookMarkScreen>
   }
 
   GridView _buildBookmarkGrid(String type) {
-    final bookmarkViewModel = Provider.of<BookmarkViewModel>(context);
+    final BookmarkViewModel bookmarkViewModel =
+        context.watch<BookmarkViewModel>();
     List<BookMark> bookmarkList = (bookmarkViewModel.bookmarkList
         .where((element) => element.mediaType == type)).toList();
     return GridView.builder(

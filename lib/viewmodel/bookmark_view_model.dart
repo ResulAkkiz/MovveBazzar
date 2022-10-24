@@ -9,10 +9,10 @@ class BookmarkViewModel extends ChangeNotifier {
   List<BookMark> bookmarkList = [];
   bool isBookmarked = false;
 
-  Future<bool> saveBookMarks(BookMark media) async {
+  Future<bool> saveBookMarks(String movierID, BookMark media) async {
     try {
       isBookmarked = await firebaseDbService.saveBookMark(media);
-      notifyListeners();
+      getBookMarks(movierID);
       return isBookmarked;
     } on Exception catch (e) {
       debugPrint('Error in saving Bookmarks : ${e.toString()}');
@@ -26,9 +26,7 @@ class BookmarkViewModel extends ChangeNotifier {
     );
 
     isBookmarked = bookMark != null;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      notifyListeners();
-    });
+    notifyListeners();
   }
 
   Future<void> getBookMarks(String movierID) async {
@@ -44,7 +42,7 @@ class BookmarkViewModel extends ChangeNotifier {
   Future<bool> deleteBookmark(String movierID, int mediaID) async {
     try {
       isBookmarked = !await firebaseDbService.deleteBookmark(movierID, mediaID);
-      notifyListeners();
+      getBookMarks(movierID);
       return isBookmarked;
     } catch (e) {
       debugPrint('Error in deleting bookmark');

@@ -2,13 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
-import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
-import 'package:flutter_application_1/pages/movie_detail_screen.dart';
 import 'package:flutter_application_1/pages/more_trends_screen.dart';
+import 'package:flutter_application_1/pages/movie_detail_screen.dart';
 import 'package:flutter_application_1/pages/tv_detail_screen.dart';
 import 'package:flutter_application_1/services/base_service.dart';
-import 'package:flutter_application_1/services/firebase_db_service.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
@@ -22,37 +20,19 @@ class HomepageBody extends StatefulWidget {
   State<HomepageBody> createState() => _HomepageBodyState();
 }
 
-class _HomepageBodyState extends State<HomepageBody> with RouteAware {
+class _HomepageBodyState extends State<HomepageBody> {
   BaseService baseService = BaseService();
-  late final MediaViewModel mediaViewModel = context.read();
-  late final BookmarkViewModel bookmarkViewModel = context.read();
-  late final MovierViewModel movierViewModel = context.read();
   final double posterAspectRatio = 10 / 16;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      routeObserver.subscribe(this, ModalRoute.of(context)!);
-    });
-    getStarted();
-  }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-
-  @override
-  void didPopNext() {
-    super.didPopNext();
     getStarted();
   }
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = Provider.of<MediaViewModel>(context);
+    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
@@ -136,8 +116,8 @@ class _HomepageBodyState extends State<HomepageBody> with RouteAware {
   }
 
   Widget buildMediaListView(List<IBaseTrendingModel<dynamic>> mediaList) {
-    final MovierViewModel movierViewModel =
-        Provider.of<MovierViewModel>(context);
+    final MovierViewModel movierViewModel = context.read<MovierViewModel>();
+
     return SizedBox(
       height: (MediaQuery.of(context).size.shortestSide *
               0.36 /
@@ -234,6 +214,11 @@ class _HomepageBodyState extends State<HomepageBody> with RouteAware {
   }
 
   void getStarted() {
+    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
+    final BookmarkViewModel bookmarkViewModel =
+        context.read<BookmarkViewModel>();
+    final MovierViewModel movierViewModel = context.read<MovierViewModel>();
+
     mediaViewModel.getTrendings(
       type: 'all',
       timeInterval: 'day',

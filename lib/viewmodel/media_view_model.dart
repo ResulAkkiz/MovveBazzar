@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
+import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
@@ -11,7 +12,6 @@ import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
-import 'package:flutter_application_1/model/media_images_model.dart';
 
 class MediaViewModel extends ChangeNotifier {
   bool isLoading = false;
