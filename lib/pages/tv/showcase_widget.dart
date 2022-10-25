@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
@@ -20,10 +22,13 @@ class ShowcaseWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color? scaffoldBackgroundColor = palette?.darkMutedColor?.color ??
+        Theme.of(context).scaffoldBackgroundColor;
+
     return Stack(
       alignment: AlignmentDirectional.bottomCenter,
       children: [
-        buildBackDropImage(image),
+        buildBackDropImage(tv, image),
         Positioned(
           bottom: -2,
           child: Container(
@@ -35,9 +40,8 @@ class ShowcaseWidget extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 stops: const [0, 0.6],
                 colors: [
-                  Colors.transparent,
-                  palette?.darkMutedColor?.color ??
-                      Theme.of(context).scaffoldBackgroundColor,
+                  scaffoldBackgroundColor.withOpacity(0),
+                  scaffoldBackgroundColor,
                 ],
               ),
             ),
@@ -82,19 +86,34 @@ class ShowcaseWidget extends StatelessWidget {
     );
   }
 
-  Widget buildBackDropImage(ImageProvider image) {
+  Widget buildBackDropImage(Tv tv, ImageProvider placeholder) {
+    String url = getImage(
+      path: tv.backdropPath,
+      size: 'original',
+    );
+    final ImageProvider image = CachedNetworkImageProvider(url);
     const double posterAspectRatio = 7 / 6;
+    Color? dominantColor = palette?.dominantColor?.color;
 
     return AspectRatio(
       aspectRatio: posterAspectRatio,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: palette?.dominantColor?.color,
-          image: DecorationImage(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: dominantColor,
+              image: DecorationImage(
+                image: placeholder,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Image(
             image: image,
             fit: BoxFit.cover,
           ),
-        ),
+        ],
       ),
     );
   }

@@ -36,7 +36,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
+    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
     final PaletteGenerator? palette = widget.palette;
 
     return mediaViewModel.reviewList.isNotEmpty

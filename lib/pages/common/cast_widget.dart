@@ -32,7 +32,7 @@ class _CastWidgetState extends State<CastWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
+    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
     final List<PeopleCast> people = mediaViewModel.peopleCastList;
 
     return Column(

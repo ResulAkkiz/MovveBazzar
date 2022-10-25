@@ -40,7 +40,7 @@ class _MovieDetailSimiliarThemesWidgetState
   @override
   Widget build(BuildContext context) {
     final MovierViewModel movierViewModel = context.read<MovierViewModel>();
-    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
+    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
     final List<MovieTrending> similiarMovieList =
         mediaViewModel.similiarMovieList;
 

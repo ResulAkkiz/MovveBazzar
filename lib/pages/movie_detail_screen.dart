@@ -41,7 +41,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaViewModel = Provider.of<MediaViewModel>(context);
     return FutureBuilder(
         future: context.read<MediaViewModel>().getMoviebyID(widget.mediaID),
         builder: (context, AsyncSnapshot<Movie> snapshot) {
@@ -52,79 +51,75 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           }
           if (snapshot.hasData) {
             Movie movie = snapshot.data!;
-
-            String url = getImage(
-              path: movie.backdropPath,
-              size: 'original',
-            );
-            ImageProvider image = CachedNetworkImageProvider(url);
-            return loadContent(image, movie, mediaViewModel);
+            return loadContent(movie);
           } else {
             return const SplashScreen();
           }
         });
   }
 
-  FutureBuilder<PaletteGenerator?> loadContent(
-      ImageProvider image, Movie movie, MediaViewModel mediaViewModel) {
+  FutureBuilder<PaletteGenerator?> loadContent(Movie movie) {
+    String url = getImage(
+      path: movie.backdropPath,
+      size: 'w300',
+    );
+    ImageProvider image = CachedNetworkImageProvider(url);
     return FutureBuilder(
-        future: image.toPalette(
-          size: const Size(150, 240),
-        ),
-        builder: (context, AsyncSnapshot<PaletteGenerator?> snapshot) {
-          if (snapshot.hasData) {
-            palette = snapshot.data!;
-          }
-          return Stack(
-            children: [
-              Scaffold(
-                extendBodyBehindAppBar: true,
-                appBar: MovieDetailAppBarWidget(
-                  movie,
-                  palette: palette,
-                ),
-                backgroundColor: palette?.darkMutedColor?.color,
-                body: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      MovieDetailShowcaseWidget(
-                        movie,
-                        image: image,
-                        palette: palette,
-                      ),
-                      MovieDetailGenresWidget(
-                        movie,
-                        palette: palette,
-                      ),
-                      buildOverview(movie),
-                      MediaWidget(movie.id, 'movie'),
-                      CastWidget(movie.id, 'movie'),
-                      ReviewsWidget(
-                        movie.id,
-                        'movie',
-                        palette: palette,
-                      ),
-                      MovieDetailSimiliarThemesWidget(movie),
-                    ],
-                  ),
+      future: image.toPalette(
+        size: const Size(80, 128),
+      ),
+      builder: (context, AsyncSnapshot<PaletteGenerator?> snapshot) {
+        if (snapshot.hasData) {
+          palette = snapshot.data!;
+        }
+
+        return Stack(
+          children: [
+            Scaffold(
+              extendBodyBehindAppBar: true,
+              appBar: MovieDetailAppBarWidget(
+                movie,
+                palette: palette,
+              ),
+              backgroundColor: palette?.darkMutedColor?.color,
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    MovieDetailShowcaseWidget(
+                      movie,
+                      image: image,
+                      palette: palette,
+                    ),
+                    MovieDetailGenresWidget(
+                      movie,
+                      palette: palette,
+                    ),
+                    buildOverview(movie),
+                    MediaWidget(movie.id, 'movie'),
+                    CastWidget(movie.id, 'movie'),
+                    ReviewsWidget(
+                      movie.id,
+                      'movie',
+                      palette: palette,
+                    ),
+                    MovieDetailSimiliarThemesWidget(movie),
+                  ],
                 ),
               ),
-              if (snapshot.connectionState == ConnectionState.waiting)
-                buildLoader(),
-            ],
-          );
-        });
+            ),
+            if (snapshot.connectionState == ConnectionState.waiting)
+              buildLoader(),
+          ],
+        );
+      },
+    );
   }
 
   Widget buildLoader() {
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-      child: const Opacity(
-        opacity: 0.8,
-        child: ModalBarrier(
-          dismissible: false,
-          color: Colors.black,
-        ),
+      child: const Material(
+        type: MaterialType.transparency,
       ),
     );
   }
