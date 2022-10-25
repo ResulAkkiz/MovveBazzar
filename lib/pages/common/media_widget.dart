@@ -4,28 +4,28 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
-import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MediaWidget extends StatefulWidget {
-  final Tv tv;
+  final int mediaID;
+  final String mediaType;
 
-  const MediaWidget(this.tv, {Key? key}) : super(key: key);
+  const MediaWidget(this.mediaID, this.mediaType, {Key? key}) : super(key: key);
 
   @override
   State<MediaWidget> createState() => _MediaWidgetState();
 }
 
 class _MediaWidgetState extends State<MediaWidget> {
-  late final Tv tv = widget.tv;
-
   @override
   void initState() {
     super.initState();
 
-    context.read<MediaViewModel>().getMediasbyMediaID(tv.id!, 'tv');
+    context
+        .read<MediaViewModel>()
+        .getMediasbyMediaID(widget.mediaID, widget.mediaType);
   }
 
   @override

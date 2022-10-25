@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/app_constants/text_styles.dart';
 
 import 'package:cool_alert/src/constants/images.dart';
 import 'package:cool_alert/src/utils/animate.dart';
@@ -105,28 +104,5 @@ void showCoolerDialog(
     barrierLabel: '',
     context: context,
     pageBuilder: (context, _, __) => Container(),
-  );
-}
-
-Future<dynamic> buildAlertDialog(BuildContext context, bool isSuccess) {
-  return showDialog(
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Row(
-          children: const [
-            Text('Succesfully '),
-            Icon(Icons.check_circle_outline_rounded)
-          ],
-        ),
-        content: Text(
-          'It is added to Bookmark List ',
-          style: TextStyles.robotoBold18Style,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-      );
-    },
-    context: context,
   );
 }

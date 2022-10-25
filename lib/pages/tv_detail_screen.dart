@@ -8,10 +8,10 @@ import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/pages/tv/app_bar_widget.dart';
-import 'package:flutter_application_1/pages/tv/cast_widget.dart';
+import 'package:flutter_application_1/pages/common/cast_widget.dart';
 import 'package:flutter_application_1/pages/tv/genres_widget.dart';
-import 'package:flutter_application_1/pages/tv/media_widget.dart';
-import 'package:flutter_application_1/pages/tv/reviews_widget.dart';
+import 'package:flutter_application_1/pages/common/media_widget.dart';
+import 'package:flutter_application_1/pages/common/reviews_widget.dart';
 import 'package:flutter_application_1/pages/tv/seasons_widget.dart';
 import 'package:flutter_application_1/pages/tv/showcase_widget.dart';
 import 'package:flutter_application_1/pages/tv/similar_themes_widget.dart';
@@ -100,10 +100,11 @@ class _TvDetailPageState extends State<TvDetailPage> {
                       palette: palette,
                     ),
                     buildOverview(tv),
-                    MediaWidget(tv),
-                    CastWidget(tv),
+                    MediaWidget(tv.id!, 'tv'),
+                    CastWidget(tv.id!, 'tv'),
                     ReviewsWidget(
-                      tv,
+                      tv.id!,
+                      'tv',
                       palette: palette,
                     ),
                     SimilarThemesWidget(tv),
@@ -123,23 +124,16 @@ class _TvDetailPageState extends State<TvDetailPage> {
     );
   }
 
-  Stack buildLoader() {
-    return Stack(
-      children: [
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-          child: const Opacity(
-            opacity: 0.8,
-            child: ModalBarrier(
-              dismissible: false,
-              color: Colors.black,
-            ),
-          ),
+  Widget buildLoader() {
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+      child: const Opacity(
+        opacity: 0.8,
+        child: ModalBarrier(
+          dismissible: false,
+          color: Colors.black,
         ),
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ],
+      ),
     );
   }
 

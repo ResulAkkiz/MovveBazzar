@@ -6,27 +6,28 @@ import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
-import 'package:flutter_application_1/model/tv_model.dart';
+
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
 
 class CastWidget extends StatefulWidget {
-  final Tv tv;
+  final int mediaID;
+  final String mediaType;
 
-  const CastWidget(this.tv, {Key? key}) : super(key: key);
+  const CastWidget(this.mediaID, this.mediaType, {Key? key}) : super(key: key);
 
   @override
   State<CastWidget> createState() => _CastWidgetState();
 }
 
 class _CastWidgetState extends State<CastWidget> {
-  late final Tv tv = widget.tv;
-
   @override
   void initState() {
     super.initState();
 
-    context.read<MediaViewModel>().getCastbyMediaIDs(tv.id!, 'tv');
+    context
+        .read<MediaViewModel>()
+        .getCastbyMediaIDs(widget.mediaID, widget.mediaType);
   }
 
   @override

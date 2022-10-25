@@ -4,12 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
-import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shake/shake.dart';
 
@@ -29,7 +27,7 @@ class _ShakeScreenState extends State<ShakeScreen>
   void initState() {
     controller = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
-    ShakeDetector detector = ShakeDetector.autoStart(
+    ShakeDetector.autoStart(
       onPhoneShake: () {
         getRandomTrendMedia();
         controller.forward(from: 0.0);

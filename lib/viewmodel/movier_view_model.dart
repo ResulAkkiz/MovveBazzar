@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/movier.dart';
 import 'package:flutter_application_1/services/auth_base.dart';
-import 'package:flutter_application_1/services/db_base.dart';
 import 'package:flutter_application_1/services/firabase_storage_service.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/services/firebase_db_service.dart';

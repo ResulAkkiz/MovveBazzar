@@ -4,17 +4,18 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/review_model.dart';
-import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
 class ReviewsWidget extends StatefulWidget {
-  final Tv tv;
+  final int mediaID;
+  final String mediaType;
   final PaletteGenerator? palette;
 
   const ReviewsWidget(
-    this.tv, {
+    this.mediaID,
+    this.mediaType, {
     Key? key,
     this.palette,
   }) : super(key: key);
@@ -24,13 +25,13 @@ class ReviewsWidget extends StatefulWidget {
 }
 
 class _ReviewsWidgetState extends State<ReviewsWidget> {
-  late final Tv tv = widget.tv;
-
   @override
   void initState() {
     super.initState();
 
-    context.read<MediaViewModel>().getReviewsbyMediaID(tv.id!, 1, 'tv');
+    context
+        .read<MediaViewModel>()
+        .getReviewsbyMediaID(widget.mediaID, 1, widget.mediaType);
   }
 
   @override

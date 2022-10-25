@@ -1,38 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
-import 'package:flutter_application_1/model/tv_model.dart';
+import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
-class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
-  final Tv tv;
+class MovieDetailAppBarWidget extends StatefulWidget
+    implements PreferredSizeWidget {
+  final Movie movie;
   final PaletteGenerator? palette;
 
   @override
   final Size preferredSize;
 
-  const AppBarWidget(
-    this.tv, {
+  const MovieDetailAppBarWidget(
+    this.movie, {
     Key? key,
     this.palette,
   })  : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
   @override
-  State<AppBarWidget> createState() => _AppBarWidgetState();
+  State<MovieDetailAppBarWidget> createState() =>
+      _MovieDetailAppBarWidgetState();
 }
 
-class _AppBarWidgetState extends State<AppBarWidget> {
-  late final Tv tv = widget.tv;
+class _MovieDetailAppBarWidgetState extends State<MovieDetailAppBarWidget> {
+  late final Movie movie = widget.movie;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookmarkViewModel>().searchingBookmark(tv.id!);
+      context.read<BookmarkViewModel>().searchingBookmark(movie.id);
     });
   }
 
@@ -61,21 +63,19 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       actions: [
         IconButton(
           onPressed: () {
-            debugPrint(
-                '////////////////////${bookmarkViewModel.isBookmarked}/////////////////////');
             bookmarkViewModel.isBookmarked
                 ? bookmarkViewModel.deleteBookmark(
-                    movierViewModel.movier!.movierID, tv.id!)
+                    movierViewModel.movier!.movierID, movie.id)
                 : bookmarkViewModel.saveBookMarks(
                     movierViewModel.movier!.movierID,
                     BookMark(
-                      runtime: tv.episodeRunTime?.first,
-                      date: tv.firstAirDate,
-                      mediaType: 'tv',
-                      mediaID: tv.id ?? 0,
-                      mediaVote: tv.voteAverage,
-                      mediaName: tv.name ?? '',
-                      imagePath: tv.posterPath,
+                      runtime: movie.runtime,
+                      date: movie.releaseDate,
+                      mediaType: 'movie',
+                      mediaID: movie.id,
+                      mediaVote: movie.voteAverage,
+                      mediaName: movie.title ?? '',
+                      imagePath: movie.posterPath,
                     ),
                   );
           },

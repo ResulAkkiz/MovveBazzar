@@ -25,6 +25,7 @@ enum ImageEnums {
   samplecast,
   profilepicture,
   celebrity,
+  glasses,
 }
 
 extension IconEnumsExtension on IconEnums {
@@ -39,6 +40,13 @@ extension IconEnumsExtension on IconEnums {
         width: 20,
         height: 30,
         color: Colors.white,
+      );
+
+  SvgPicture toImageWHColor(Color? color) => SvgPicture.asset(
+        toPath,
+        width: 20,
+        height: 30,
+        color: color,
       );
 
   String get toName {
