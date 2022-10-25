@@ -54,13 +54,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
         if (snapshot.hasData) {
           Tv tv = snapshot.data!;
 
-          String url = getImage(
-            path: tv.backdropPath,
-            size: 'original',
-          );
-          ImageProvider image = CachedNetworkImageProvider(url);
-
-          return loadContent(tv, image);
+          return loadContent(tv);
         }
 
         return const SplashScreen();
@@ -68,10 +62,16 @@ class _TvDetailPageState extends State<TvDetailPage> {
     );
   }
 
-  FutureBuilder<PaletteGenerator?> loadContent(Tv tv, ImageProvider image) {
+  FutureBuilder<PaletteGenerator?> loadContent(Tv tv) {
+    String url = getImage(
+      path: tv.backdropPath,
+      size: 'w300',
+    );
+    ImageProvider image = CachedNetworkImageProvider(url);
+
     return FutureBuilder(
       future: image.toPalette(
-        size: const Size(150, 240),
+        size: const Size(80, 128),
       ),
       builder: (context, AsyncSnapshot<PaletteGenerator?> snapshot) {
         if (snapshot.hasData) {
@@ -123,23 +123,15 @@ class _TvDetailPageState extends State<TvDetailPage> {
     );
   }
 
-  Stack buildLoader() {
-    return Stack(
-      children: [
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-          child: const Opacity(
-            opacity: 0.8,
-            child: ModalBarrier(
-              dismissible: false,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ],
+  Widget buildLoader() {
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+      child: const Material(
+        type: MaterialType.transparency,
+        // child: Center(
+        //   child: CircularProgressIndicator(),
+        // ),
+      ),
     );
   }
 

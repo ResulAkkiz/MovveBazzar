@@ -30,7 +30,7 @@ class _MediaWidgetState extends State<MediaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
+    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
 
     return mediaViewModel.mediaList?.isEmpty ?? true
         ? const SizedBox.shrink()
