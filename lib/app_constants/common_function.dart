@@ -1,12 +1,11 @@
 import 'dart:math';
 
 import 'package:cool_alert/cool_alert.dart';
-import 'package:flutter/material.dart';
-
 import 'package:cool_alert/src/constants/images.dart';
 import 'package:cool_alert/src/utils/animate.dart';
 import 'package:cool_alert/src/utils/single_loop_controller.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutter/material.dart';
 
 String generateRandomString(int len) {
   var r = Random();
@@ -26,12 +25,6 @@ void showCoolerDialog(
   int? seconds = 2,
   CoolAlertType types = CoolAlertType.success,
 }) {
-  if (seconds != null) {
-    Future.delayed(Duration(seconds: seconds), () {
-      Navigator.of(context, rootNavigator: true).pop();
-    });
-  }
-
   Widget buildHeader(context) {
     CoolAlertType type = types;
 
@@ -94,7 +87,7 @@ void showCoolerDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          content: buildHeader(context),
+          content: widget,
         ),
         animation: anim1,
       );
@@ -103,6 +96,15 @@ void showCoolerDialog(
     barrierDismissible: false,
     barrierLabel: '',
     context: context,
-    pageBuilder: (context, _, __) => Container(),
+    routeSettings: const RouteSettings(name: 'alertDialog'),
+    pageBuilder: (context, _, __) {
+      if (seconds != null) {
+        Future.delayed(Duration(seconds: seconds), () {
+          Navigator.of(context)
+              .popUntil((route) => route.settings.name != 'alertDialog');
+        });
+      }
+      return buildHeader(context);
+    },
   );
 }

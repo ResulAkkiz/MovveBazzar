@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cool_alert/cool_alert.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
@@ -183,13 +182,12 @@ class _BookMarkScreenState extends State<BookMarkScreen>
 
                         bookmarkViewModel.getBookMarks(widget.userID);
                         if (mounted) {
-                          if (isSuccess) {
-                            showCoolerDialog(context,
-                                types: CoolAlertType.error);
-                          } else {
-                            showCoolerDialog(context,
-                                types: CoolAlertType.success);
-                          }
+                          showCoolerDialog(
+                            context,
+                            types: isSuccess
+                                ? CoolAlertType.error
+                                : CoolAlertType.success,
+                          );
                         }
                       },
                       icon: const Icon(Icons.close),
