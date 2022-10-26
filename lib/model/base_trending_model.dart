@@ -23,9 +23,9 @@ abstract class IBaseTrendingModel<T> {
   final String? overview;
   final String? posterPath;
   final String? mediaType;
-  final List<int>? genreIds;
-  final double? popularity;
-  final double? voteAverage;
+  final List<int?>? genreIds;
+  final num? popularity;
+  final num? voteAverage;
   final int? voteCount;
 
   T fromMap(Map<String, dynamic> json);

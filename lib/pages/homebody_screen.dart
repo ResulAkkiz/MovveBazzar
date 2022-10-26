@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/pages/more_trends_screen.dart';
-import 'package:flutter_application_1/pages/movie_detail_screen.dart';
-import 'package:flutter_application_1/pages/tv_detail_screen.dart';
 import 'package:flutter_application_1/services/base_service.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
@@ -116,8 +115,6 @@ class _HomepageBodyState extends State<HomepageBody> {
   }
 
   Widget buildMediaListView(List<IBaseTrendingModel<dynamic>> mediaList) {
-    final MovierViewModel movierViewModel = context.read<MovierViewModel>();
-
     return SizedBox(
       height: (MediaQuery.of(context).size.shortestSide *
               0.36 /
@@ -139,15 +136,10 @@ class _HomepageBodyState extends State<HomepageBody> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return currentMedia.mediaType == 'tv'
-                            ? TvDetailPage(
-                                mediaID: currentMedia.id!,
-                                movierID: movierViewModel.movier!.movierID,
-                              )
-                            : MovieDetailPage(
-                                mediaID: currentMedia.id!,
-                                movierID: movierViewModel.movier!.movierID,
-                              );
+                        return MediaDetailPage(
+                          currentMedia.id!,
+                          mediaType: currentMedia.mediaType!,
+                        );
                       },
                     ),
                   );

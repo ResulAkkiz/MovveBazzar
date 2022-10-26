@@ -31,22 +31,17 @@ enum ImageEnums {
 extension IconEnumsExtension on IconEnums {
   String get toPath => 'assets/icons/ic_$name.svg';
 
-  SvgPicture get toImage => SvgPicture.asset(
-        toPath,
-      );
+  SvgPicture get toImage => SvgPicture.asset(toPath);
 
-  SvgPicture get toImageWH => SvgPicture.asset(
+  SvgPicture toIcon({
+    Color? color,
+    double dimension = 24.0,
+  }) =>
+      SvgPicture.asset(
         toPath,
-        width: 20,
-        height: 30,
-        color: Colors.white,
-      );
-
-  SvgPicture toImageWHColor(Color? color) => SvgPicture.asset(
-        toPath,
-        width: 20,
-        height: 30,
-        color: color,
+        width: dimension,
+        height: dimension,
+        color: color ?? Colors.white,
       );
 
   String get toName {

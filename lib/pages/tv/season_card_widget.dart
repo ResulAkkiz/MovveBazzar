@@ -111,13 +111,16 @@ class _SeasonCardWidgetState extends State<SeasonCardWidget> {
                                       Colors.white,
                                 ),
                               ),
-                              Text(
-                                'First Air Date: ${DateFormat('dd-MM-yyyy').format(widget.season.airDate ?? DateTime.now())}',
-                                style: TextStyles.robotoRegular10Style.copyWith(
-                                  color: palette?.primaryColor?.bodyTextColor ??
-                                      Colors.white,
+                              if (widget.season.airDate != null)
+                                Text(
+                                  'First Air Date: ${DateFormat('dd-MM-yyyy').format(widget.season.airDate!)}',
+                                  style:
+                                      TextStyles.robotoRegular10Style.copyWith(
+                                    color:
+                                        palette?.primaryColor?.bodyTextColor ??
+                                            Colors.white,
+                                  ),
                                 ),
-                              ),
                             ],
                           ).separated(const SizedBox(
                             height: 6,

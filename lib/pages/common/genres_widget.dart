@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
-import 'package:flutter_application_1/model/movie_model.dart';
+import 'package:flutter_application_1/model/base_model.dart';
 import 'package:palette_generator/palette_generator.dart';
 
-class MovieDetailGenresWidget extends StatelessWidget {
-  final Movie movie;
+class GenresWidget extends StatelessWidget {
+  final IBaseModel media;
   final PaletteGenerator? palette;
 
-  const MovieDetailGenresWidget(
-    this.movie, {
+  const GenresWidget(
+    this.media, {
     Key? key,
     this.palette,
   }) : super(key: key);
@@ -20,13 +20,13 @@ class MovieDetailGenresWidget extends StatelessWidget {
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
-        itemCount: movie.genres!.length,
+        itemCount: media.genres!.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(5.0),
             child: Chip(
               label: Text(
-                movie.genres![index].name ?? '',
+                media.genres![index].name ?? '',
                 style: TextStyle(
                   color: palette?.primaryColor?.bodyTextColor,
                 ),

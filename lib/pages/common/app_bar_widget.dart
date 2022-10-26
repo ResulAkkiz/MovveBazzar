@@ -1,40 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
+import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
-class MovieDetailAppBarWidget extends StatefulWidget
-    implements PreferredSizeWidget {
-  final Movie movie;
+class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
+  final IBaseModel media;
   final PaletteGenerator? palette;
 
   @override
   final Size preferredSize;
 
-  const MovieDetailAppBarWidget(
-    this.movie, {
+  const AppBarWidget(
+    this.media, {
     Key? key,
     this.palette,
   })  : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
   @override
-  State<MovieDetailAppBarWidget> createState() =>
-      _MovieDetailAppBarWidgetState();
+  State<AppBarWidget> createState() => _AppBarWidgetState();
 }
 
-class _MovieDetailAppBarWidgetState extends State<MovieDetailAppBarWidget> {
-  late final Movie movie = widget.movie;
+class _AppBarWidgetState extends State<AppBarWidget> {
+  late final IBaseModel media = widget.media;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookmarkViewModel>().searchingBookmark(movie.id);
+      context.read<BookmarkViewModel>().searchingBookmark(media.id);
     });
   }
 
@@ -63,19 +63,35 @@ class _MovieDetailAppBarWidgetState extends State<MovieDetailAppBarWidget> {
       actions: [
         IconButton(
           onPressed: () {
+            String? title;
+            int? runtime;
+            DateTime? date;
+
+            if (media is Movie) {
+              title = (media as Movie).title;
+              runtime = (media as Movie).runtime;
+              date = (media as Movie).releaseDate;
+            } else if (media is Tv) {
+              title = (media as Tv).name;
+              if ((media as Tv).episodeRunTime?.isNotEmpty ?? false) {
+                runtime = (media as Tv).episodeRunTime?.first;
+              }
+              date = (media as Tv).firstAirDate;
+            }
+
             bookmarkViewModel.isBookmarked
                 ? bookmarkViewModel.deleteBookmark(
-                    movierViewModel.movier!.movierID, movie.id)
+                    movierViewModel.movier!.movierID, media.id)
                 : bookmarkViewModel.saveBookMarks(
                     movierViewModel.movier!.movierID,
                     BookMark(
-                      runtime: movie.runtime,
-                      date: movie.releaseDate,
-                      mediaType: 'movie',
-                      mediaID: movie.id,
-                      mediaVote: movie.voteAverage,
-                      mediaName: movie.title ?? '',
-                      imagePath: movie.posterPath,
+                      runtime: runtime,
+                      date: date,
+                      mediaType: 'tv',
+                      mediaID: media.id,
+                      mediaVote: media.voteAverage,
+                      mediaName: title ?? '',
+                      imagePath: media.posterPath,
                     ),
                   );
           },

@@ -30,8 +30,8 @@ class MovieTrending extends IBaseTrendingModel<MovieTrending> {
         title: json["title"],
         originalTitle: json["original_title"],
         video: json["video"],
-        date: DateTime.parse(json["release_date"]),
-        releaseDate: DateTime.parse(json["release_date"]),
+        date: DateTime.tryParse(json["release_date"] ?? ''),
+        releaseDate: DateTime.tryParse(json["release_date"] ?? ''),
         adult: json["adult"],
         backdropPath: json["backdrop_path"],
         id: json["id"],
@@ -40,8 +40,8 @@ class MovieTrending extends IBaseTrendingModel<MovieTrending> {
         posterPath: json["poster_path"],
         mediaType: json["media_type"] ?? 'movie',
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
-        popularity: json["popularity"].toDouble(),
-        voteAverage: json["vote_average"].toDouble(),
+        popularity: json["popularity"],
+        voteAverage: json["vote_average"],
         voteCount: json["vote_count"],
       );
 

@@ -2,20 +2,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
+import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:palette_generator/palette_generator.dart';
 
-class MovieDetailShowcaseWidget extends StatelessWidget {
-  final Movie movie;
+class ShowcaseWidget extends StatelessWidget {
+  final IBaseModel media;
   final ImageProvider image;
   final PaletteGenerator? palette;
 
-  const MovieDetailShowcaseWidget(
-    this.movie, {
+  const ShowcaseWidget(
+    this.media, {
     Key? key,
     required this.image,
     this.palette,
@@ -23,56 +25,70 @@ class MovieDetailShowcaseWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double posterAspectRatio = 7 / 6;
     Color? scaffoldBackgroundColor = palette?.darkMutedColor?.color ??
         Theme.of(context).scaffoldBackgroundColor;
-    return Stack(
-      alignment: AlignmentDirectional.bottomCenter,
-      children: [
-        buildBackDropImage(movie, image),
-        Positioned(
-          bottom: -2,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.shortestSide * 0.5,
+    String? title;
+    int? runtime;
+    DateTime? date;
+
+    if (media is Movie) {
+      title = (media as Movie).title;
+      runtime = (media as Movie).runtime;
+      date = (media as Movie).releaseDate;
+    } else if (media is Tv) {
+      title = (media as Tv).name;
+      if ((media as Tv).episodeRunTime?.isNotEmpty ?? false) {
+        runtime = (media as Tv).episodeRunTime?.first;
+      }
+      date = (media as Tv).firstAirDate;
+    }
+
+    return AspectRatio(
+      aspectRatio: posterAspectRatio,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          buildBackDropImage(media, image),
+          Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: const [0, 0.6],
+                stops: const [0.6, 0.82],
                 colors: [
                   scaffoldBackgroundColor.withOpacity(0),
                   scaffoldBackgroundColor,
                 ],
               ),
             ),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    movie.title ?? 'UNKNOWN',
-                    style: TextStyles.robotoBoldStyle.copyWith(
-                      color: palette?.lightVibrantColor?.color,
-                      fontSize: 30,
-                    ),
-                    textAlign: TextAlign.center,
+                Text(
+                  title ?? 'UNKNOWN',
+                  style: TextStyles.robotoBoldStyle.copyWith(
+                    color: palette?.lightVibrantColor?.color,
+                    fontSize: 30,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 Wrap(
                   children: [
-                    Text(
-                      '${movie.releaseDate?.year}',
-                      style: TextStyles.robotoRegular16Style,
-                    ),
-                    if (movie.runtime != null)
+                    if (date != null)
                       Text(
-                        ', Runtime: ${movie.runtime} min',
+                        '${date.year}',
+                        style: TextStyles.robotoRegular16Style,
+                      ),
+                    if (runtime != null)
+                      Text(
+                        ', Runtime: $runtime min',
                         style: TextStyles.robotoRegular16Style,
                       ),
                   ],
                 ),
-                buildRatingBar(movie),
+                buildRatingBar(media),
               ],
             ).separated(
               const SizedBox(
@@ -80,23 +96,26 @@ class MovieDetailShowcaseWidget extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget buildBackDropImage(Movie movie, ImageProvider placeholder) {
+  Widget buildBackDropImage(IBaseModel media, ImageProvider placeholder) {
     String url = getImage(
-      path: movie.backdropPath,
+      path: media.backdropPath,
       size: 'original',
     );
     final ImageProvider image = CachedNetworkImageProvider(url);
-    const double posterAspectRatio = 7 / 6;
-    Color? dominantColor = palette?.dominantColor?.color;
+    Color dominantColor = palette?.primaryColor?.color ?? Colors.transparent;
 
-    return AspectRatio(
-        aspectRatio: posterAspectRatio,
-        child: Stack(fit: StackFit.expand, children: [
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 8.0,
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
           DecoratedBox(
             decoration: BoxDecoration(
               color: dominantColor,
@@ -110,15 +129,17 @@ class MovieDetailShowcaseWidget extends StatelessWidget {
             image: image,
             fit: BoxFit.cover,
           ),
-        ]));
+        ],
+      ),
+    );
   }
 
-  Row buildRatingBar(Movie movie) {
+  Row buildRatingBar(IBaseModel media) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          movie.voteAverage!.toStringAsFixed(1),
+          media.voteAverage!.toStringAsFixed(1),
           style: TextStyles.robotoMedium18Style.copyWith(
             color: const Color(0xFFFDC432),
           ),
@@ -126,7 +147,7 @@ class MovieDetailShowcaseWidget extends StatelessWidget {
         RatingBar(
           ignoreGestures: true,
           itemSize: 20,
-          initialRating: movie.voteAverage! / 2,
+          initialRating: media.voteAverage! / 2,
           direction: Axis.horizontal,
           allowHalfRating: true,
           itemCount: 5,
@@ -139,7 +160,7 @@ class MovieDetailShowcaseWidget extends StatelessWidget {
           ),
         ),
         Text(
-          '(${movie.voteCount!.toStringAsFixed(1)})',
+          '(${media.voteCount!.toStringAsFixed(1)})',
           style: TextStyles.robotoRegular10Style.copyWith(
             color: Colors.white.withOpacity(0.4),
           ),

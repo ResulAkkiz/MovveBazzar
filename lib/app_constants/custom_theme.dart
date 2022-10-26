@@ -58,7 +58,7 @@ final ThemeData lightTheme = ThemeData(
       borderRadius: BorderRadius.all(Radius.circular(2.0)),
     ),
     alignedDropdown: false,
-    buttonColor: Color(0xff5e35b1),
+    buttonColor: Color(0xffffffff),
     disabledColor: Color(0x61ffffff),
     highlightColor: Color(0x29ffffff),
     splashColor: Color(0x1fffffff),
