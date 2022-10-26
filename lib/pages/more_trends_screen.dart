@@ -4,10 +4,8 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
-import 'package:flutter_application_1/pages/movie_detail_screen.dart';
-import 'package:flutter_application_1/pages/tv_detail_screen.dart';
+import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
-import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -59,7 +57,6 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final MovierViewModel movierViewModel = context.read<MovierViewModel>();
     double maxCrossAxisExtent =
         (MediaQuery.of(context).size.shortestSide - 40.0) / 3;
     double posterAspectRatio = 10 / 16;
@@ -123,15 +120,10 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return currentMedia.mediaType == 'tv'
-                            ? TvDetailPage(
-                                mediaID: currentMedia.id!,
-                                movierID: movierViewModel.movier!.movierID,
-                              )
-                            : MovieDetailPage(
-                                mediaID: currentMedia.id!,
-                                movierID: movierViewModel.movier!.movierID,
-                              );
+                        return MediaDetailPage(
+                          currentMedia.id!,
+                          mediaType: currentMedia.mediaType!,
+                        );
                       },
                     ),
                   );

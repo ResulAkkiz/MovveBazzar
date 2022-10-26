@@ -1,18 +1,20 @@
 import 'package:flutter_application_1/model/media_base_model.dart';
 
 class MediaVideo implements MediaBase<MediaVideo> {
-  MediaVideo(
-      {this.iso6391,
-      this.iso31661,
-      this.name,
-      this.key,
-      this.site,
-      this.size,
-      this.type,
-      this.official,
-      this.publishedAt,
-      this.id,
-      this.mediaType});
+  MediaVideo({
+    this.iso6391,
+    this.iso31661,
+    this.name,
+    this.key,
+    this.site,
+    this.size,
+    this.type,
+    this.official,
+    this.publishedAt,
+    this.id,
+    this.mediaType,
+  });
+
   String? mediaType;
   String? iso6391;
   String? iso31661;
@@ -35,7 +37,7 @@ class MediaVideo implements MediaBase<MediaVideo> {
         size: json["size"],
         type: json["type"],
         official: json["official"],
-        publishedAt: DateTime.parse(json["published_at"]),
+        publishedAt: DateTime.tryParse(json["published_at"] ?? ''),
         id: json["id"],
       );
 

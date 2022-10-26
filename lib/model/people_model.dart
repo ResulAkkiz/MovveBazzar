@@ -21,10 +21,10 @@ class People {
   String? deathday;
   int? id;
   String? name;
-  List<String>? alsoKnownAs;
+  List<String?>? alsoKnownAs;
   int? gender;
   String? biography;
-  double? popularity;
+  num? popularity;
   String? placeOfBirth;
   String? profilePath;
   bool? adult;
@@ -32,9 +32,7 @@ class People {
   dynamic homepage;
 
   factory People.fromMap(Map<String, dynamic> json) => People(
-        birthday: json["birthday"] != null
-            ? DateTime.parse(json["birthday"] ?? DateTime.now())
-            : null,
+        birthday: DateTime.tryParse(json["birthday"] ?? ''),
         knownForDepartment: json["known_for_department"],
         deathday: json["deathday"],
         id: json["id"],
@@ -44,7 +42,7 @@ class People {
             : null,
         gender: json["gender"],
         biography: json["biography"],
-        popularity: json["popularity"].toDouble(),
+        popularity: json["popularity"],
         placeOfBirth: json["place_of_birth"],
         profilePath: json["profile_path"],
         adult: json["adult"],

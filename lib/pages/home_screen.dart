@@ -13,11 +13,9 @@ import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/pages/bookmark_screen.dart';
 import 'package:flutter_application_1/pages/homebody_screen.dart';
-import 'package:flutter_application_1/pages/movie_detail_screen.dart';
+import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/pages/profile_screen.dart';
-import 'package:flutter_application_1/pages/tv_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
-import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shake/shake.dart';
 
@@ -32,41 +30,38 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
-  late AnimationController controller;
+  late final AnimationController controller;
   bool isDone = false;
-  late IBaseTrendingModel? randomTrendMedia;
+  bool isOpened = false;
+  IBaseTrendingModel? randomTrendMedia;
+  IBaseTrendingModel? previousRandomTrendMedia;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  late PageController _pageController;
+  final PageController pageController = PageController();
   final DragController dragController = DragController();
   late final List<Widget> _pages = [
     const HomepageBody(),
-    BookMarkScreen(
-      userID: context.read<MovierViewModel>().movier!.movierID,
-    ),
+    const BookMarkScreen(),
     const ProfileScreen(),
   ];
   late final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 4 * pi)
       .chain(CurveTween(curve: Curves.bounceIn))
       .animate(controller)
     ..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        isDone = true;
-      }
+      isDone = status == AnimationStatus.completed;
     });
 
   @override
   void initState() {
     super.initState();
     controller = AnimationController(
-        duration: const Duration(milliseconds: 2000), vsync: this);
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
     ShakeDetector.autoStart(
       onPhoneShake: () {
         if (_currentIndex == 0) {
-          if (ModalRoute.of(context)!.settings.name != 'randomMedia') {
-            buildRandomMediaDialog(context, offsetAnimation);
-          }
+          buildRandomMediaDialog();
           getRandomTrendMedia();
-          controller.forward(from: 0.0);
         }
       },
       minimumShakeCount: 1,
@@ -74,19 +69,18 @@ class _HomePageState extends State<HomePage>
       shakeCountResetTime: 200,
       shakeThresholdGravity: 2.2,
     );
-    _pageController = PageController();
   }
 
   Future<void> getRandomTrendMedia() async {
-    if (mounted) {
-      randomTrendMedia =
-          await context.read<MediaViewModel>().getRandomTrendingMedia();
-    }
+    controller.forward(from: 0.0);
+    previousRandomTrendMedia = randomTrendMedia;
+    randomTrendMedia =
+        await context.read<MediaViewModel>().getRandomTrendingMedia();
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    pageController.dispose();
     super.dispose();
   }
 
@@ -116,20 +110,16 @@ class _HomePageState extends State<HomePage>
               shadowBorderRadius: 50,
               initialPosition: AnchoringPosition.bottomLeft,
               dragController: dragController,
-              child: Container(
-                height: 64,
-                width: 64,
-                decoration: BoxDecoration(
-                  color: Colors.amber.shade600,
-                  shape: BoxShape.circle,
-                ),
+              child: CircleAvatar(
+                radius: 32,
+                backgroundColor: Colors.amber.shade600,
                 child: IconButton(
-                    icon: IconEnums.shake.toImageWHColor(
-                      Colors.black,
-                    ),
-                    onPressed: () {
-                      buildRandomMediaDialog(context, offsetAnimation);
-                    }),
+                  iconSize: 24.0,
+                  icon: IconEnums.shake.toIcon(
+                    color: Colors.black,
+                  ),
+                  onPressed: buildRandomMediaDialog,
+                ),
               ),
             ),
         ],
@@ -137,170 +127,227 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Future<dynamic> buildRandomMediaDialog(
-      BuildContext context, Animation<double> offsetAnimation) {
-    Navigator.of(context)
-        .popUntil((route) => route.settings.name != 'randomMedia');
-    return showDialog(
-      routeSettings: const RouteSettings(name: 'randomMedia'),
-      context: context,
-      builder: (context) {
-        final movierViewModel = Provider.of<MovierViewModel>(context);
-        return Stack(
-          children: [
-            Material(
-              type: MaterialType.transparency,
+  Future<void> buildRandomMediaDialog() async {
+    if (!isOpened) {
+      isOpened = true;
+      isDone = false;
+      previousRandomTrendMedia = null;
+      randomTrendMedia = null;
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return Material(
+            type: MaterialType.transparency,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 90),
-                child: AnimatedBuilder(
-                  builder: (context, widget) {
-                    return Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.001)
-                          ..rotateY(offsetAnimation.value),
-                        child: isDone
-                            ? GestureDetector(
-                                onTap: () {
-                                  randomTrendMedia?.mediaType == 'tv'
-                                      ? Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TvDetailPage(
-                                                      mediaID: randomTrendMedia!
-                                                          .id!,
-                                                      movierID: movierViewModel
-                                                          .movier!.movierID)))
-                                      : Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MovieDetailPage(
-                                                      mediaID:
-                                                          randomTrendMedia!.id!,
-                                                      movierID: movierViewModel
-                                                          .movier!.movierID)));
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color:
-                                          Theme.of(context).primaryColorDark),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        //'https://image.tmdb.org/t/p/original/pFlaoHTZeyNkG83vxsAJiGzfSsa.jpg',
-                                        CachedNetworkImage(
-                                          imageUrl: getImage(
-                                              path:
-                                                  randomTrendMedia?.posterPath,
-                                              size: 'original'),
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  AspectRatio(
-                                            aspectRatio: 0.8,
-                                            child: DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 32.0,
+                  horizontal: 42.0,
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 64,
+                        bottom: 16.0,
+                      ),
+                      child: AnimatedBuilder(
+                        builder: (context, widget) {
+                          return GestureDetector(
+                            onVerticalDragUpdate: (details) {
+                              if ((details.primaryDelta ?? 0).abs() > 20) {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            onHorizontalDragUpdate: (details) {
+                              if ((details.primaryDelta ?? 0).abs() > 20) {
+                                getRandomTrendMedia();
+                              }
+                            },
+                            child: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()
+                                ..setEntry(3, 2, 0.001)
+                                ..rotateY(offsetAnimation.value),
+                              child: isDone
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                          ..pop()
+                                          ..push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                MediaDetailPage(
+                                              randomTrendMedia!.id!,
+                                              mediaType:
+                                                  randomTrendMedia!.mediaType!,
                                             ),
-                                          ),
-                                          placeholder: (context, url) {
-                                            return const SizedBox.square(
-                                              dimension: 250,
-                                              child: Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        Text(
-                                            randomTrendMedia!.mediaName
-                                                .toString(),
-                                            style: TextStyles.robotoBoldStyle
-                                                .copyWith(fontSize: 25),
-                                            textAlign: TextAlign.center),
-                                        buildRatingBar(
-                                            voteAverage:
-                                                randomTrendMedia!.voteAverage ??
-                                                    0,
-                                            voteCount:
-                                                randomTrendMedia!.voteCount ??
-                                                    0),
-                                        buildGenreList(context, [
-                                          'Science Fiction',
-                                          'Drama',
-                                          'Action'
-                                        ]),
-                                        Text(
-                                          'Shake me again, if you are not pleasent from result.',
-                                          style: TextStyles.robotoMedium12Style
-                                              .copyWith(
-                                                  fontSize: 10,
-                                                  color: Colors.white
-                                                      .withOpacity(0.4)),
-                                        ),
-                                      ],
-                                    ).separated(const SizedBox(
-                                      height: 5,
-                                    )),
-                                  ),
-                                ),
-                              )
-                            : Center(
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.longestSide *
-                                          0.7,
-                                  width:
-                                      MediaQuery.of(context).size.shortestSide *
-                                          0.7,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: Theme.of(context).primaryColorDark,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.question_mark_outlined,
-                                          color: Theme.of(context).primaryColor,
-                                          size: 150,
-                                        ),
-                                        Text(
-                                          'Try your chance.',
-                                          style: TextStyles.robotoMedium16Style,
-                                        ),
-                                        const SizedBox(
-                                          height: 15,
-                                        ),
-                                        Text(
-                                          'Shake me!!',
-                                          style: TextStyles.appBarTitleStyle,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ));
-                  },
-                  animation: offsetAnimation,
+                                          ));
+                                      },
+                                      child: randomMediaCard(randomTrendMedia!),
+                                    )
+                                  : previousRandomTrendMedia == null
+                                      ? buildRandomMediaBrief(context)
+                                      : randomMediaCard(
+                                          previousRandomTrendMedia!),
+                            ),
+                          );
+                        },
+                        animation: offsetAnimation,
+                      ),
+                    ),
+                    const Align(
+                      alignment: Alignment.topCenter,
+                      child: CloseButton(),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.amber.shade600,
+                        foregroundColor: Colors.black,
+                        child: IconButton(
+                          icon: const Icon(Icons.refresh),
+                          onPressed: getRandomTrendMedia,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        );
-      },
+          );
+        },
+      );
+      isOpened = false;
+    }
+  }
+
+  Container buildRandomMediaBrief(BuildContext context) {
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    return Container(
+      width: isLandscape ? null : MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).primaryColorDark,
+      ),
+      padding: const EdgeInsets.all(15.0),
+      child: Flex(
+        mainAxisSize: isLandscape ? MainAxisSize.min : MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        direction: isLandscape ? Axis.horizontal : Axis.vertical,
+        children: [
+          Icon(
+            Icons.question_mark_outlined,
+            color: Theme.of(context).primaryColor,
+            size: MediaQuery.of(context).size.shortestSide * 0.2,
+          ),
+          Column(
+            crossAxisAlignment: isLandscape
+                ? CrossAxisAlignment.start
+                : CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Try your chance.',
+                style: TextStyles.robotoMedium16Style,
+              ),
+              Text(
+                'Shake me!',
+                style: TextStyles.appBarTitleStyle,
+              ),
+            ],
+          ).separated(
+            const SizedBox(
+              height: 15,
+            ),
+          )
+        ],
+      ).separated(
+        const SizedBox(
+          height: 15,
+        ),
+      ),
+    );
+  }
+
+  Widget randomMediaCard(IBaseTrendingModel media) {
+    const aspectRatio = 10 / 16;
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    return Container(
+      padding: const EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.0),
+        color: Theme.of(context).primaryColorDark,
+      ),
+      child: Flex(
+        mainAxisSize: isLandscape ? MainAxisSize.min : MainAxisSize.max,
+        mainAxisAlignment:
+            isLandscape ? MainAxisAlignment.center : MainAxisAlignment.start,
+        direction: isLandscape ? Axis.horizontal : Axis.vertical,
+        children: [
+          AspectRatio(
+            aspectRatio: aspectRatio,
+            child: CachedNetworkImage(
+              imageUrl: getImage(
+                path: media.posterPath,
+                size: 'original',
+              ),
+              imageBuilder: (context, imageProvider) => DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          ),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: isLandscape
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(media.mediaName.toString(),
+                    style: TextStyles.robotoBoldStyle.copyWith(fontSize: 20),
+                    textAlign: TextAlign.center),
+                buildRatingBar(
+                    voteAverage: media.voteAverage ?? 0,
+                    voteCount: media.voteCount ?? 0),
+                buildGenreList(context, ['Science Fiction', 'Drama', 'Action']),
+                Text(
+                  'Shake me again, if you are not pleasant from result.',
+                  style: TextStyles.robotoMedium12Style.copyWith(
+                    fontSize: 10,
+                    color: Colors.white.withOpacity(0.4),
+                  ),
+                ),
+                const SizedBox(
+                  height: 8.0,
+                ),
+              ],
+            ),
+          )
+        ],
+      ).separated(
+        const SizedBox.square(
+          dimension: 15,
+        ),
+      ),
     );
   }
 
@@ -309,7 +356,12 @@ class _HomePageState extends State<HomePage>
       floating: true,
       snap: true,
       elevation: 0,
-      actions: [IconButton(onPressed: () {}, icon: IconEnums.search.toImage)],
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: IconEnums.search.toIcon(),
+        )
+      ],
       title: buildAppBarLogo(),
     );
   }
@@ -333,34 +385,31 @@ class _HomePageState extends State<HomePage>
           showElevation: true,
           onItemSelected: (index) => setState(() {
             _currentIndex = index;
-            if (_pageController.hasClients) {
-              _pageController.animateToPage(index,
-                  duration: const Duration(milliseconds: 150),
-                  curve: Curves.ease);
+            if (pageController.hasClients) {
+              pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 150),
+                curve: Curves.ease,
+              );
             }
           }),
           items: [
-            _buildNavyBarItem(
-              imageEnum: IconEnums.home,
-            ),
-            _buildNavyBarItem(
-              imageEnum: IconEnums.bookmark,
-            ),
-            _buildNavyBarItem(
-              imageEnum: IconEnums.profile,
-            ),
+            _buildNavyBarItem(IconEnums.home),
+            _buildNavyBarItem(IconEnums.bookmark),
+            _buildNavyBarItem(IconEnums.profile),
           ],
         ),
       ),
     );
   }
 
-  BottomNavyBarItem _buildNavyBarItem({
-    required IconEnums imageEnum,
-  }) {
+  BottomNavyBarItem _buildNavyBarItem(IconEnums imageEnum) {
     return BottomNavyBarItem(
-      icon: imageEnum.toImageWH,
-      title: Text(imageEnum.toName, style: TextStyles.navbarItemStyle),
+      icon: imageEnum.toIcon(dimension: 28.0),
+      title: Text(
+        imageEnum.toName,
+        style: TextStyles.navbarItemStyle,
+      ),
       activeColor: const Color(0xFF420b0b),
     );
   }

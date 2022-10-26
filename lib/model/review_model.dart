@@ -17,7 +17,7 @@ class Review {
         author: json["author"],
         authorDetails: AuthorDetails.fromMap(json["author_details"]),
         content: json["content"],
-        createdAt: DateTime.parse(json["created_at"]),
+        createdAt: DateTime.tryParse(json["created_at"] ?? ''),
         id: json["id"],
       );
 

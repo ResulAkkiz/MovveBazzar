@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
@@ -141,26 +142,16 @@ class BaseService {
     }
   }
 
-  Future<Movie> getMoviebyID(int movieID) async {
-    final String url = "$baseUrl/movie/$movieID?api_key=$apiKey";
-
-    final response = await http.get(Uri.parse(url));
-    switch (response.statusCode) {
-      case HttpStatus.ok:
-        return Movie.fromMap(jsonDecode(response.body));
-      default:
-        throw Exception(response.body);
-    }
-  }
-
-  Future<Tv> getTvbyID(int tvID) async {
-    final String url = "$baseUrl/tv/$tvID?api_key=$apiKey";
+  Future<IBaseModel> getMediabyID(int tvID, String type) async {
+    final String url = "$baseUrl/$type/$tvID?api_key=$apiKey";
 
     final response = await http.get(Uri.parse(url));
 
     switch (response.statusCode) {
       case HttpStatus.ok:
-        return Tv.fromMap(jsonDecode(response.body));
+        return (type == 'tv'
+            ? Tv.fromMap(jsonDecode(response.body))
+            : Movie.fromMap(jsonDecode(response.body))) as IBaseModel;
       default:
         throw Exception(response.body);
     }

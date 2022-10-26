@@ -8,12 +8,12 @@ import 'package:flutter_application_1/app_constants/ticket_widget.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
+import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class BookMarkScreen extends StatefulWidget {
-  final String userID;
-  const BookMarkScreen({super.key, required this.userID});
+  const BookMarkScreen({super.key});
 
   @override
   State<BookMarkScreen> createState() => _BookMarkScreenState();
@@ -21,10 +21,13 @@ class BookMarkScreen extends StatefulWidget {
 
 class _BookMarkScreenState extends State<BookMarkScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  late final TabController _tabController;
+  late final String movierID;
+
   @override
   void initState() {
-    context.read<BookmarkViewModel>().getBookMarks(widget.userID);
+    movierID = context.read<MovierViewModel>().movier!.movierID;
+    context.read<BookmarkViewModel>().getBookMarks(movierID);
     super.initState();
     _tabController = TabController(vsync: this, length: 2);
   }
@@ -176,11 +179,10 @@ class _BookMarkScreenState extends State<BookMarkScreen>
                     ),
                     IconButton(
                       onPressed: () async {
-                        bool? isSuccess =
-                            await bookmarkViewModel.deleteBookmark(
-                                widget.userID, currentBookmark.mediaID);
+                        bool? isSuccess = await bookmarkViewModel
+                            .deleteBookmark(movierID, currentBookmark.mediaID);
 
-                        bookmarkViewModel.getBookMarks(widget.userID);
+                        bookmarkViewModel.getBookMarks(movierID);
                         if (mounted) {
                           showCoolerDialog(
                             context,

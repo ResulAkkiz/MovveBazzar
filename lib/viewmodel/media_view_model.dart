@@ -1,15 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
-import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
-import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
 
@@ -48,12 +47,15 @@ class MediaViewModel extends ChangeNotifier {
   }
 
   Future<IBaseTrendingModel?> getRandomTrendingMedia() async {
-    int randomPage = Random().nextInt(20);
+    List<String> mediaList = ['tv', 'movie'];
+    mediaList.shuffle();
+
+    int randomPage = Random().nextInt(20) + 1;
     int randomIndex = Random().nextInt(20);
     try {
       final List<IBaseTrendingModel> tempTrendingModelList =
           await _jsonPlaceService.getTrendings(
-        type: 'all',
+        type: mediaList.first,
         timeInterval: 'day',
         pageNumber: randomPage,
       );
@@ -112,12 +114,8 @@ class MediaViewModel extends ChangeNotifier {
     return tempPopularMovieModelList;
   }
 
-  Future<Movie> getMoviebyID(int movieID) async {
-    return await _jsonPlaceService.getMoviebyIDs(movieID);
-  }
-
-  Future<Tv> getTvbyID(int tvID) async {
-    return await _jsonPlaceService.getTvbyIDs(tvID);
+  Future<IBaseModel> getMediabyID(int movieID, String type) async {
+    return await _jsonPlaceService.getMediabyIDs(movieID, type);
   }
 
   Future<void> getCastbyMediaIDs(int movieID, String type) async {

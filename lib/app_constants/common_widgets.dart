@@ -173,8 +173,9 @@ Future<dynamic> buildShowModelBottomSheet(BuildContext context) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox.square(
-                  dimension: MediaQuery.of(context).size.width * 0.3,
-                  child: IconEnums.danger.toImage),
+                dimension: MediaQuery.of(context).size.width * 0.3,
+                child: IconEnums.danger.toImage,
+              ),
               Flexible(
                 child: Container(
                   padding: const EdgeInsets.only(left: 15.0),
@@ -216,9 +217,9 @@ Widget buildGenreList(BuildContext context, List<String> genres) {
   );
 }
 
-Row buildRatingBar({required double voteAverage, required num voteCount}) {
+Row buildRatingBar({required num voteAverage, required num voteCount}) {
   return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
     children: [
       Text(
         voteAverage.toStringAsFixed(1),

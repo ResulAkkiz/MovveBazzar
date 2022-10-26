@@ -20,7 +20,7 @@ class PeopleCast {
   String? knownForDepartment;
   String? name;
   String? originalName;
-  double? popularity;
+  num? popularity;
   String? profilePath;
   int? castId;
   String? character;
@@ -34,7 +34,7 @@ class PeopleCast {
         knownForDepartment: json["known_for_department"],
         name: json["name"],
         originalName: json["original_name"],
-        popularity: json["popularity"].toDouble(),
+        popularity: json["popularity"],
         profilePath: json["profile_path"],
         castId: json["cast_id"],
         character: json["character"],

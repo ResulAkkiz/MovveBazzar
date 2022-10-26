@@ -4,7 +4,7 @@ class TvTrending extends IBaseTrendingModel<TvTrending> {
   String? name;
   String? originalName;
   DateTime? firstAirDate;
-  List<String>? originCountry;
+  List<String?>? originCountry;
 
   TvTrending(
       {this.name,
@@ -29,12 +29,8 @@ class TvTrending extends IBaseTrendingModel<TvTrending> {
         mediaName: json["name"],
         name: json["name"],
         originalName: json["original_name"],
-        date: json["first_air_date"] != ""
-            ? DateTime.parse(json["first_air_date"])
-            : DateTime.now(),
-        firstAirDate: json["first_air_date"] != ""
-            ? DateTime.parse(json["first_air_date"])
-            : DateTime.now(),
+        date: DateTime.tryParse(json["first_air_date"] ?? ''),
+        firstAirDate: DateTime.tryParse(json["first_air_date"] ?? ''),
         originCountry: json["originCountry"],
         adult: json["adult"],
         backdropPath: json["backdrop_path"],
@@ -44,8 +40,8 @@ class TvTrending extends IBaseTrendingModel<TvTrending> {
         posterPath: json["poster_path"],
         mediaType: json["media_type"] ?? 'tv',
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
-        popularity: json["popularity"].toDouble(),
-        voteAverage: json["vote_average"].toDouble(),
+        popularity: json["popularity"],
+        voteAverage: json["vote_average"],
         voteCount: json["vote_count"],
       );
 

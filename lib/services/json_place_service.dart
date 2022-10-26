@@ -1,13 +1,12 @@
+import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
-import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
-import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/base_service.dart';
-import 'package:flutter_application_1/model/media_images_model.dart';
 
 class JsonPlaceService extends BaseService {
   Future<List<IBaseTrendingModel>> getTrendings({
@@ -40,8 +39,8 @@ class JsonPlaceService extends BaseService {
     return await getDiscover(type: type, pageNumber: pageNumber);
   }
 
-  Future<Movie> getMoviebyIDs(int movieID) async {
-    return await getMoviebyID(movieID);
+  Future<IBaseModel> getMediabyIDs(int movieID, String type) async {
+    return await getMediabyID(movieID, type);
   }
 
   Future<List<PeopleCast>> getCastbyMediaIDs(int mediaID, String type) async {
@@ -94,9 +93,5 @@ class JsonPlaceService extends BaseService {
     return await getSimilarTvbyTvID(
       tvID,
     );
-  }
-
-  Future<Tv> getTvbyIDs(int tvID) async {
-    return await getTvbyID(tvID);
   }
 }

@@ -1,40 +1,47 @@
-import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
-import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
-import 'package:flutter_application_1/pages/splash_screen.dart';
-import 'package:flutter_application_1/pages/tv/app_bar_widget.dart';
+import 'package:flutter_application_1/pages/common/app_bar_widget.dart';
 import 'package:flutter_application_1/pages/common/cast_widget.dart';
-import 'package:flutter_application_1/pages/tv/genres_widget.dart';
+import 'package:flutter_application_1/pages/common/genres_widget.dart';
+import 'package:flutter_application_1/pages/common/loader_widget.dart';
 import 'package:flutter_application_1/pages/common/media_widget.dart';
+import 'package:flutter_application_1/pages/common/overview_widget.dart';
 import 'package:flutter_application_1/pages/common/reviews_widget.dart';
+import 'package:flutter_application_1/pages/common/showcase_widget.dart';
+import 'package:flutter_application_1/pages/movie/movie_detail_similiarthemes_widget.dart';
+import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/pages/tv/seasons_widget.dart';
-import 'package:flutter_application_1/pages/tv/showcase_widget.dart';
 import 'package:flutter_application_1/pages/tv/similar_themes_widget.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
-class TvDetailPage extends StatefulWidget {
-  const TvDetailPage(
-      {super.key, required this.mediaID, required this.movierID});
+class MediaDetailPage extends StatefulWidget {
   final int mediaID;
-  final String movierID;
+  final String mediaType;
+
+  const MediaDetailPage(
+    this.mediaID, {
+    super.key,
+    required this.mediaType,
+  });
 
   @override
-  State<TvDetailPage> createState() => _TvDetailPageState();
+  State<MediaDetailPage> createState() => _MediaDetailPageState();
 }
 
-class _TvDetailPageState extends State<TvDetailPage> {
+class _MediaDetailPageState extends State<MediaDetailPage> {
   PaletteGenerator? palette;
 
   @override
   void initState() {
     debugPrint(widget.mediaID.toString());
+
     super.initState();
   }
 
@@ -43,8 +50,8 @@ class _TvDetailPageState extends State<TvDetailPage> {
     final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
 
     return FutureBuilder(
-      future: mediaViewModel.getTvbyID(widget.mediaID),
-      builder: (context, AsyncSnapshot<Tv> snapshot) {
+      future: mediaViewModel.getMediabyID(widget.mediaID, widget.mediaType),
+      builder: (context, AsyncSnapshot<IBaseModel> snapshot) {
         if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
@@ -52,9 +59,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
         }
 
         if (snapshot.hasData) {
-          Tv tv = snapshot.data!;
+          IBaseModel media = snapshot.data!;
 
-          return loadContent(tv);
+          return loadContent(media);
         }
 
         return const SplashScreen();
@@ -62,12 +69,13 @@ class _TvDetailPageState extends State<TvDetailPage> {
     );
   }
 
-  FutureBuilder<PaletteGenerator?> loadContent(Tv tv) {
+  FutureBuilder<PaletteGenerator?> loadContent(IBaseModel media) {
     String url = getImage(
-      path: tv.backdropPath,
+      path: media.backdropPath,
       size: 'w300',
     );
     ImageProvider image = CachedNetworkImageProvider(url);
+
     return FutureBuilder(
       future: image.toPalette(
         size: const Size(80, 128),
@@ -82,7 +90,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
             Scaffold(
               extendBodyBehindAppBar: true,
               appBar: AppBarWidget(
-                tv,
+                media,
                 palette: palette,
               ),
               backgroundColor: palette?.darkMutedColor?.color,
@@ -90,58 +98,39 @@ class _TvDetailPageState extends State<TvDetailPage> {
                 child: Column(
                   children: [
                     ShowcaseWidget(
-                      tv,
+                      media,
                       image: image,
                       palette: palette,
                     ),
                     GenresWidget(
-                      tv,
+                      media,
                       palette: palette,
                     ),
-                    buildOverview(tv),
-                    MediaWidget(tv.id!, 'tv'),
-                    CastWidget(tv.id!, 'tv'),
+                    OverviewWidget(media),
+                    MediaWidget(media.id, widget.mediaType),
+                    CastWidget(media.id, widget.mediaType),
                     ReviewsWidget(
-                      tv.id!,
-                      'tv',
+                      media.id,
+                      widget.mediaType,
                       palette: palette,
                     ),
-                    SimilarThemesWidget(tv),
-                    SeasonsWidget(
-                      tv,
-                      palette: palette,
-                    ),
+                    widget.mediaType == 'tv'
+                        ? SimilarThemesWidget(media as Tv)
+                        : MovieDetailSimiliarThemesWidget(media as Movie),
+                    if (widget.mediaType == 'tv')
+                      SeasonsWidget(
+                        media as Tv,
+                        palette: palette,
+                      ),
                   ],
                 ),
               ),
             ),
             if (snapshot.connectionState == ConnectionState.waiting)
-              buildLoader(),
+              const LoaderWidget(),
           ],
         );
       },
-    );
-  }
-
-  Widget buildLoader() {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-      child: const Material(
-        type: MaterialType.transparency,
-      ),
-    );
-  }
-
-  Padding buildOverview(Tv tv) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Text(
-        tv.overview ?? 'UNKNOWN OVERVIEW',
-        style: TextStyles.robotoRegular19Style.copyWith(
-          color: palette?.darkMutedColor?.bodyTextColor ??
-              Colors.white.withOpacity(0.5),
-        ),
-      ),
     );
   }
 }
