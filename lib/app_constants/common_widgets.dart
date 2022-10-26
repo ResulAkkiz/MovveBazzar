@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
+import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 RichText buildLogo() {
   return RichText(
@@ -190,13 +193,26 @@ Future<dynamic> buildShowModelBottomSheet(BuildContext context) {
       });
 }
 
-Widget buildGenreList(BuildContext context, List<String> genres) {
+Widget buildGenreList(BuildContext context, Set<String> mediaGenresName) {
+  // List<Genre> genreList = mediaType == 'tv'
+  //     ? Provider.of<MediaViewModel>(context).tvGenreList
+  //     : Provider.of<MediaViewModel>(context).movieGenreList;
+  // debugPrint(genreList.map((e) => e.name ?? '').toList().toString());
+  // debugPrint(genreList.map((e) => e.id ?? 0).toList().toString());
+  // debugPrint(mediaGenresID.toString());
+  // genreList.removeWhere((e) => e.name == null);
+  // Set<String> genreNameList = genreList
+  //     .where((value) => mediaGenresID.contains(value.id))
+  //     .map((e) => e.name!)
+  //     .toSet();
+  // debugPrint(genreNameList.toString());
+
   return SizedBox(
     height: MediaQuery.of(context).size.shortestSide * 0.10,
     child: ListView.builder(
       shrinkWrap: true,
       scrollDirection: Axis.horizontal,
-      itemCount: genres.length,
+      itemCount: mediaGenresName.length,
       itemBuilder: (context, index) {
         return Container(
           alignment: Alignment.center,
@@ -207,7 +223,7 @@ Widget buildGenreList(BuildContext context, List<String> genres) {
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: Text(
-            genres[index],
+            mediaGenresName.elementAt(index),
             style: TextStyles.robotoMedium12Style,
           ),
         );

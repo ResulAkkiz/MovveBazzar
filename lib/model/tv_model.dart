@@ -1,3 +1,5 @@
+import 'package:flutter_application_1/model/genre_model.dart';
+
 class Tv {
   Tv({
     this.adult,
@@ -176,26 +178,6 @@ class CreatedBy {
         "name": name,
         "gender": gender,
         "profile_path": profilePath,
-      };
-}
-
-class Genre {
-  Genre({
-    this.id,
-    this.name,
-  });
-
-  int? id;
-  String? name;
-
-  factory Genre.fromMap(Map<String, dynamic> json) => Genre(
-        id: json["id"],
-        name: json["name"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name,
       };
 }
 

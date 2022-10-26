@@ -118,8 +118,8 @@ class _ShakeScreenState extends State<ShakeScreen>
                                   voteAverage:
                                       randomTrendMedia!.voteAverage ?? 0,
                                   voteCount: randomTrendMedia!.voteCount ?? 0),
-                              buildGenreList(context,
-                                  ['Science Fiction', 'Drama', 'Action']),
+                              // buildGenreList(context,
+                              //     ['Science Fiction', 'Drama', 'Action']),
                               Text(
                                 'Shake me again, if you are not pleasent from result.',
                                 style: TextStyles.robotoMedium12Style.copyWith(

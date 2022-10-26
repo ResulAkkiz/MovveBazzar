@@ -1,3 +1,5 @@
+import 'package:flutter_application_1/model/genre_model.dart';
+
 class Movie {
   Movie({
     this.adult,
@@ -116,26 +118,6 @@ class Movie {
         "video": video,
         "vote_average": voteAverage,
         "vote_count": voteCount,
-      };
-}
-
-class Genre {
-  Genre({
-    this.id,
-    this.name,
-  });
-
-  int? id;
-  String? name;
-
-  factory Genre.fromMap(Map<String, dynamic> json) => Genre(
-        id: json["id"],
-        name: json["name"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name,
       };
 }
 

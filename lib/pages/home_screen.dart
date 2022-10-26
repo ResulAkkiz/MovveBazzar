@@ -11,6 +11,7 @@ import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/pages/bookmark_screen.dart';
 import 'package:flutter_application_1/pages/homebody_screen.dart';
 import 'package:flutter_application_1/pages/movie_detail_screen.dart';
@@ -34,7 +35,10 @@ class _HomePageState extends State<HomePage>
   int _currentIndex = 0;
   late AnimationController controller;
   bool isDone = false;
+  bool isOpened = false;
   late IBaseTrendingModel? randomTrendMedia;
+  List<Genre> tvGenreList = [];
+  List<Genre> movieGenreList = [];
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   late PageController _pageController;
   final DragController dragController = DragController();
@@ -62,9 +66,7 @@ class _HomePageState extends State<HomePage>
     ShakeDetector.autoStart(
       onPhoneShake: () {
         if (_currentIndex == 0) {
-          if (ModalRoute.of(context)!.settings.name != 'randomMedia') {
-            buildRandomMediaDialog(context, offsetAnimation);
-          }
+          buildRandomMediaDialog(offsetAnimation);
           getRandomTrendMedia();
           controller.forward(from: 0.0);
         }
@@ -78,9 +80,21 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> getRandomTrendMedia() async {
-    if (mounted) {
-      randomTrendMedia =
-          await context.read<MediaViewModel>().getRandomTrendingMedia();
+    if (!mounted) return;
+    randomTrendMedia =
+        await context.read<MediaViewModel>().getRandomTrendingMedia();
+    if (!mounted) return;
+    await context.read<MediaViewModel>().getMovieGenre();
+    if (!mounted) return;
+    await context.read<MediaViewModel>().getTvGenre();
+
+    if (tvGenreList.isEmpty && mounted) {
+      tvGenreList = context.read<MediaViewModel>().tvGenreList;
+      tvGenreList.removeWhere((e) => e.name == null);
+    }
+    if (movieGenreList.isEmpty && mounted) {
+      movieGenreList = context.read<MediaViewModel>().movieGenreList;
+      movieGenreList.removeWhere((e) => e.name == null);
     }
   }
 
@@ -128,7 +142,7 @@ class _HomePageState extends State<HomePage>
                       Colors.black,
                     ),
                     onPressed: () {
-                      buildRandomMediaDialog(context, offsetAnimation);
+                      buildRandomMediaDialog(offsetAnimation);
                     }),
               ),
             ),
@@ -137,171 +151,187 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Future<dynamic> buildRandomMediaDialog(
-      BuildContext context, Animation<double> offsetAnimation) {
-    Navigator.of(context)
-        .popUntil((route) => route.settings.name != 'randomMedia');
-    return showDialog(
-      routeSettings: const RouteSettings(name: 'randomMedia'),
-      context: context,
-      builder: (context) {
-        final movierViewModel = Provider.of<MovierViewModel>(context);
-        return Stack(
-          children: [
-            Material(
-              type: MaterialType.transparency,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 90),
-                child: AnimatedBuilder(
-                  builder: (context, widget) {
-                    return Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.001)
-                          ..rotateY(offsetAnimation.value),
-                        child: isDone
-                            ? GestureDetector(
-                                onTap: () {
-                                  randomTrendMedia?.mediaType == 'tv'
-                                      ? Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TvDetailPage(
-                                                      mediaID: randomTrendMedia!
-                                                          .id!,
-                                                      movierID: movierViewModel
-                                                          .movier!.movierID)))
-                                      : Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MovieDetailPage(
-                                                      mediaID:
-                                                          randomTrendMedia!.id!,
-                                                      movierID: movierViewModel
-                                                          .movier!.movierID)));
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color:
-                                          Theme.of(context).primaryColorDark),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        //'https://image.tmdb.org/t/p/original/pFlaoHTZeyNkG83vxsAJiGzfSsa.jpg',
-                                        CachedNetworkImage(
-                                          imageUrl: getImage(
-                                              path:
-                                                  randomTrendMedia?.posterPath,
-                                              size: 'original'),
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  AspectRatio(
-                                            aspectRatio: 0.8,
-                                            child: DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.fill,
+  Future<void> buildRandomMediaDialog(Animation<double> offsetAnimation) async {
+    if (!isOpened) {
+      isOpened = true;
+      showDialog(
+        context: context,
+        builder: (context) {
+          final movierViewModel = Provider.of<MovierViewModel>(context);
+          List<Genre> genreList = randomTrendMedia?.mediaType == 'tv'
+              ? tvGenreList
+              : movieGenreList;
+          Set<String> genreNameList = genreList
+              .where((value) =>
+                  randomTrendMedia?.genreIds?.contains(value.id) ?? false)
+              .map((e) => e.name!)
+              .toSet();
+          debugPrint(genreNameList.toString());
+          return Stack(
+            children: [
+              Material(
+                type: MaterialType.transparency,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 90),
+                  child: AnimatedBuilder(
+                    builder: (context, widget) {
+                      return Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.identity()
+                            ..setEntry(3, 2, 0.001)
+                            ..rotateY(offsetAnimation.value),
+                          child: isDone
+                              ? GestureDetector(
+                                  onTap: () {
+                                    randomTrendMedia?.mediaType == 'tv'
+                                        ? Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TvDetailPage(
+                                                        mediaID:
+                                                            randomTrendMedia!
+                                                                .id!,
+                                                        movierID:
+                                                            movierViewModel
+                                                                .movier!
+                                                                .movierID)))
+                                        : Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    MovieDetailPage(
+                                                        mediaID:
+                                                            randomTrendMedia!
+                                                                .id!,
+                                                        movierID:
+                                                            movierViewModel
+                                                                .movier!
+                                                                .movierID)));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color:
+                                            Theme.of(context).primaryColorDark),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          //'https://image.tmdb.org/t/p/original/pFlaoHTZeyNkG83vxsAJiGzfSsa.jpg',
+                                          CachedNetworkImage(
+                                            imageUrl: getImage(
+                                                path: randomTrendMedia
+                                                    ?.posterPath,
+                                                size: 'original'),
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    AspectRatio(
+                                              aspectRatio: 0.8,
+                                              child: DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.fill,
+                                                  ),
                                                 ),
                                               ),
                                             ),
+                                            placeholder: (context, url) {
+                                              return const SizedBox.square(
+                                                dimension: 250,
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                              );
+                                            },
                                           ),
-                                          placeholder: (context, url) {
-                                            return const SizedBox.square(
-                                              dimension: 250,
-                                              child: Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        Text(
-                                            randomTrendMedia!.mediaName
-                                                .toString(),
-                                            style: TextStyles.robotoBoldStyle
-                                                .copyWith(fontSize: 25),
-                                            textAlign: TextAlign.center),
-                                        buildRatingBar(
-                                            voteAverage:
-                                                randomTrendMedia!.voteAverage ??
-                                                    0,
-                                            voteCount:
-                                                randomTrendMedia!.voteCount ??
-                                                    0),
-                                        buildGenreList(context, [
-                                          'Science Fiction',
-                                          'Drama',
-                                          'Action'
-                                        ]),
-                                        Text(
-                                          'Shake me again, if you are not pleasent from result.',
-                                          style: TextStyles.robotoMedium12Style
-                                              .copyWith(
-                                                  fontSize: 10,
-                                                  color: Colors.white
-                                                      .withOpacity(0.4)),
-                                        ),
-                                      ],
-                                    ).separated(const SizedBox(
-                                      height: 5,
-                                    )),
-                                  ),
-                                ),
-                              )
-                            : Center(
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.longestSide *
-                                          0.7,
-                                  width:
-                                      MediaQuery.of(context).size.shortestSide *
-                                          0.7,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: Theme.of(context).primaryColorDark,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.question_mark_outlined,
-                                          color: Theme.of(context).primaryColor,
-                                          size: 150,
-                                        ),
-                                        Text(
-                                          'Try your chance.',
-                                          style: TextStyles.robotoMedium16Style,
-                                        ),
-                                        const SizedBox(
-                                          height: 15,
-                                        ),
-                                        Text(
-                                          'Shake me!!',
-                                          style: TextStyles.appBarTitleStyle,
-                                        ),
-                                      ],
+                                          Text(
+                                              randomTrendMedia!.mediaName
+                                                  .toString(),
+                                              style: TextStyles.robotoBoldStyle
+                                                  .copyWith(fontSize: 25),
+                                              textAlign: TextAlign.center),
+                                          buildRatingBar(
+                                              voteAverage: randomTrendMedia!
+                                                      .voteAverage ??
+                                                  0,
+                                              voteCount:
+                                                  randomTrendMedia!.voteCount ??
+                                                      0),
+                                          buildGenreList(
+                                              context, genreNameList),
+                                          Text(
+                                            'Shake me again, if you are not pleasent from result.',
+                                            style: TextStyles
+                                                .robotoMedium12Style
+                                                .copyWith(
+                                                    fontSize: 10,
+                                                    color: Colors.white
+                                                        .withOpacity(0.4)),
+                                          ),
+                                        ],
+                                      ).separated(const SizedBox(
+                                        height: 5,
+                                      )),
                                     ),
                                   ),
-                                ),
-                              ));
-                  },
-                  animation: offsetAnimation,
+                                )
+                              : Center(
+                                  child: Container(
+                                    height: MediaQuery.of(context)
+                                            .size
+                                            .longestSide *
+                                        0.7,
+                                    width: MediaQuery.of(context)
+                                            .size
+                                            .shortestSide *
+                                        0.7,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Theme.of(context).primaryColorDark,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.question_mark_outlined,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            size: 150,
+                                          ),
+                                          Text(
+                                            'Try your chance.',
+                                            style:
+                                                TextStyles.robotoMedium16Style,
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          Text(
+                                            'Shake me!!',
+                                            style: TextStyles.appBarTitleStyle,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ));
+                    },
+                    animation: offsetAnimation,
+                  ),
                 ),
               ),
-            ),
-          ],
-        );
-      },
-    );
+            ],
+          );
+        },
+      ).then((value) => isOpened = false);
+    }
   }
 
   SliverAppBar _buildSliverAppBar() {
