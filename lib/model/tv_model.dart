@@ -1,5 +1,7 @@
 import 'package:flutter_application_1/model/base_model.dart';
 
+import './base_import.dart';
+
 class Tv extends IBaseModel<Tv> {
   Tv({
     required super.id,

@@ -1,3 +1,5 @@
+import './base_import.dart';
+
 abstract class IBaseModel<T> {
   IBaseModel({
     required this.id,
@@ -36,76 +38,6 @@ abstract class IBaseModel<T> {
   String? status;
 
   T fromMap(Map<String, dynamic> json);
-}
-
-class Genre {
-  Genre({
-    this.id,
-    this.name,
-  });
-
-  int? id;
-  String? name;
-
-  factory Genre.fromMap(Map<String, dynamic> json) => Genre(
-        id: json["id"],
-        name: json["name"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name,
-      };
-}
-
-class ProductionCompany {
-  ProductionCompany({
-    this.id,
-    this.logoPath,
-    this.name,
-    this.originCountry,
-  });
-
-  int? id;
-  String? logoPath;
-  String? name;
-  String? originCountry;
-
-  factory ProductionCompany.fromMap(Map<String, dynamic> json) =>
-      ProductionCompany(
-        id: json["id"],
-        logoPath: json["logo_path"],
-        name: json["name"],
-        originCountry: json["origin_country"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "logo_path": logoPath,
-        "name": name,
-        "origin_country": originCountry,
-      };
-}
-
-class ProductionCountry {
-  ProductionCountry({
-    this.iso31661,
-    this.name,
-  });
-
-  String? iso31661;
-  String? name;
-
-  factory ProductionCountry.fromMap(Map<String, dynamic> json) =>
-      ProductionCountry(
-        iso31661: json["iso_3166_1"],
-        name: json["name"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "iso_3166_1": iso31661,
-        "name": name,
-      };
 }
 
 class SpokenLanguage {
