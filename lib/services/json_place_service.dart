@@ -1,5 +1,6 @@
 import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
@@ -93,5 +94,13 @@ class JsonPlaceService extends BaseService {
     return await getSimilarTvbyTvID(
       tvID,
     );
+  }
+
+  Future<List<Genre>> getTvGenre() async {
+    return await getGenreList('tv');
+  }
+
+  Future<List<Genre>> getMovieGenre() async {
+    return await getGenreList('movie');
   }
 }

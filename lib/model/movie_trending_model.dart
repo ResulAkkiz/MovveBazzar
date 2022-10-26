@@ -1,29 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/base_trending_show_model.dart';
 
-class MovieTrending extends IBaseTrendingModel<MovieTrending> {
+class MovieTrending extends IBaseTrendingShowModel<MovieTrending> {
   String? title; //name
   String? originalTitle; //originalname
   bool? video;
+
   DateTime? releaseDate; //fi
 
-  MovieTrending(
-      {this.title,
-      this.originalTitle,
-      this.releaseDate,
-      super.adult,
-      super.backdropPath,
-      super.id,
-      super.originalLanguage,
-      super.overview,
-      super.date,
-      super.posterPath,
-      super.mediaType,
-      super.genreIds,
-      super.popularity,
-      super.mediaName,
-      this.video,
-      super.voteAverage,
-      super.voteCount});
+  MovieTrending({
+    this.title,
+    this.originalTitle,
+    this.video,
+    super.backdropPath,
+    this.releaseDate,
+    super.originalLanguage,
+    super.overview,
+    super.date,
+    super.posterPath,
+    super.genreIds,
+    super.adult,
+    super.id,
+    super.mediaType,
+    super.popularity,
+    super.voteAverage,
+    super.voteCount,
+    super.mediaName,
+  });
 
   factory MovieTrending.fromMap(Map<String, dynamic> json) => MovieTrending(
         mediaName: json["title"],

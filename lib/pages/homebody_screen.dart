@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/movie_trending_model.dart';
+import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/pages/more_trends_screen.dart';
 import 'package:flutter_application_1/services/base_service.dart';
@@ -158,26 +160,36 @@ class _HomepageBodyState extends State<HomepageBody> {
   }
 
   Widget buildMediaClip(IBaseTrendingModel<dynamic> currentMedia) {
+    late DateTime? date;
+    late String? posterPath;
+    if (currentMedia is TvTrending) {
+      date = currentMedia.firstAirDate;
+      posterPath = currentMedia.posterPath;
+    } else if (currentMedia is MovieTrending) {
+      date = currentMedia.releaseDate;
+      posterPath = currentMedia.posterPath;
+    }
     return SizedBox(
       width: MediaQuery.of(context).size.shortestSide * 0.36,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CachedNetworkImage(
-            imageUrl: getImage(path: currentMedia.posterPath, size: 'w200'),
-            imageBuilder: (context, imageProvider) => AspectRatio(
-              aspectRatio: posterAspectRatio,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
+          if (posterPath != null)
+            CachedNetworkImage(
+              imageUrl: getImage(path: posterPath, size: 'w200'),
+              imageBuilder: (context, imageProvider) => AspectRatio(
+                aspectRatio: posterAspectRatio,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
           const SizedBox(
             height: 10.0,
           ),
@@ -192,14 +204,13 @@ class _HomepageBodyState extends State<HomepageBody> {
           const SizedBox(
             height: 5.0,
           ),
-          Flexible(
-            child: Text(
-              currentMedia.date == null
-                  ? 'UNKNOWN'
-                  : DateFormat.yMMMd().format(currentMedia.date!),
-              style: TextStyles.robotoRegularStyle,
+          if (date != null)
+            Flexible(
+              child: Text(
+                DateFormat.yMMMd().format(date),
+                style: TextStyles.robotoRegularStyle,
+              ),
             ),
-          ),
         ],
       ),
     );

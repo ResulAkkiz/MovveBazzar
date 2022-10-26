@@ -1,29 +1,31 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/base_trending_show_model.dart';
 
-class TvTrending extends IBaseTrendingModel<TvTrending> {
+class TvTrending extends IBaseTrendingShowModel<TvTrending> {
   String? name;
   String? originalName;
   DateTime? firstAirDate;
   List<String?>? originCountry;
-
-  TvTrending(
-      {this.name,
-      this.originalName,
-      this.originCountry,
-      this.firstAirDate,
-      super.adult,
-      super.backdropPath,
-      super.id,
-      super.date,
-      super.originalLanguage,
-      super.overview,
-      super.posterPath,
-      super.mediaType,
-      super.genreIds,
-      super.popularity,
-      super.voteAverage,
-      super.mediaName,
-      super.voteCount});
+  TvTrending({
+    this.name,
+    this.originalName,
+    this.firstAirDate,
+    super.backdropPath,
+    this.originCountry,
+    super.originalLanguage,
+    super.overview,
+    super.date,
+    super.posterPath,
+    super.genreIds,
+    super.adult,
+    super.id,
+    super.mediaType,
+    super.popularity,
+    super.voteAverage,
+    super.voteCount,
+    super.mediaName,
+  });
 
   factory TvTrending.fromMap(Map<String, dynamic> json) => TvTrending(
         mediaName: json["name"],
