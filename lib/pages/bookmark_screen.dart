@@ -7,6 +7,7 @@ import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/ticket_widget.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
+import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:intl/intl.dart';
@@ -82,122 +83,17 @@ class _BookMarkScreenState extends State<BookMarkScreen>
             itemCount: bookmarkList.length,
             itemBuilder: (context, index) {
               BookMark currentBookmark = bookmarkList[index];
-              return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                child: Stack(
-                  alignment: AlignmentDirectional.topEnd,
-                  children: [
-                    TicketWidget(
-                      width: (208 * 10 / 16) + 16,
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: AspectRatio(
-                                aspectRatio: 10 / 16,
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: CachedNetworkImage(
-                                      imageUrl: getImage(
-                                          path: currentBookmark.imagePath,
-                                          size: 'original'),
-                                    )),
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 25.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    currentBookmark.mediaName,
-                                    style: TextStyles.robotoRegularBold24Style,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      if (currentBookmark.mediaVote != null)
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            SizedBox.square(
-                                                dimension: 20,
-                                                child:
-                                                    IconEnums.fullstar.toImage),
-                                            Text(
-                                              currentBookmark.mediaVote!
-                                                  .toStringAsFixed(1),
-                                              style: TextStyles
-                                                  .robotoBold18Style
-                                                  .copyWith(
-                                                      color: Colors.amber),
-                                            ),
-                                          ],
-                                        ).separated(
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                        ),
-                                      Chip(
-                                          backgroundColor:
-                                              Colors.amber.shade600,
-                                          label: Text(
-                                            DateFormat('dd/MM/yyyy').format(
-                                                currentBookmark.date ??
-                                                    DateTime.now()),
-                                            style: TextStyles
-                                                .robotoRegular12Style
-                                                .copyWith(
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                          ))
-                                    ],
-                                  ),
-                                  Text(
-                                    'Runtime: ${currentBookmark.runtime} min',
-                                    style: TextStyles.robotoMedium12Style,
-                                  )
-                                ],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        bool? isSuccess = await bookmarkViewModel
-                            .deleteBookmark(movierID, currentBookmark.mediaID);
-
-                        bookmarkViewModel.getBookMarks(movierID);
-                        if (mounted) {
-                          showCoolerDialog(
-                            context,
-                            types: isSuccess
-                                ? CoolAlertType.error
-                                : CoolAlertType.success,
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.close),
-                      splashColor: Colors.transparent,
-                    ),
-                  ],
-                ),
-              );
+              return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MediaDetailPage(
+                              currentBookmark.mediaID,
+                              mediaType: type),
+                        ));
+                  },
+                  child: buildTicketWidget(currentBookmark));
             },
           )
         : Center(
@@ -218,5 +114,114 @@ class _BookMarkScreenState extends State<BookMarkScreen>
               height: 20,
             )),
           );
+  }
+
+  Widget buildTicketWidget(BookMark currentBookmark) {
+    final BookmarkViewModel bookmarkViewModel =
+        context.watch<BookmarkViewModel>();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+      child: Stack(
+        alignment: AlignmentDirectional.topEnd,
+        children: [
+          TicketWidget(
+            width: (208 * 10 / 16) + 16,
+            child: Row(
+              children: [
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: AspectRatio(
+                      aspectRatio: 10 / 16,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedNetworkImage(
+                            imageUrl: getImage(
+                                path: currentBookmark.imagePath,
+                                size: 'original'),
+                          )),
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 25.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          currentBookmark.mediaName,
+                          style: TextStyles.robotoRegularBold24Style,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if (currentBookmark.mediaVote != null)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  SizedBox.square(
+                                      dimension: 20,
+                                      child: IconEnums.fullstar.toImage),
+                                  Text(
+                                    currentBookmark.mediaVote!
+                                        .toStringAsFixed(1),
+                                    style: TextStyles.robotoBold18Style
+                                        .copyWith(color: Colors.amber),
+                                  ),
+                                ],
+                              ).separated(
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                              ),
+                            Chip(
+                                backgroundColor: Colors.amber.shade600,
+                                label: Text(
+                                  DateFormat('dd/MM/yyyy').format(
+                                      currentBookmark.date ?? DateTime.now()),
+                                  style: TextStyles.robotoRegular12Style
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500),
+                                ))
+                          ],
+                        ),
+                        Text(
+                          'Runtime: ${currentBookmark.runtime} min',
+                          style: TextStyles.robotoMedium12Style,
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () async {
+              bool? isSuccess = await bookmarkViewModel.deleteBookmark(
+                  movierID, currentBookmark.mediaID);
+
+              bookmarkViewModel.getBookMarks(movierID);
+              if (mounted) {
+                showCoolerDialog(
+                  context,
+                  types:
+                      isSuccess ? CoolAlertType.error : CoolAlertType.success,
+                );
+              }
+            },
+            icon: const Icon(Icons.close),
+            splashColor: Colors.transparent,
+          ),
+        ],
+      ),
+    );
   }
 }

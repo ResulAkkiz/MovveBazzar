@@ -3,11 +3,14 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/base_trending_show_model.dart';
+import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
+import 'package:flutter_application_1/model/people_trending_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
@@ -24,6 +27,10 @@ class MediaViewModel extends ChangeNotifier {
   List<Review> reviewList = [];
   List<MovieTrending> similiarMovieList = [];
   List<TvTrending> similiarTvList = [];
+  List<Genre> tvGenreList = [];
+  List<Genre> movieGenreList = [];
+  Set<String> genreNameList = {};
+
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
 
   Future<List<IBaseTrendingModel>> getTrendings({
@@ -46,20 +53,45 @@ class MediaViewModel extends ChangeNotifier {
     return tempTrendingModelList;
   }
 
-  Future<IBaseTrendingModel?> getRandomTrendingMedia() async {
+  Future<IBaseTrendingShowModel?> getRandomTrendingMedia() async {
     List<String> mediaList = ['tv', 'movie'];
     mediaList.shuffle();
 
     int randomPage = Random().nextInt(20) + 1;
     int randomIndex = Random().nextInt(20);
     try {
+      if (tvGenreList.isEmpty) {
+        await getTvGenre();
+      }
+
+      if (movieGenreList.isEmpty) {
+        await getMovieGenre();
+      }
+
       final List<IBaseTrendingModel> tempTrendingModelList =
           await _jsonPlaceService.getTrendings(
         type: mediaList.first,
         timeInterval: 'day',
         pageNumber: randomPage,
       );
-      return tempTrendingModelList[randomIndex];
+      IBaseTrendingModel randomMedia = tempTrendingModelList[randomIndex];
+
+      if (randomMedia.mediaType == 'tv' || randomMedia.mediaType == 'movie') {
+        List<Genre> genreList =
+            randomMedia.mediaType == 'tv' ? tvGenreList : movieGenreList;
+
+        randomMedia as IBaseTrendingShowModel;
+
+        genreList.removeWhere((e) => e.name == null);
+        genreNameList = genreList
+            .where((value) => randomMedia.genreIds?.contains(value.id) ?? false)
+            .map((e) => e.name!)
+            .toSet();
+      } else {
+        genreNameList.clear();
+      }
+
+      return randomMedia as IBaseTrendingShowModel;
     } on Exception catch (e) {
       debugPrint('Error in getting random media : ${e.toString()}');
       return null;
@@ -159,6 +191,16 @@ class MediaViewModel extends ChangeNotifier {
 
   Future<void> getSimilarTvbyTvIDs(int tvID) async {
     similiarTvList = await _jsonPlaceService.getSimilarTvbyTvIDs(tvID);
+    notifyListeners();
+  }
+
+  Future<void> getTvGenre() async {
+    tvGenreList = await _jsonPlaceService.getTvGenre();
+    notifyListeners();
+  }
+
+  Future<void> getMovieGenre() async {
+    movieGenreList = await _jsonPlaceService.getMovieGenre();
     notifyListeners();
   }
 }

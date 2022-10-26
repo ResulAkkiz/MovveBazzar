@@ -4,6 +4,9 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/base_trending_show_model.dart';
+import 'package:flutter_application_1/model/movie_trending_model.dart';
+import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
@@ -115,6 +118,11 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
             itemCount: trendingList.length,
             itemBuilder: (BuildContext context, int index) {
               IBaseTrendingModel currentMedia = trendingList[index];
+              late String? posterPath;
+              if (currentMedia is IBaseTrendingShowModel) {
+                posterPath = currentMedia.posterPath;
+              }
+
               return GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
@@ -131,22 +139,22 @@ class _MoreTrendScreenState extends State<MoreTrendScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CachedNetworkImage(
-                      imageUrl:
-                          getImage(path: currentMedia.posterPath, size: 'w200'),
-                      imageBuilder: (context, imageProvider) => AspectRatio(
-                        aspectRatio: posterAspectRatio,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
+                    if (posterPath != null)
+                      CachedNetworkImage(
+                        imageUrl: getImage(path: posterPath, size: 'w200'),
+                        imageBuilder: (context, imageProvider) => AspectRatio(
+                          aspectRatio: posterAspectRatio,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
                     const SizedBox(
                       height: 10.0,
                     ),

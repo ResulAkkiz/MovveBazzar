@@ -21,13 +21,16 @@ class MediaClipWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     String? title;
     DateTime? date;
+    String? posterPath;
 
     if (media is MovieTrending) {
       title = (media as MovieTrending).title;
       date = (media as MovieTrending).releaseDate;
+      posterPath = (media as MovieTrending).posterPath;
     } else if (media is TvTrending) {
       title = (media as TvTrending).name;
       date = (media as TvTrending).firstAirDate;
+      posterPath = (media as TvTrending).posterPath;
     }
 
     return SizedBox(
@@ -37,7 +40,7 @@ class MediaClipWidget extends StatelessWidget {
         children: [
           CachedNetworkImage(
             imageUrl: getImage(
-              path: media.posterPath,
+              path: posterPath,
               size: 'w200',
             ),
             imageBuilder: (context, imageProvider) => AspectRatio(

@@ -10,7 +10,7 @@ import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
-import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/base_trending_show_model.dart';
 import 'package:flutter_application_1/pages/bookmark_screen.dart';
 import 'package:flutter_application_1/pages/homebody_screen.dart';
 import 'package:flutter_application_1/pages/media_detail_screen.dart';
@@ -33,8 +33,8 @@ class _HomePageState extends State<HomePage>
   late final AnimationController controller;
   bool isDone = false;
   bool isOpened = false;
-  IBaseTrendingModel? randomTrendMedia;
-  IBaseTrendingModel? previousRandomTrendMedia;
+  IBaseTrendingShowModel? randomTrendMedia;
+  IBaseTrendingShowModel? previousRandomTrendMedia;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final PageController pageController = PageController();
   final DragController dragController = DragController();
@@ -43,8 +43,8 @@ class _HomePageState extends State<HomePage>
     const BookMarkScreen(),
     const ProfileScreen(),
   ];
-  late final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 4 * pi)
-      .chain(CurveTween(curve: Curves.bounceIn))
+  late final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 6 * pi)
+      .chain(CurveTween(curve: Curves.easeOut))
       .animate(controller)
     ..addStatusListener((status) {
       isDone = status == AnimationStatus.completed;
@@ -53,13 +53,15 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
+
     controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
       vsync: this,
     );
+    getRandomTrendMedia();
     ShakeDetector.autoStart(
       onPhoneShake: () {
-        if (_currentIndex == 0) {
+        if (_currentIndex == 0 && ModalRoute.of(context)!.isCurrent) {
           buildRandomMediaDialog();
           getRandomTrendMedia();
         }
@@ -275,7 +277,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget randomMediaCard(IBaseTrendingModel media) {
+  Widget randomMediaCard(IBaseTrendingShowModel media) {
     const aspectRatio = 10 / 16;
     bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
@@ -292,29 +294,30 @@ class _HomePageState extends State<HomePage>
             isLandscape ? MainAxisAlignment.center : MainAxisAlignment.start,
         direction: isLandscape ? Axis.horizontal : Axis.vertical,
         children: [
-          AspectRatio(
-            aspectRatio: aspectRatio,
-            child: CachedNetworkImage(
-              imageUrl: getImage(
-                path: media.posterPath,
-                size: 'original',
-              ),
-              imageBuilder: (context, imageProvider) => DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
+          if (media.posterPath != null)
+            AspectRatio(
+              aspectRatio: aspectRatio,
+              child: CachedNetworkImage(
+                imageUrl: getImage(
+                  path: media.posterPath,
+                  size: 'original',
+                ),
+                imageBuilder: (context, imageProvider) => DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
+                placeholder: (context, url) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
               ),
-              placeholder: (context, url) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
             ),
-          ),
           Flexible(
             child: Column(
               crossAxisAlignment: isLandscape
@@ -328,7 +331,7 @@ class _HomePageState extends State<HomePage>
                 buildRatingBar(
                     voteAverage: media.voteAverage ?? 0,
                     voteCount: media.voteCount ?? 0),
-                buildGenreList(context, ['Science Fiction', 'Drama', 'Action']),
+                buildGenreList(context),
                 Text(
                   'Shake me again, if you are not pleasant from result.',
                   style: TextStyles.robotoMedium12Style.copyWith(

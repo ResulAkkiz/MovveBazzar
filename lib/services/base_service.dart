@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
@@ -296,26 +297,28 @@ class BaseService {
     }
     return reviewList;
   }
-}
 
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+  Future<List<Genre>> getGenreList(String type) async {
+    //https://api.themoviedb.org/3/genre/movie/list?api_key=07f5723af6c9503db9c8ce9493c975ce
+    final String url = "$baseUrl/genre/$type/list?api_key=$apiKey";
+    debugPrint(url);
+    final response = await http.get(Uri.parse(url));
 
 //  var jsonBody = jsonDecode(response.body)['results'];
+    List<Genre> genreList = [];
+    var jsonBody = jsonDecode(response.body)['genres'];
 
-//         switch (response.statusCode) {
-//           case HttpStatus.ok:
-//             if (jsonBody is List) {
-//               for (var singleMap in jsonBody) {
-//                 mediaList.add(MediaImage.fromMap(singleMap));
-//               }
-//             }
-//             break;
-//           default:
-//             throw Exception(response.body);
-//         }
-//         break;
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        if (jsonBody is List) {
+          for (var singleMap in jsonBody) {
+            genreList.add(Genre.fromMap(singleMap));
+          }
+        }
+        break;
+      default:
+        throw Exception(response.body);
+    }
+    return genreList;
+  }
+}

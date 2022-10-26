@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
+import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 RichText buildLogo() {
   return RichText(
@@ -191,7 +193,8 @@ Future<dynamic> buildShowModelBottomSheet(BuildContext context) {
       });
 }
 
-Widget buildGenreList(BuildContext context, List<String> genres) {
+Widget buildGenreList(BuildContext context) {
+  Set<String> genres = context.read<MediaViewModel>().genreNameList;
   return SizedBox(
     height: MediaQuery.of(context).size.shortestSide * 0.10,
     child: ListView.builder(
@@ -208,7 +211,7 @@ Widget buildGenreList(BuildContext context, List<String> genres) {
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: Text(
-            genres[index],
+            genres.elementAt(index),
             style: TextStyles.robotoMedium12Style,
           ),
         );
