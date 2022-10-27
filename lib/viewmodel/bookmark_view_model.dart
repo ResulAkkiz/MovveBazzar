@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 import 'package:flutter_application_1/services/firebase_db_service.dart';
 
 class BookmarkViewModel extends ChangeNotifier {
@@ -20,7 +21,7 @@ class BookmarkViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> searchingBookmark(int mediaID) async {
+  Future<void> searchingBookmark(Id mediaID) async {
     BookMark? bookMark = bookmarkList.firstWhereOrNull(
       (BookMark element) => element.mediaID == mediaID,
     );
@@ -39,7 +40,7 @@ class BookmarkViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteBookmark(String movierID, int mediaID) async {
+  Future<bool> deleteBookmark(String movierID, Id mediaID) async {
     try {
       isBookmarked = !await firebaseDbService.deleteBookmark(movierID, mediaID);
       getBookMarks(movierID);

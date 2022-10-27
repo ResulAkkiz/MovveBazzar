@@ -1,14 +1,14 @@
 class Movier {
-  String movierID;
-  String movierEmail;
-  String movierUsername;
-  String? movierAge;
-  DateTime? movierBirthday;
-  String? movierGender;
-  String? movierPhotoUrl;
-  String? movierPhoneNumber;
+  final String movierID;
+  final String movierEmail;
+  final String movierUsername;
+  final String? movierAge;
+  final DateTime? movierBirthday;
+  final String? movierGender;
+  final String? movierPhotoUrl;
+  final String? movierPhoneNumber;
 
-  Movier({
+  const Movier({
     required this.movierID,
     required this.movierEmail,
     required this.movierUsername,
@@ -35,19 +35,15 @@ class Movier {
   factory Movier.fromMap(Map<String, dynamic> map) {
     return Movier(
       movierID: map['movierID'] as String,
-      movierEmail: map['movierEmail'] as String,
-      movierUsername: map['movierUsername'] as String,
+      movierEmail: map['movierEmail'],
+      movierUsername: map['movierUsername'],
       movierAge: map['movierAge'] != null ? map['movierAge'] as String : null,
       movierBirthday: map['movierBirthday'] != null
           ? DateTime.fromMicrosecondsSinceEpoch(map['movierBirthday'] * 1000)
           : null,
       movierGender: map['movierGender'],
-      movierPhotoUrl: map['movierPhotoUrl'] != null
-          ? map['movierPhotoUrl'] as String
-          : null,
-      movierPhoneNumber: map['movierPhoneNumber'] != null
-          ? map['movierPhoneNumber'] as String
-          : null,
+      movierPhotoUrl: map['movierPhotoUrl'],
+      movierPhoneNumber: map['movierPhoneNumber'],
     );
   }
 

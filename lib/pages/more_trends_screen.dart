@@ -5,8 +5,6 @@ import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/base_trending_show_model.dart';
-import 'package:flutter_application_1/model/movie_trending_model.dart';
-import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';

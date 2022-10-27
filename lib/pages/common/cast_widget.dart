@@ -6,11 +6,12 @@ import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
 
 class CastWidget extends StatefulWidget {
-  final int mediaID;
+  final Id mediaID;
   final String mediaType;
 
   const CastWidget(this.mediaID, this.mediaType, {Key? key}) : super(key: key);

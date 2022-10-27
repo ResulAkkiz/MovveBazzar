@@ -10,9 +10,9 @@ import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
-import 'package:flutter_application_1/model/people_trending_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
 
 class MediaViewModel extends ChangeNotifier {
@@ -146,16 +146,16 @@ class MediaViewModel extends ChangeNotifier {
     return tempPopularMovieModelList;
   }
 
-  Future<IBaseModel> getMediabyID(int movieID, String type) async {
+  Future<IBaseModel> getMediabyID(Id movieID, String type) async {
     return await _jsonPlaceService.getMediabyIDs(movieID, type);
   }
 
-  Future<void> getCastbyMediaIDs(int movieID, String type) async {
+  Future<void> getCastbyMediaIDs(Id movieID, String type) async {
     peopleCastList = await _jsonPlaceService.getCastbyMediaIDs(movieID, type);
     notifyListeners();
   }
 
-  Future<void> getMediasbyMediaID(int mediaID, String type) async {
+  Future<void> getMediasbyMediaID(Id mediaID, String type) async {
     mediaList = [];
 
     List<MediaVideo>? videoList = type == 'tv'
@@ -174,7 +174,7 @@ class MediaViewModel extends ChangeNotifier {
   }
 
   Future<void> getReviewsbyMediaID(
-    int mediaID,
+    Id mediaID,
     int pageNumber,
     String type,
   ) async {
@@ -183,13 +183,13 @@ class MediaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSimilarMoviebyMovieIDs(int movieID) async {
+  Future<void> getSimilarMoviebyMovieIDs(Id movieID) async {
     similiarMovieList =
         await _jsonPlaceService.getSimilarMoviebyMovieIDs(movieID);
     notifyListeners();
   }
 
-  Future<void> getSimilarTvbyTvIDs(int tvID) async {
+  Future<void> getSimilarTvbyTvIDs(Id tvID) async {
     similiarTvList = await _jsonPlaceService.getSimilarTvbyTvIDs(tvID);
     notifyListeners();
   }

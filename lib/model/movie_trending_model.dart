@@ -1,27 +1,25 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/base_trending_show_model.dart';
 
 class MovieTrending extends IBaseTrendingShowModel<MovieTrending> {
-  String? title; //name
-  String? originalTitle; //originalname
-  bool? video;
+  final String? title;
+  final String? originalTitle;
+  final bool? video;
+  final DateTime? releaseDate;
 
-  DateTime? releaseDate; //fi
-
-  MovieTrending({
+  const MovieTrending({
     this.title,
     this.originalTitle,
     this.video,
-    super.backdropPath,
     this.releaseDate,
+    super.id,
+    super.backdropPath,
     super.originalLanguage,
     super.overview,
     super.date,
     super.posterPath,
     super.genreIds,
     super.adult,
-    super.id,
     super.mediaType,
     super.popularity,
     super.voteAverage,

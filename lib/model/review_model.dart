@@ -7,11 +7,11 @@ class Review {
     this.id,
   });
 
-  String? author;
-  AuthorDetails? authorDetails;
-  String? content;
-  DateTime? createdAt;
-  String? id;
+  final String? author;
+  final AuthorDetails? authorDetails;
+  final String? content;
+  final DateTime? createdAt;
+  final String? id;
 
   factory Review.fromMap(Map<String, dynamic> json) => Review(
         author: json["author"],
@@ -31,15 +31,15 @@ class Review {
 }
 
 class AuthorDetails {
-  AuthorDetails({
+  const AuthorDetails({
     this.name,
     this.username,
     this.avatarPath,
   });
 
-  String? name;
-  String? username;
-  String? avatarPath;
+  final String? name;
+  final String? username;
+  final String? avatarPath;
 
   factory AuthorDetails.fromMap(Map<String, dynamic> json) => AuthorDetails(
         name: json["name"],

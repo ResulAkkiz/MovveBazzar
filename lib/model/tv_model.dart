@@ -3,7 +3,7 @@ import 'package:flutter_application_1/model/base_model.dart';
 import './base_import.dart';
 
 class Tv extends IBaseModel<Tv> {
-  Tv({
+  const Tv({
     required super.id,
     super.overview,
     super.popularity,
@@ -38,22 +38,22 @@ class Tv extends IBaseModel<Tv> {
     this.type,
   });
 
-  List<CreatedBy>? createdBy;
-  List<int?>? episodeRunTime;
-  DateTime? firstAirDate;
-  bool? inProduction;
-  List<String?>? languages;
-  DateTime? lastAirDate;
-  LastEpisodeToAir? lastEpisodeToAir;
-  String? name;
-  dynamic nextEpisodeToAir;
-  List<Network>? networks;
-  int? numberOfEpisodes;
-  int? numberOfSeasons;
-  List<String?>? originCountry;
-  String? originalName;
-  List<Season>? seasons;
-  String? type;
+  final List<CreatedBy>? createdBy;
+  final List<int?>? episodeRunTime;
+  final DateTime? firstAirDate;
+  final bool? inProduction;
+  final List<String?>? languages;
+  final DateTime? lastAirDate;
+  final LastEpisodeToAir? lastEpisodeToAir;
+  final String? name;
+  final dynamic nextEpisodeToAir;
+  final List<Network>? networks;
+  final int? numberOfEpisodes;
+  final int? numberOfSeasons;
+  final List<String?>? originCountry;
+  final String? originalName;
+  final List<Season>? seasons;
+  final String? type;
 
   @override
   Tv fromMap(Map<String, dynamic> json) => Tv.fromMap(json);
@@ -141,7 +141,7 @@ class Tv extends IBaseModel<Tv> {
 }
 
 class CreatedBy {
-  CreatedBy({
+  const CreatedBy({
     this.id,
     this.creditId,
     this.name,
@@ -149,11 +149,11 @@ class CreatedBy {
     this.profilePath,
   });
 
-  int? id;
-  String? creditId;
-  String? name;
-  int? gender;
-  String? profilePath;
+  final int? id;
+  final String? creditId;
+  final String? name;
+  final int? gender;
+  final String? profilePath;
 
   factory CreatedBy.fromMap(Map<String, dynamic> json) => CreatedBy(
         id: json["id"],
@@ -173,7 +173,7 @@ class CreatedBy {
 }
 
 class LastEpisodeToAir {
-  LastEpisodeToAir({
+  const LastEpisodeToAir({
     this.airDate,
     this.episodeNumber,
     this.id,
@@ -188,18 +188,18 @@ class LastEpisodeToAir {
     this.voteCount,
   });
 
-  DateTime? airDate;
-  int? episodeNumber;
-  int? id;
-  String? name;
-  String? overview;
-  String? productionCode;
-  int? runtime;
-  int? seasonNumber;
-  int? showId;
-  String? stillPath;
-  num? voteAverage;
-  int? voteCount;
+  final DateTime? airDate;
+  final int? episodeNumber;
+  final int? id;
+  final String? name;
+  final String? overview;
+  final String? productionCode;
+  final int? runtime;
+  final int? seasonNumber;
+  final int? showId;
+  final String? stillPath;
+  final num? voteAverage;
+  final int? voteCount;
 
   factory LastEpisodeToAir.fromMap(Map<String, dynamic> json) =>
       LastEpisodeToAir(
@@ -234,17 +234,17 @@ class LastEpisodeToAir {
 }
 
 class Network {
-  Network({
+  const Network({
     this.id,
     this.name,
     this.logoPath,
     this.originCountry,
   });
 
-  int? id;
-  String? name;
-  String? logoPath;
-  String? originCountry;
+  final int? id;
+  final String? name;
+  final String? logoPath;
+  final String? originCountry;
 
   factory Network.fromMap(Map<String, dynamic> json) => Network(
         id: json["id"],
@@ -262,7 +262,7 @@ class Network {
 }
 
 class Season {
-  Season({
+  const Season({
     this.airDate,
     this.episodeCount,
     this.id,
@@ -272,13 +272,13 @@ class Season {
     this.seasonNumber,
   });
 
-  DateTime? airDate;
-  int? episodeCount;
-  int? id;
-  String? name;
-  String? overview;
-  String? posterPath;
-  int? seasonNumber;
+  final DateTime? airDate;
+  final int? episodeCount;
+  final int? id;
+  final String? name;
+  final String? overview;
+  final String? posterPath;
+  final int? seasonNumber;
 
   factory Season.fromMap(Map<String, dynamic> json) {
     return Season(

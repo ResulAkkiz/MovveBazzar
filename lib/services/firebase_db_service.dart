@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
-
 import 'package:flutter_application_1/model/movier.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 import 'package:flutter_application_1/services/db_base.dart';
 
 class FirebaseDbService implements DbBase {
@@ -57,7 +57,7 @@ class FirebaseDbService implements DbBase {
   }
 
   @override
-  Future<bool> deleteBookmark(String movierID, int mediaID) async {
+  Future<bool> deleteBookmark(String movierID, Id mediaID) async {
     firestore
         .collection('bookmarks')
         .doc(movierID)

@@ -1,16 +1,16 @@
 import 'package:flutter_application_1/model/media_base_model.dart';
 
 class MediaImage implements MediaBase<MediaImage> {
-  num? aspectRatio;
-  int? height;
-  dynamic iso6391;
-  String? filePath;
-  num? voteAverage;
-  int? voteCount;
-  int? width;
-  String? mediaType;
+  final num? aspectRatio;
+  final int? height;
+  final dynamic iso6391;
+  final String? filePath;
+  final num? voteAverage;
+  final int? voteCount;
+  final int? width;
+  final String? mediaType;
 
-  MediaImage({
+  const MediaImage({
     this.aspectRatio,
     this.height,
     this.iso6391,

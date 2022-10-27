@@ -7,6 +7,7 @@ import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 import 'package:flutter_application_1/services/base_service.dart';
 
 class JsonPlaceService extends BaseService {
@@ -24,13 +25,13 @@ class JsonPlaceService extends BaseService {
 
   Future<List<TvTrending>> getTvPopulars({required int pageNumber}) async {
     return await getPopulars<TvTrending>(
-        type: 'tv', pageNumber: pageNumber, model: TvTrending());
+        type: 'tv', pageNumber: pageNumber, model: const TvTrending());
   }
 
   Future<List<MovieTrending>> getMoviePopulars(
       {required int pageNumber}) async {
     return await getPopulars<MovieTrending>(
-        type: 'movie', pageNumber: pageNumber, model: MovieTrending());
+        type: 'movie', pageNumber: pageNumber, model: const MovieTrending());
   }
 
   Future<List<IBaseTrendingModel>> getDiscovers({
@@ -40,40 +41,40 @@ class JsonPlaceService extends BaseService {
     return await getDiscover(type: type, pageNumber: pageNumber);
   }
 
-  Future<IBaseModel> getMediabyIDs(int movieID, String type) async {
+  Future<IBaseModel> getMediabyIDs(Id movieID, String type) async {
     return await getMediabyID(movieID, type);
   }
 
-  Future<List<PeopleCast>> getCastbyMediaIDs(int mediaID, String type) async {
+  Future<List<PeopleCast>> getCastbyMediaIDs(Id mediaID, String type) async {
     return await getCastbyMediaID(mediaID, type);
   }
 
   Future<List<MediaImage>?> getMovieImagebyMediaIDs(
-    int mediaID,
+    Id mediaID,
   ) async {
     return await getImagesbymediaID(mediaID, 'movie');
   }
 
   Future<List<MediaImage>?> getTvImagebyMediaIDs(
-    int mediaID,
+    Id mediaID,
   ) async {
     return await getImagesbymediaID(mediaID, 'tv');
   }
 
   Future<List<MediaVideo>?> getMovieVideobyMediaIDs(
-    int mediaID,
+    Id mediaID,
   ) async {
     return await getVideosbymediaID(mediaID, 'movie');
   }
 
   Future<List<MediaVideo>?> getTvVideobyMediaIDs(
-    int mediaID,
+    Id mediaID,
   ) async {
     return await getVideosbymediaID(mediaID, 'tv');
   }
 
   Future<List<Review>> getReviewsbyMediaID(
-    int mediaID,
+    Id mediaID,
     int pageNumber,
     String type,
   ) async {
@@ -84,13 +85,13 @@ class JsonPlaceService extends BaseService {
     );
   }
 
-  Future<List<MovieTrending>> getSimilarMoviebyMovieIDs(int movieID) async {
+  Future<List<MovieTrending>> getSimilarMoviebyMovieIDs(Id movieID) async {
     return await getSimilarMoviebyMovieID(
       movieID,
     );
   }
 
-  Future<List<TvTrending>> getSimilarTvbyTvIDs(int tvID) async {
+  Future<List<TvTrending>> getSimilarTvbyTvIDs(Id tvID) async {
     return await getSimilarTvbyTvID(
       tvID,
     );

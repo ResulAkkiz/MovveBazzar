@@ -4,12 +4,13 @@ import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/review_model.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
 class ReviewsWidget extends StatefulWidget {
-  final int mediaID;
+  final Id mediaID;
   final String mediaType;
   final PaletteGenerator? palette;
 

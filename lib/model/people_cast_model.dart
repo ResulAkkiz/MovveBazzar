@@ -1,5 +1,5 @@
 class PeopleCast {
-  PeopleCast({
+  const PeopleCast({
     this.adult,
     this.gender,
     this.id,
@@ -14,18 +14,18 @@ class PeopleCast {
     this.order,
   });
 
-  bool? adult;
-  int? gender;
-  int? id;
-  String? knownForDepartment;
-  String? name;
-  String? originalName;
-  num? popularity;
-  String? profilePath;
-  int? castId;
-  String? character;
-  String? creditId;
-  int? order;
+  final bool? adult;
+  final int? gender;
+  final int? id;
+  final String? knownForDepartment;
+  final String? name;
+  final String? originalName;
+  final num? popularity;
+  final String? profilePath;
+  final int? castId;
+  final String? character;
+  final String? creditId;
+  final int? order;
 
   factory PeopleCast.fromMap(Map<String, dynamic> json) => PeopleCast(
         adult: json["adult"],

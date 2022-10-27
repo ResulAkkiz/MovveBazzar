@@ -1,5 +1,6 @@
 import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/model/movier.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 
 abstract class DbBase {
   Future<bool> saveMovier(Movier movier);
@@ -7,5 +8,5 @@ abstract class DbBase {
   Future<Movier?> getMovierByID(String movierID);
   Future<bool> saveBookMark(BookMark bookmarkMedia);
   Future<List<BookMark>> getBookMarks(String movierID);
-  Future<bool> deleteBookmark(String movierID, int mediaID);
+  Future<bool> deleteBookmark(String movierID, Id mediaID);
 }

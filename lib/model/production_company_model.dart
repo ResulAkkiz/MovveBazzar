@@ -1,15 +1,15 @@
 class ProductionCompany {
-  ProductionCompany({
+  const ProductionCompany({
     this.id,
     this.logoPath,
     this.name,
     this.originCountry,
   });
 
-  int? id;
-  String? logoPath;
-  String? name;
-  String? originCountry;
+  final int? id;
+  final String? logoPath;
+  final String? name;
+  final String? originCountry;
 
   factory ProductionCompany.fromMap(Map<String, dynamic> json) =>
       ProductionCompany(

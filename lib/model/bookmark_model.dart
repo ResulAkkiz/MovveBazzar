@@ -1,12 +1,15 @@
+import 'package:flutter_application_1/model/type_definitions.dart';
+
 class BookMark {
-  String mediaType;
-  int mediaID;
-  String mediaName;
-  num? mediaVote;
-  String? imagePath;
-  DateTime? date;
-  int? runtime;
-  BookMark({
+  final String mediaType;
+  final Id mediaID;
+  final String mediaName;
+  final num? mediaVote;
+  final String? imagePath;
+  final DateTime? date;
+  final int? runtime;
+
+  const BookMark({
     required this.date,
     required this.mediaVote,
     required this.mediaType,
@@ -24,7 +27,7 @@ class BookMark {
       'mediaName': mediaName,
       'imagePath': imagePath,
       'date': date?.millisecondsSinceEpoch,
-      'runtime': runtime
+      'runtime': runtime,
     };
   }
 
@@ -34,11 +37,11 @@ class BookMark {
       date: map['date'] != null
           ? DateTime.fromMicrosecondsSinceEpoch(map['date'] * 1000)
           : null,
-      mediaVote: map['mediaVote'] as num,
-      mediaType: map['mediaType'] as String,
-      mediaID: map['mediaID'] as int,
-      mediaName: map['mediaName'] as String,
-      imagePath: map['imagePath'] as String,
+      mediaVote: map['mediaVote'],
+      mediaType: map['mediaType'],
+      mediaID: map['mediaID'],
+      mediaName: map['mediaName'],
+      imagePath: map['imagePath'],
     );
   }
 

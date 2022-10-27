@@ -2,13 +2,14 @@
 import 'package:flutter_application_1/model/base_trending_model.dart';
 
 class TrendingPeople extends IBaseTrendingModel<TrendingPeople> {
-  String? name;
-  String? originalName;
-  int? gender;
-  String? knownForDepartment;
-  String? profilePath;
-  dynamic knownFor;
-  TrendingPeople({
+  final String? name;
+  final String? originalName;
+  final int? gender;
+  final String? knownForDepartment;
+  final String? profilePath;
+  final dynamic knownFor;
+
+  const TrendingPeople({
     this.name,
     this.originalName,
     this.gender,

@@ -5,6 +5,7 @@ import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 import 'package:flutter_application_1/pages/common/app_bar_widget.dart';
 import 'package:flutter_application_1/pages/common/cast_widget.dart';
 import 'package:flutter_application_1/pages/common/genres_widget.dart';
@@ -22,7 +23,7 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
 class MediaDetailPage extends StatefulWidget {
-  final int mediaID;
+  final Id mediaID;
   final String mediaType;
 
   const MediaDetailPage(

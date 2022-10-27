@@ -58,7 +58,6 @@ class _HomePageState extends State<HomePage>
       duration: const Duration(seconds: 3),
       vsync: this,
     );
-    getRandomTrendMedia();
     ShakeDetector.autoStart(
       onPhoneShake: () {
         if (_currentIndex == 0 && ModalRoute.of(context)!.isCurrent) {
@@ -68,7 +67,7 @@ class _HomePageState extends State<HomePage>
       },
       minimumShakeCount: 1,
       shakeSlopTimeMS: 500,
-      shakeCountResetTime: 200,
+      shakeCountResetTime: 1000,
       shakeThresholdGravity: 2.2,
     );
   }

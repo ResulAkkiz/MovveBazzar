@@ -8,15 +8,15 @@ abstract class IBaseTrendingShowModel<T> extends IBaseTrendingModel<T> {
   final String? posterPath;
   final List<int?>? genreIds;
 
-  IBaseTrendingShowModel({
+  const IBaseTrendingShowModel({
     this.genreIds,
     this.date,
     this.overview,
     this.backdropPath,
     this.originalLanguage,
     this.posterPath,
-    super.adult,
     super.id,
+    super.adult,
     super.mediaType,
     super.popularity,
     super.voteAverage,

@@ -13,6 +13,7 @@ import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
+import 'package:flutter_application_1/model/type_definitions.dart';
 import 'package:http/http.dart' as http;
 
 class BaseService {
@@ -143,7 +144,7 @@ class BaseService {
     }
   }
 
-  Future<IBaseModel> getMediabyID(int tvID, String type) async {
+  Future<IBaseModel> getMediabyID(Id tvID, String type) async {
     final String url = "$baseUrl/$type/$tvID?api_key=$apiKey";
 
     final response = await http.get(Uri.parse(url));
@@ -158,7 +159,7 @@ class BaseService {
     }
   }
 
-  Future<List<MovieTrending>> getSimilarMoviebyMovieID(int movieID) async {
+  Future<List<MovieTrending>> getSimilarMoviebyMovieID(Id movieID) async {
     //https: //api.themoviedb.org/3/movie/760161/similar?api_key=07f5723af6c9503db9c8ce9493c975ce
     final String url = "$baseUrl/movie/$movieID/similar?api_key=$apiKey";
 
@@ -178,7 +179,7 @@ class BaseService {
     }
   }
 
-  Future<List<TvTrending>> getSimilarTvbyTvID(int tvID) async {
+  Future<List<TvTrending>> getSimilarTvbyTvID(Id tvID) async {
     //https: //api.themoviedb.org/3/movie/760161/similar?api_key=07f5723af6c9503db9c8ce9493c975ce
     final String url = "$baseUrl/tv/$tvID/similar?api_key=$apiKey";
 
@@ -198,7 +199,7 @@ class BaseService {
     }
   }
 
-  Future<List<PeopleCast>> getCastbyMediaID(int mediaID, String type) async {
+  Future<List<PeopleCast>> getCastbyMediaID(Id mediaID, String type) async {
     //https://api.themoviedb.org/3/movie/2/credits?api_key=07f5723af6c9503db9c8ce9493c975ce
     final String url = "$baseUrl/$type/$mediaID/credits?api_key=$apiKey";
 
@@ -221,7 +222,7 @@ class BaseService {
   }
 
   Future<List<MediaImage>?> getImagesbymediaID(
-    int mediaID,
+    Id mediaID,
     String type,
   ) async {
     final String url = "$baseUrl/$type/$mediaID/images?api_key=$apiKey";
@@ -246,7 +247,7 @@ class BaseService {
   }
 
   Future<List<MediaVideo>?> getVideosbymediaID(
-    int mediaID,
+    Id mediaID,
     String type,
   ) async {
     final String url = "$baseUrl/$type/$mediaID/videos?api_key=$apiKey";
@@ -271,7 +272,7 @@ class BaseService {
   }
 
   Future<List<Review>> getReviewbyMediaID(
-    int mediaID,
+    Id mediaID,
     int pageNumber,
     String type,
   ) async {

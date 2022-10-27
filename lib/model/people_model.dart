@@ -1,5 +1,5 @@
 class People {
-  People({
+  const People({
     this.birthday,
     this.knownForDepartment,
     this.deathday,
@@ -16,20 +16,20 @@ class People {
     this.homepage,
   });
 
-  DateTime? birthday;
-  String? knownForDepartment;
-  String? deathday;
-  int? id;
-  String? name;
-  List<String?>? alsoKnownAs;
-  int? gender;
-  String? biography;
-  num? popularity;
-  String? placeOfBirth;
-  String? profilePath;
-  bool? adult;
-  String? imdbId;
-  dynamic homepage;
+  final DateTime? birthday;
+  final String? knownForDepartment;
+  final String? deathday;
+  final int? id;
+  final String? name;
+  final List<String?>? alsoKnownAs;
+  final int? gender;
+  final String? biography;
+  final num? popularity;
+  final String? placeOfBirth;
+  final String? profilePath;
+  final bool? adult;
+  final String? imdbId;
+  final dynamic homepage;
 
   factory People.fromMap(Map<String, dynamic> json) => People(
         birthday: DateTime.tryParse(json["birthday"] ?? ''),

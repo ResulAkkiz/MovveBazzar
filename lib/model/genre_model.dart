@@ -1,11 +1,11 @@
 class Genre {
-  Genre({
+  const Genre({
     this.id,
     this.name,
   });
 
-  int? id;
-  String? name;
+  final int? id;
+  final String? name;
 
   factory Genre.fromMap(Map<String, dynamic> json) => Genre(
         id: json["id"],

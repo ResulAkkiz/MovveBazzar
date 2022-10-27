@@ -1,7 +1,7 @@
 import 'package:flutter_application_1/model/media_base_model.dart';
 
 class MediaVideo implements MediaBase<MediaVideo> {
-  MediaVideo({
+  const MediaVideo({
     this.iso6391,
     this.iso31661,
     this.name,
@@ -15,17 +15,17 @@ class MediaVideo implements MediaBase<MediaVideo> {
     this.mediaType,
   });
 
-  String? mediaType;
-  String? iso6391;
-  String? iso31661;
-  String? name;
-  String? key;
-  String? site;
-  int? size;
-  String? type;
-  bool? official;
-  DateTime? publishedAt;
-  String? id;
+  final String? mediaType;
+  final String? iso6391;
+  final String? iso31661;
+  final String? name;
+  final String? key;
+  final String? site;
+  final int? size;
+  final String? type;
+  final bool? official;
+  final DateTime? publishedAt;
+  final String? id;
 
   factory MediaVideo.fromMap(Map<String, dynamic> json) => MediaVideo(
         mediaType: 'video',

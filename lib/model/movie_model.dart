@@ -3,7 +3,7 @@ import 'package:flutter_application_1/model/base_model.dart';
 import './base_import.dart';
 
 class Movie extends IBaseModel<Movie> {
-  Movie({
+  const Movie({
     required super.id,
     super.overview,
     super.popularity,
@@ -31,15 +31,15 @@ class Movie extends IBaseModel<Movie> {
     this.video,
   });
 
-  dynamic belongsToCollection;
-  int? budget;
-  String? imdbId;
-  String? originalTitle;
-  DateTime? releaseDate;
-  int? revenue;
-  int? runtime;
-  String? title;
-  bool? video;
+  final dynamic belongsToCollection;
+  final int? budget;
+  final String? imdbId;
+  final String? originalTitle;
+  final DateTime? releaseDate;
+  final int? revenue;
+  final int? runtime;
+  final String? title;
+  final bool? video;
 
   @override
   Movie fromMap(Map<String, dynamic> json) => Movie.fromMap(json);

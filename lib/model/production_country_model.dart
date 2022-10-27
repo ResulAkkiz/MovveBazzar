@@ -1,11 +1,11 @@
 class ProductionCountry {
-  ProductionCountry({
+  const ProductionCountry({
     this.iso31661,
     this.name,
   });
 
-  String? iso31661;
-  String? name;
+  final String? iso31661;
+  final String? name;
 
   factory ProductionCountry.fromMap(Map<String, dynamic> json) =>
       ProductionCountry(

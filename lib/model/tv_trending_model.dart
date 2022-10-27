@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/base_trending_show_model.dart';
 
 class TvTrending extends IBaseTrendingShowModel<TvTrending> {
-  String? name;
-  String? originalName;
-  DateTime? firstAirDate;
-  List<String?>? originCountry;
-  TvTrending({
+  final String? name;
+  final String? originalName;
+  final DateTime? firstAirDate;
+  final List<String?>? originCountry;
+
+  const TvTrending({
     this.name,
     this.originalName,
     this.firstAirDate,
