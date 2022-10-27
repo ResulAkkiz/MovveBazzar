@@ -10,7 +10,6 @@ import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
-import 'package:flutter_application_1/model/people_trending_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
@@ -29,6 +28,7 @@ class MediaViewModel extends ChangeNotifier {
   List<TvTrending> similiarTvList = [];
   List<Genre> tvGenreList = [];
   List<Genre> movieGenreList = [];
+  List<IBaseTrendingModel>? queryResultList = [];
   Set<String> genreNameList = {};
 
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
@@ -201,6 +201,11 @@ class MediaViewModel extends ChangeNotifier {
 
   Future<void> getMovieGenre() async {
     movieGenreList = await _jsonPlaceService.getMovieGenre();
+    notifyListeners();
+  }
+
+  Future<void> searchQueries(String? query, String? page) async {
+    queryResultList = await _jsonPlaceService.searchQueries(query, page);
     notifyListeners();
   }
 }

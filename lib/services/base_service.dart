@@ -3,15 +3,19 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/base_search_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
+import 'package:flutter_application_1/model/movie_search_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
+import 'package:flutter_application_1/model/people_search_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
+import 'package:flutter_application_1/model/tv_search_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -320,5 +324,46 @@ class BaseService {
         throw Exception(response.body);
     }
     return genreList;
+  }
+
+  //https://api.themoviedb.org/3/search/multi?api_key=07f5723af6c9503db9c8ce9493c975ce&query=
+
+  Future<List<IBaseSearchModel>?> searchQuery(
+      {String? query, String? page = '1'}) async {
+    if (query != null) {
+      query.trim();
+      query.replaceAll('', '%20');
+      final String url =
+          "$baseUrl/search/multi?api_key=$apiKey&query=$query&page=$page";
+      final response = await http.get(Uri.parse(url));
+      List<IBaseSearchModel<dynamic>> resultList = [];
+      var jsonBody = jsonDecode(response.body)['results'];
+      switch (response.statusCode) {
+        case HttpStatus.ok:
+          if (jsonBody is List) {
+            for (var singleMap in jsonBody) {
+              switch (singleMap["media_type"]) {
+                case "movie":
+                  resultList.add(MovieSearch().);
+                  break;
+                case "tv":
+                  resultList.add(TvSearch().fromMap(singleMap));
+                  break;
+                case "person":
+                  resultList.add(PeopleSearch().fromMap(singleMap));
+                  break;
+                default:
+                  debugPrint('another type model pass here');
+              }
+            }
+          }
+          break;
+        default:
+          throw Exception(response.body);
+      }
+      return resultList;
+    } else {
+      return null;
+    }
   }
 }

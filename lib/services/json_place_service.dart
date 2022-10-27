@@ -103,4 +103,9 @@ class JsonPlaceService extends BaseService {
   Future<List<Genre>> getMovieGenre() async {
     return await getGenreList('movie');
   }
+
+  Future<List<IBaseTrendingModel>?> searchQueries(
+      String? query, String? page) async {
+    return await searchQuery(query: query, page: page);
+  }
 }

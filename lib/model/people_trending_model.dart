@@ -1,14 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_application_1/model/base_trending_model.dart';
 
-class TrendingPeople extends IBaseTrendingModel<TrendingPeople> {
+class PeopleTrending extends IBaseTrendingModel<PeopleTrending> {
   String? name;
   String? originalName;
   int? gender;
   String? knownForDepartment;
   String? profilePath;
   dynamic knownFor;
-  TrendingPeople({
+  PeopleTrending({
     this.name,
     this.originalName,
     this.gender,
@@ -24,7 +24,8 @@ class TrendingPeople extends IBaseTrendingModel<TrendingPeople> {
     super.mediaName,
   });
 
-  factory TrendingPeople.fromMap(Map<String, dynamic> json) => TrendingPeople(
+  factory PeopleTrending.fromMap(Map<String, dynamic> json) => PeopleTrending(
+        mediaName: json["name"],
         adult: json['adult'],
         id: json['id'],
         name: json['name'],
@@ -37,7 +38,7 @@ class TrendingPeople extends IBaseTrendingModel<TrendingPeople> {
         knownFor: json['known_for'],
       );
   @override
-  TrendingPeople fromMap(Map<String, dynamic> json) {
-    return TrendingPeople.fromMap(json);
+  PeopleTrending fromMap(Map<String, dynamic> json) {
+    return PeopleTrending.fromMap(json);
   }
 }
