@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
@@ -27,7 +28,7 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _AppBarWidgetState extends State<AppBarWidget> {
-  late final IBaseModel media = widget.media;
+  late IBaseModel media = widget.media;
 
   @override
   void initState() {
@@ -61,50 +62,52 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-        IconButton(
-          onPressed: () {
-            String? title;
-            int? runtime;
-            DateTime? date;
+        if (media is IBaseShowModel)
+          IconButton(
+            onPressed: () {
+              String? title;
+              int? runtime;
+              DateTime? date;
 
-            if (media is Movie) {
-              title = (media as Movie).title;
-              runtime = (media as Movie).runtime;
-              date = (media as Movie).releaseDate;
-            } else if (media is Tv) {
-              title = (media as Tv).name;
-              if ((media as Tv).episodeRunTime?.isNotEmpty ?? false) {
-                runtime = (media as Tv).episodeRunTime?.first;
+              if (media is Movie) {
+                title = (media as Movie).title;
+                runtime = (media as Movie).runtime;
+                date = (media as Movie).releaseDate;
+              } else if (media is Tv) {
+                title = (media as Tv).name;
+                if ((media as Tv).episodeRunTime?.isNotEmpty ?? false) {
+                  runtime = (media as Tv).episodeRunTime?.first;
+                }
+                date = (media as Tv).firstAirDate;
               }
-              date = (media as Tv).firstAirDate;
-            }
 
-            bookmarkViewModel.isBookmarked
-                ? bookmarkViewModel.deleteBookmark(
-                    movierViewModel.movier!.movierID, media.id)
-                : bookmarkViewModel.saveBookMarks(
-                    movierViewModel.movier!.movierID,
-                    BookMark(
-                      runtime: runtime,
-                      date: date,
-                      mediaType: 'tv',
-                      mediaID: media.id,
-                      mediaVote: media.voteAverage,
-                      mediaName: title ?? '',
-                      imagePath: media.posterPath,
-                    ),
-                  );
-          },
-          icon: CircleAvatar(
-            radius: 16.0,
-            backgroundColor: palette?.darkMutedColor?.color.withOpacity(0.4) ??
-                Colors.black38,
-            foregroundColor: palette?.lightVibrantColor?.color,
-            child: bookmarkViewModel.isBookmarked
-                ? const Icon(Icons.bookmark)
-                : const Icon(Icons.bookmark_border),
+              bookmarkViewModel.isBookmarked
+                  ? bookmarkViewModel.deleteBookmark(
+                      movierViewModel.movier!.movierID, media.id)
+                  : bookmarkViewModel.saveBookMarks(
+                      movierViewModel.movier!.movierID,
+                      BookMark(
+                        runtime: runtime,
+                        date: date,
+                        mediaType: 'tv',
+                        mediaID: media.id,
+                        mediaVote: (media as IBaseShowModel).voteAverage,
+                        mediaName: title ?? '',
+                        imagePath: media.posterPath,
+                      ),
+                    );
+            },
+            icon: CircleAvatar(
+              radius: 16.0,
+              backgroundColor:
+                  palette?.darkMutedColor?.color.withOpacity(0.4) ??
+                      Colors.black38,
+              foregroundColor: palette?.lightVibrantColor?.color,
+              child: bookmarkViewModel.isBookmarked
+                  ? const Icon(Icons.bookmark)
+                  : const Icon(Icons.bookmark_border),
+            ),
           ),
-        ),
       ],
     );
   }

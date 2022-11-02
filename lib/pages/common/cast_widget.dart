@@ -6,6 +6,8 @@ import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
+import 'package:flutter_application_1/pages/media_detail_screen.dart';
+import 'package:flutter_application_1/pages/person_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -53,22 +55,35 @@ class _CastWidgetState extends State<CastWidget> {
 
                     return Column(
                       children: [
-                        ClipOval(
-                          child: person.profilePath != null
-                              ? CachedNetworkImage(
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.contain,
-                                  imageUrl: getImage(
-                                    path: person.profilePath ?? '',
-                                    size: 'original',
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return PersonDetailScreen(
+                                    personID: person.id!,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: ClipOval(
+                            child: person.profilePath != null
+                                ? CachedNetworkImage(
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.contain,
+                                    imageUrl: getImage(
+                                      path: person.profilePath ?? '',
+                                      size: 'original',
+                                    ),
+                                  )
+                                : CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: Colors.transparent,
+                                    child: ImageEnums.celebrity.toImage,
                                   ),
-                                )
-                              : CircleAvatar(
-                                  radius: 30,
-                                  backgroundColor: Colors.transparent,
-                                  child: ImageEnums.celebrity.toImage,
-                                ),
+                          ),
                         ),
                         Text(
                           textAlign: TextAlign.center,

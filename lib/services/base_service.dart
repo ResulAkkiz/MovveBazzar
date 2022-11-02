@@ -3,19 +3,24 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_model.dart';
-import 'package:flutter_application_1/model/base_search_model.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
+
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/castcredit_model.dart';
 import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
-import 'package:flutter_application_1/model/movie_search_model.dart';
+
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
-import 'package:flutter_application_1/model/people_search_model.dart';
+import 'package:flutter_application_1/model/people_model.dart';
+
+import 'package:flutter_application_1/model/people_trending_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
+
 import 'package:flutter_application_1/model/tv_model.dart';
-import 'package:flutter_application_1/model/tv_search_model.dart';
+
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -147,16 +152,34 @@ class BaseService {
     }
   }
 
-  Future<IBaseModel> getMediabyID(int tvID, String type) async {
-    final String url = "$baseUrl/$type/$tvID?api_key=$apiKey";
+  Future<IBaseModel> getDetailbyID(int mediaID, String type) async {
+    final String url = "$baseUrl/$type/$mediaID?api_key=$apiKey";
 
     final response = await http.get(Uri.parse(url));
 
     switch (response.statusCode) {
       case HttpStatus.ok:
-        return (type == 'tv'
-            ? Tv.fromMap(jsonDecode(response.body))
-            : Movie.fromMap(jsonDecode(response.body))) as IBaseModel;
+        switch (type) {
+          case 'tv':
+            return Tv.fromMap(jsonDecode(response.body));
+          case 'movie':
+            return Movie.fromMap(jsonDecode(response.body));
+          default:
+            return Person.fromMap(jsonDecode(response.body));
+        }
+      default:
+        throw Exception(response.body);
+    }
+  }
+
+  Future<Person> getPersonbyID(int personID) async {
+    final String url = "$baseUrl/person/$personID?api_key=$apiKey";
+
+    final response = await http.get(Uri.parse(url));
+
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        return Person.fromMap(jsonDecode(response.body));
       default:
         throw Exception(response.body);
     }
@@ -224,10 +247,32 @@ class BaseService {
     }
   }
 
+  Future<List<CastCredit>> getCastCreditbyPersonID(int personID) async {
+    final String url =
+        "$baseUrl/person/$personID/combined_credits?api_key=$apiKey";
+
+    final response = await http.get(Uri.parse(url));
+
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        var jsonBody = (jsonDecode(response.body))['cast'];
+        List<CastCredit> castCreditList = [];
+        if (jsonBody is List) {
+          for (Map<String, dynamic> singleMap in jsonBody) {
+            castCreditList.add(CastCredit.fromMap(singleMap));
+          }
+        }
+        return castCreditList;
+      default:
+        throw Exception(response.body);
+    }
+  }
+
   Future<List<MediaImage>?> getImagesbymediaID(
     int mediaID,
     String type,
   ) async {
+    // https: //api.themoviedb.org/3/person/287/images?api_key=07f5723af6c9503db9c8ce9493c975ce
     final String url = "$baseUrl/$type/$mediaID/images?api_key=$apiKey";
 
     final response = await http.get(Uri.parse(url));
@@ -235,7 +280,34 @@ class BaseService {
 
     switch (response.statusCode) {
       case HttpStatus.ok:
-        var jsonBody = jsonDecode(response.body)['backdrops'];
+        var jsonBody = type != 'person'
+            ? jsonDecode(response.body)['backdrops']
+            : jsonDecode(response.body)['profiles'];
+        if (jsonBody is List) {
+          for (var singleMap in jsonBody) {
+            imageList.add(MediaImage.fromMap(singleMap));
+          }
+        }
+        break;
+      default:
+        throw Exception(response.body);
+    }
+
+    return imageList;
+  }
+
+  Future<List<MediaImage>?> getTaggedImagesbyPersonID(
+    int mediaID,
+  ) async {
+    // https: //api.themoviedb.org/3/person/287/images?api_key=07f5723af6c9503db9c8ce9493c975ce
+    final String url = "$baseUrl/person/$mediaID/tagged_images?api_key=$apiKey";
+
+    final response = await http.get(Uri.parse(url));
+    List<MediaImage> imageList = [];
+
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        var jsonBody = jsonDecode(response.body)['results'];
         if (jsonBody is List) {
           for (var singleMap in jsonBody) {
             imageList.add(MediaImage.fromMap(singleMap));
@@ -328,7 +400,7 @@ class BaseService {
 
   //https://api.themoviedb.org/3/search/multi?api_key=07f5723af6c9503db9c8ce9493c975ce&query=
 
-  Future<List<IBaseSearchModel>?> searchQuery(
+  Future<List<IBaseTrendingModel>?> searchQuery(
       {String? query, String? page = '1'}) async {
     if (query != null) {
       query.trim();
@@ -336,7 +408,7 @@ class BaseService {
       final String url =
           "$baseUrl/search/multi?api_key=$apiKey&query=$query&page=$page";
       final response = await http.get(Uri.parse(url));
-      List<IBaseSearchModel<dynamic>> resultList = [];
+      List<IBaseTrendingModel<dynamic>> resultList = [];
       var jsonBody = jsonDecode(response.body)['results'];
       switch (response.statusCode) {
         case HttpStatus.ok:
@@ -344,13 +416,13 @@ class BaseService {
             for (var singleMap in jsonBody) {
               switch (singleMap["media_type"]) {
                 case "movie":
-                  resultList.add(MovieSearch().);
+                  resultList.add(MovieTrending.fromMap(singleMap));
                   break;
                 case "tv":
-                  resultList.add(TvSearch().fromMap(singleMap));
+                  resultList.add(TvTrending.fromMap(singleMap));
                   break;
                 case "person":
-                  resultList.add(PeopleSearch().fromMap(singleMap));
+                  resultList.add(PeopleTrending.fromMap(singleMap));
                   break;
                 default:
                   debugPrint('another type model pass here');

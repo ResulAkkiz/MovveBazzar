@@ -1,8 +1,8 @@
-import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
 
 import './base_import.dart';
 
-class Movie extends IBaseModel<Movie> {
+class Movie extends IBaseShowModel<Movie> {
   Movie({
     required super.id,
     super.overview,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/pages/common/media_clip_widget.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
 
 class MovieDetailSimiliarThemesWidget extends StatefulWidget {
-  final Movie movie;
+  final IBaseShowModel movie;
 
   const MovieDetailSimiliarThemesWidget(this.movie, {Key? key})
       : super(key: key);
@@ -20,7 +21,7 @@ class MovieDetailSimiliarThemesWidget extends StatefulWidget {
 
 class _MovieDetailSimiliarThemesWidgetState
     extends State<MovieDetailSimiliarThemesWidget> {
-  late final Movie movie = widget.movie;
+  late final IBaseShowModel movie = widget.movie;
 
   final double aspectRatio = 10 / 16;
 

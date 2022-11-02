@@ -9,8 +9,6 @@ import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
 import 'package:provider/provider.dart';
 
-import 'pages/search_screen.dart';
-
 ThemeData _theme = lightTheme;
 
 void main() async {
@@ -61,7 +59,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: _theme,
       title: 'Movve',
-      home: const SearchScreen(),
+      home: const LandingScreen(),
     );
   }
 }

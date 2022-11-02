@@ -1,11 +1,14 @@
 import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
+import 'package:flutter_application_1/model/castcredit_model.dart';
 import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
+
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/base_service.dart';
 
@@ -40,8 +43,8 @@ class JsonPlaceService extends BaseService {
     return await getDiscover(type: type, pageNumber: pageNumber);
   }
 
-  Future<IBaseModel> getMediabyIDs(int movieID, String type) async {
-    return await getMediabyID(movieID, type);
+  Future<IBaseModel> getDetailbyIDs(int detailID, String type) async {
+    return await getDetailbyID(detailID, type);
   }
 
   Future<List<PeopleCast>> getCastbyMediaIDs(int mediaID, String type) async {
@@ -72,6 +75,12 @@ class JsonPlaceService extends BaseService {
     return await getVideosbymediaID(mediaID, 'tv');
   }
 
+  Future<List<MediaImage>?> getPersonImagebyPersonIDs(
+    int mediaID,
+  ) async {
+    return await getImagesbymediaID(mediaID, 'person');
+  }
+
   Future<List<Review>> getReviewsbyMediaID(
     int mediaID,
     int pageNumber,
@@ -82,6 +91,10 @@ class JsonPlaceService extends BaseService {
       pageNumber,
       type,
     );
+  }
+
+  Future<List<MediaImage>?> getTaggedImagesbyPersonIDs(int personID) async {
+    return await getTaggedImagesbyPersonID(personID);
   }
 
   Future<List<MovieTrending>> getSimilarMoviebyMovieIDs(int movieID) async {
@@ -107,5 +120,9 @@ class JsonPlaceService extends BaseService {
   Future<List<IBaseTrendingModel>?> searchQueries(
       String? query, String? page) async {
     return await searchQuery(query: query, page: page);
+  }
+
+  Future<List<CastCredit>> getCastCreditbyPersonIDs(int personID) async {
+    return await getCastCreditbyPersonID(personID);
   }
 }
