@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
+import 'package:flutter_application_1/base_page.dart';
 import 'package:flutter_application_1/model/base_show_model.dart';
-import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/pages/common/media_clip_widget.dart';
 import 'package:flutter_application_1/pages/media_detail_screen.dart';
@@ -20,7 +20,7 @@ class MovieDetailSimiliarThemesWidget extends StatefulWidget {
 }
 
 class _MovieDetailSimiliarThemesWidgetState
-    extends State<MovieDetailSimiliarThemesWidget> {
+    extends BaseState<MovieDetailSimiliarThemesWidget> {
   late final IBaseShowModel movie = widget.movie;
 
   final double aspectRatio = 10 / 16;
@@ -29,12 +29,26 @@ class _MovieDetailSimiliarThemesWidgetState
   void initState() {
     super.initState();
 
-    context.read<MediaViewModel>().getSimilarMoviebyMovieIDs(movie.id);
+    reload();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+
+    reload();
+  }
+
+  void reload() {
+    context
+        .read<MediaViewModel>()
+        .getSimilarMoviebyMovieIDs(movie.id)
+        .then((_) => setState(() {}));
   }
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
+    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
     final List<MovieTrending> similiarMovieList =
         mediaViewModel.similiarMovieList;
 

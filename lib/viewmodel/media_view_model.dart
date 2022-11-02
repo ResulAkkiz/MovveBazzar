@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_model.dart';
-import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/base_trending_show_model.dart';
 import 'package:flutter_application_1/model/castcredit_model.dart';
@@ -14,7 +13,6 @@ import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/people_trending_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
-
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
 
@@ -26,7 +24,7 @@ class MediaViewModel extends ChangeNotifier {
   List<TvTrending> popularTvModelList = [];
   List<MovieTrending> popularMovieModelList = [];
   List<PeopleCast> peopleCastList = [];
-  List<MediaBase>? mediaList = [];
+  List<MediaBase> mediaList = [];
   List<Review> reviewList = [];
   List<MovieTrending> similiarMovieList = [];
   List<TvTrending> similiarTvList = [];
@@ -163,7 +161,7 @@ class MediaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getMediasbyMediaID(int mediaID, String type) async {
+  Future<List<MediaBase>> getMediasbyMediaID(int mediaID, String type) async {
     mediaList = [];
     List<MediaImage>? imageList = [];
     List<MediaImage>? taggedImageList = [];
@@ -186,14 +184,18 @@ class MediaViewModel extends ChangeNotifier {
     }
 
     if (videoList != null) {
-      mediaList!.addAll(videoList);
+      mediaList.addAll(videoList);
     }
-    mediaList!.addAll(imageList!);
+    if (imageList != null) {
+      mediaList.addAll(imageList);
+    }
     if (taggedImageList != null) {
-      mediaList!.addAll(taggedImageList);
+      mediaList.addAll(taggedImageList);
     }
 
     notifyListeners();
+
+    return mediaList;
   }
 
   Future<void> getReviewsbyMediaID(

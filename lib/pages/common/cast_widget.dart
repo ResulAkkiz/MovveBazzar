@@ -5,8 +5,8 @@ import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
+import 'package:flutter_application_1/base_page.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
-import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/pages/person_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
@@ -21,19 +21,31 @@ class CastWidget extends StatefulWidget {
   State<CastWidget> createState() => _CastWidgetState();
 }
 
-class _CastWidgetState extends State<CastWidget> {
+class _CastWidgetState extends BaseState<CastWidget> {
   @override
   void initState() {
     super.initState();
 
+    reload();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+
+    reload();
+  }
+
+  void reload() {
     context
         .read<MediaViewModel>()
-        .getCastbyMediaIDs(widget.mediaID, widget.mediaType);
+        .getCastbyMediaIDs(widget.mediaID, widget.mediaType)
+        .then((_) => setState(() {}));
   }
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
+    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
     final List<PeopleCast> people = mediaViewModel.peopleCastList;
 
     return people.isEmpty
