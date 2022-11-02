@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
+import 'package:flutter_application_1/base_page.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
@@ -18,28 +19,44 @@ class MediaWidget extends StatefulWidget {
   State<MediaWidget> createState() => _MediaWidgetState();
 }
 
-class _MediaWidgetState extends State<MediaWidget> {
+class _MediaWidgetState extends BaseState<MediaWidget> {
+  List<MediaBase> mediaList = [];
+
   @override
   void initState() {
     super.initState();
 
+    reload();
+  }
+
+  // @override
+  // void didPopNext() {
+  //   super.didPopNext();
+
+  //   reload();
+  // }
+
+  void reload() {
     context
         .read<MediaViewModel>()
-        .getMediasbyMediaID(widget.mediaID, widget.mediaType);
+        .getMediasbyMediaID(widget.mediaID, widget.mediaType)
+        .then((value) => setState(() {
+              mediaList = value;
+            }));
   }
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
+    // final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
 
-    return mediaViewModel.mediaList?.isEmpty ?? true
+    return mediaList.isEmpty
         ? const SizedBox.shrink()
         : SizedBox(
             height: MediaQuery.of(context).size.shortestSide * 0.7,
             child: PageView.builder(
-              itemCount: mediaViewModel.mediaList?.length,
+              itemCount: mediaList.length,
               itemBuilder: (context, index) {
-                MediaBase currentMedia = mediaViewModel.mediaList![index];
+                MediaBase currentMedia = mediaList[index];
 
                 if (currentMedia is MediaImage) {
                   return SizedBox(

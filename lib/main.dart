@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/app_constants/custom_theme.dart';
 import 'package:flutter_application_1/model/custom_theme_data.dart';
+import 'package:flutter_application_1/navigation_service.dart';
 import 'package:flutter_application_1/pages/landing_screen.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
@@ -60,6 +61,8 @@ class MyApp extends StatelessWidget {
       theme: _theme,
       title: 'Movve',
       home: const LandingScreen(),
+      navigatorKey: NavigationService.instance.navigationKey,
+      navigatorObservers: [NavigationService.instance.routeObserver],
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/base_page.dart';
 import 'package:flutter_application_1/model/review_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -24,19 +25,31 @@ class ReviewsWidget extends StatefulWidget {
   State<ReviewsWidget> createState() => _ReviewsWidgetState();
 }
 
-class _ReviewsWidgetState extends State<ReviewsWidget> {
+class _ReviewsWidgetState extends BaseState<ReviewsWidget> {
   @override
   void initState() {
     super.initState();
 
+    reload();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+
+    reload();
+  }
+
+  void reload() {
     context
         .read<MediaViewModel>()
-        .getReviewsbyMediaID(widget.mediaID, 1, widget.mediaType);
+        .getReviewsbyMediaID(widget.mediaID, 1, widget.mediaType)
+        .then((_) => setState(() {}));
   }
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
+    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
     final PaletteGenerator? palette = widget.palette;
 
     return mediaViewModel.reviewList.isNotEmpty

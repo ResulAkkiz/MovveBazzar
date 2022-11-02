@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
+import 'package:flutter_application_1/base_page.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/pages/common/media_clip_widget.dart';
@@ -16,7 +17,7 @@ class SimilarThemesWidget extends StatefulWidget {
   State<SimilarThemesWidget> createState() => _SimilarThemesWidgetState();
 }
 
-class _SimilarThemesWidgetState extends State<SimilarThemesWidget> {
+class _SimilarThemesWidgetState extends BaseState<SimilarThemesWidget> {
   late final Tv tv = widget.tv;
 
   final double aspectRatio = 10 / 16;
@@ -25,12 +26,26 @@ class _SimilarThemesWidgetState extends State<SimilarThemesWidget> {
   void initState() {
     super.initState();
 
-    context.read<MediaViewModel>().getSimilarTvbyTvIDs(tv.id);
+    reload();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+
+    reload();
+  }
+
+  void reload() {
+    context
+        .read<MediaViewModel>()
+        .getSimilarTvbyTvIDs(tv.id)
+        .then((_) => setState(() {}));
   }
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
+    final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
     final List<TvTrending> similiarTvList = mediaViewModel.similiarTvList;
 
     return similiarTvList.isEmpty
