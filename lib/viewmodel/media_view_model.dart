@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/base_trending_show_model.dart';
+import 'package:flutter_application_1/model/castcredit_model.dart';
 import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_application_1/model/movie_trending_model.dart';
 import 'package:flutter_application_1/model/people_cast_model.dart';
 import 'package:flutter_application_1/model/people_trending_model.dart';
 import 'package:flutter_application_1/model/review_model.dart';
+
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/services/json_place_service.dart';
 
@@ -29,6 +32,11 @@ class MediaViewModel extends ChangeNotifier {
   List<TvTrending> similiarTvList = [];
   List<Genre> tvGenreList = [];
   List<Genre> movieGenreList = [];
+  List<IBaseTrendingModel>? queryResultList = [];
+  List<TvTrending> queryTvList = [];
+  List<MovieTrending> queryMovieList = [];
+  List<PeopleTrending> queryPeopleList = [];
+  List<CastCredit> castCreditList = [];
   Set<String> genreNameList = {};
 
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
@@ -146,8 +154,8 @@ class MediaViewModel extends ChangeNotifier {
     return tempPopularMovieModelList;
   }
 
-  Future<IBaseModel> getMediabyID(int movieID, String type) async {
-    return await _jsonPlaceService.getMediabyIDs(movieID, type);
+  Future<IBaseModel> getDetailbyID(int movieID, String type) async {
+    return await _jsonPlaceService.getDetailbyIDs(movieID, type);
   }
 
   Future<void> getCastbyMediaIDs(int movieID, String type) async {
@@ -157,18 +165,33 @@ class MediaViewModel extends ChangeNotifier {
 
   Future<void> getMediasbyMediaID(int mediaID, String type) async {
     mediaList = [];
-
-    List<MediaVideo>? videoList = type == 'tv'
-        ? await _jsonPlaceService.getTvVideobyMediaIDs(mediaID)
-        : await _jsonPlaceService.getMovieVideobyMediaIDs(mediaID);
+    List<MediaImage>? imageList = [];
+    List<MediaImage>? taggedImageList = [];
+    List<MediaVideo>? videoList = [];
+    switch (type) {
+      case 'tv':
+        videoList = await _jsonPlaceService.getTvVideobyMediaIDs(mediaID);
+        imageList = await _jsonPlaceService.getTvImagebyMediaIDs(mediaID);
+        break;
+      case 'movie':
+        videoList = await _jsonPlaceService.getMovieVideobyMediaIDs(mediaID);
+        imageList = await _jsonPlaceService.getMovieImagebyMediaIDs(mediaID);
+        break;
+      case 'person':
+        imageList = await _jsonPlaceService.getPersonImagebyPersonIDs(mediaID);
+        taggedImageList =
+            await _jsonPlaceService.getTaggedImagesbyPersonIDs(mediaID);
+        break;
+      default:
+    }
 
     if (videoList != null) {
       mediaList!.addAll(videoList);
     }
-    List<MediaImage>? imageList = type != 'tv'
-        ? await _jsonPlaceService.getMovieImagebyMediaIDs(mediaID)
-        : await _jsonPlaceService.getTvImagebyMediaIDs(mediaID);
     mediaList!.addAll(imageList!);
+    if (taggedImageList != null) {
+      mediaList!.addAll(taggedImageList);
+    }
 
     notifyListeners();
   }
@@ -201,6 +224,27 @@ class MediaViewModel extends ChangeNotifier {
 
   Future<void> getMovieGenre() async {
     movieGenreList = await _jsonPlaceService.getMovieGenre();
+    notifyListeners();
+  }
+
+  Future<void> getCastCreditbyPersonID(int personID) async {
+    castCreditList = await _jsonPlaceService.getCastCreditbyPersonIDs(personID);
+    notifyListeners();
+  }
+
+  Future<void> searchQueries(String? query, String? page) async {
+    if (query != '') {
+      List<IBaseTrendingModel>? tempList =
+          await _jsonPlaceService.searchQueries(query, page);
+      if (tempList != null) {
+        queryResultList!.addAll(tempList);
+      }
+      debugPrint(
+          'tempList ${tempList?.length} ,queryResultList ${queryResultList?.length} ');
+    }
+    queryTvList = queryResultList!.whereType<TvTrending>().toList();
+    queryMovieList = queryResultList!.whereType<MovieTrending>().toList();
+    queryPeopleList = queryResultList!.whereType<PeopleTrending>().toList();
     notifyListeners();
   }
 }

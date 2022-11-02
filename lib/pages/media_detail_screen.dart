@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_application_1/pages/common/app_bar_widget.dart';
@@ -49,9 +50,9 @@ class _MediaDetailPageState extends State<MediaDetailPage> {
   Widget build(BuildContext context) {
     final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
 
-    return FutureBuilder(
-      future: mediaViewModel.getMediabyID(widget.mediaID, widget.mediaType),
-      builder: (context, AsyncSnapshot<IBaseModel> snapshot) {
+    return FutureBuilder<IBaseModel>(
+      future: mediaViewModel.getDetailbyID(widget.mediaID, widget.mediaType),
+      builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
@@ -71,7 +72,7 @@ class _MediaDetailPageState extends State<MediaDetailPage> {
 
   FutureBuilder<PaletteGenerator?> loadContent(IBaseModel media) {
     String url = getImage(
-      path: media.backdropPath,
+      path: media is IBaseShowModel ? media.backdropPath : media.posterPath,
       size: 'w300',
     );
     ImageProvider image = CachedNetworkImageProvider(url);
@@ -97,15 +98,17 @@ class _MediaDetailPageState extends State<MediaDetailPage> {
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    ShowcaseWidget(
-                      media,
-                      image: image,
-                      palette: palette,
-                    ),
-                    GenresWidget(
-                      media,
-                      palette: palette,
-                    ),
+                    if (media is IBaseShowModel)
+                      ShowcaseWidget(
+                        media,
+                        image: image,
+                        palette: palette,
+                      ),
+                    if (media is IBaseShowModel)
+                      GenresWidget(
+                        media,
+                        palette: palette,
+                      ),
                     OverviewWidget(media),
                     MediaWidget(media.id, widget.mediaType),
                     CastWidget(media.id, widget.mediaType),

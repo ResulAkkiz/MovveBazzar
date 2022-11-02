@@ -5,14 +5,14 @@ import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
-import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class ShowcaseWidget extends StatelessWidget {
-  final IBaseModel media;
+  final IBaseShowModel media;
   final ImageProvider image;
   final PaletteGenerator? palette;
 
@@ -101,7 +101,7 @@ class ShowcaseWidget extends StatelessWidget {
     );
   }
 
-  Widget buildBackDropImage(IBaseModel media, ImageProvider placeholder) {
+  Widget buildBackDropImage(IBaseShowModel media, ImageProvider placeholder) {
     String url = getImage(
       path: media.backdropPath,
       size: 'original',
@@ -134,7 +134,7 @@ class ShowcaseWidget extends StatelessWidget {
     );
   }
 
-  Row buildRatingBar(IBaseModel media) {
+  Row buildRatingBar(IBaseShowModel media) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

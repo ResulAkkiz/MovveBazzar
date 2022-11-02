@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/model/base_model.dart';
+
 import 'package:palette_generator/palette_generator.dart';
 
 class OverviewWidget extends StatelessWidget {

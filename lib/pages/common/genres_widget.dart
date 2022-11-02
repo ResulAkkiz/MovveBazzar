@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
-import 'package:flutter_application_1/model/base_model.dart';
+import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class GenresWidget extends StatelessWidget {
-  final IBaseModel media;
+  final IBaseShowModel media;
   final PaletteGenerator? palette;
 
   const GenresWidget(
