@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
-import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class PersonMediaWidget extends StatefulWidget {
   final int mediaID;
@@ -29,7 +27,7 @@ class _PersonMediaWidgetState extends State<PersonMediaWidget> {
   Widget build(BuildContext context) {
     final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
 
-    return mediaViewModel.mediaList?.isEmpty ?? true
+    return mediaViewModel.mediaList.isEmpty
         ? const SizedBox.shrink()
         : Container(
             margin: const EdgeInsets.all(12),
@@ -42,9 +40,9 @@ class _PersonMediaWidgetState extends State<PersonMediaWidget> {
             child: SizedBox(
               height: MediaQuery.of(context).size.shortestSide * 0.7,
               child: PageView.builder(
-                itemCount: mediaViewModel.mediaList?.length,
+                itemCount: mediaViewModel.mediaList.length,
                 itemBuilder: (context, index) {
-                  MediaBase currentMedia = mediaViewModel.mediaList![index];
+                  MediaBase currentMedia = mediaViewModel.mediaList[index];
 
                   if (currentMedia is MediaImage) {
                     return SizedBox(

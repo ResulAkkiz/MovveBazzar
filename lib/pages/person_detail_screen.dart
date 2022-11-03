@@ -2,20 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
-import 'package:flutter_application_1/app_constants/text_styles.dart';
-import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/people_model.dart';
 import 'package:flutter_application_1/pages/common/app_bar_widget.dart';
 import 'package:flutter_application_1/pages/common/overview_widget.dart';
 import 'package:flutter_application_1/pages/person/castcredit_widget.dart';
 import 'package:flutter_application_1/pages/person/person_media_widget.dart';
+import 'package:flutter_application_1/pages/person/person_showcase_widget.dart';
 
 import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
@@ -33,11 +30,6 @@ class _PersonDetailScreenState extends State<PersonDetailScreen> {
   PaletteGenerator? palette;
   @override
   void initState() {
-    debugPrint('${widget.personID} Initstate tetikelendi');
-    context
-        .read<MediaViewModel>()
-        .getMediasbyMediaID(widget.personID, 'person');
-    context.read<MediaViewModel>().getCastCreditbyPersonID(widget.personID);
     super.initState();
   }
 
@@ -69,10 +61,9 @@ class _PersonDetailScreenState extends State<PersonDetailScreen> {
       path: person.posterPath,
       size: 'w300',
     );
-    final MediaViewModel mediaViewModel = Provider.of<MediaViewModel>(context);
 
     ImageProvider image = CachedNetworkImageProvider(url);
-    const double posterAspectRatio = 5 / 8;
+
     return FutureBuilder(
       future: image.toPalette(
         size: const Size(80, 128),
@@ -81,9 +72,6 @@ class _PersonDetailScreenState extends State<PersonDetailScreen> {
         if (snapshot.hasData) {
           palette = snapshot.data!;
         }
-
-        Color? scaffoldBackgroundColor = palette?.darkMutedColor?.color ??
-            Theme.of(context).scaffoldBackgroundColor;
 
         return Stack(
           children: [
@@ -97,101 +85,18 @@ class _PersonDetailScreenState extends State<PersonDetailScreen> {
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    AspectRatio(
-                      aspectRatio: posterAspectRatio,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          buildBackDropImage(person, image),
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                stops: const [0.6, 0.82],
-                                colors: [
-                                  scaffoldBackgroundColor.withOpacity(0),
-                                  scaffoldBackgroundColor
-                                ],
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  person.name ?? 'UNKNOWN',
-                                  style: TextStyles.robotoBoldStyle.copyWith(
-                                    color: palette?.lightVibrantColor?.color,
-                                    fontSize: 30,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                Wrap(
-                                  runSpacing: 15,
-                                  spacing: 15,
-                                  alignment: WrapAlignment.center,
-                                  children: [
-                                    if (person.birthday != null)
-                                      buildPersonProp(
-                                        text: DateFormat.yMMMd()
-                                            .format(person.birthday!),
-                                        widget: const Icon(Icons.cake),
-                                        backgroundColor:
-                                            const Color(0xFF138086),
-                                      ),
-                                    buildPersonProp(
-                                      text: person.deathday != null
-                                          ? DateFormat.yMMMd()
-                                              .format(person.deathday!)
-                                          : '—',
-                                      widget:
-                                          const Icon(FontAwesomeIcons.skull),
-                                      backgroundColor: const Color(0xFF534666),
-                                    ),
-                                    if (person.knownForDepartment != null)
-                                      buildPersonProp(
-                                        text: person.knownForDepartment,
-                                        widget: const Icon(
-                                            FontAwesomeIcons.angellist),
-                                        backgroundColor:
-                                            const Color(0xFF974063),
-                                      ),
-                                    if (person.gender != null)
-                                      buildPersonProp(
-                                        text: person.gender == 2
-                                            ? 'Male'
-                                            : 'Female',
-                                        widget: person.gender == 2
-                                            ? const Icon(
-                                                FontAwesomeIcons.person)
-                                            : const Icon(
-                                                FontAwesomeIcons.personDress),
-                                        backgroundColor: person.gender == 2
-                                            ? const Color(0xFF75E2FF)
-                                            : const Color(0xFFF54768),
-                                      ),
-                                    if (person.placeOfBirth != null)
-                                      buildPersonProp(
-                                        text: person.placeOfBirth,
-                                        widget: const Icon(
-                                            FontAwesomeIcons.earthAmericas),
-                                        backgroundColor:
-                                            const Color(0xFF6E44FF),
-                                      ),
-                                  ],
-                                ),
-                              ],
-                            ).separated(const SizedBox(
-                              height: 15,
-                            )),
-                          )
-                        ],
-                      ),
+                    PersonShowcaseWidget(
+                      person: person,
+                      image: image,
+                      palette: palette,
                     ),
-                    OverviewWidget(person),
+                    OverviewWidget(
+                      person,
+                      palette: palette,
+                    ),
                     PersonMediaWidget(widget.personID),
                     CardCreditWidget(
-                      mediaViewModel.castCreditList,
+                      person,
                       palette: palette,
                     )
                   ],
@@ -203,65 +108,6 @@ class _PersonDetailScreenState extends State<PersonDetailScreen> {
           ],
         );
       },
-    );
-  }
-
-  Column buildPersonProp(
-      {String? text, required Widget widget, required Color backgroundColor}) {
-    return Column(
-      children: [
-        CircleAvatar(
-          foregroundColor: Colors.white,
-          radius: 20,
-          backgroundColor: backgroundColor,
-          child: Center(child: widget),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Wrap(
-          children: [
-            if (text != null)
-              Text(
-                text,
-                style: TextStyles.robotoRegular12Style,
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget buildBackDropImage(Person media, ImageProvider placeholder) {
-    String url = getImage(
-      path: media.posterPath,
-      size: 'original',
-    );
-    final ImageProvider image = CachedNetworkImageProvider(url);
-    Color dominantColor = palette?.primaryColor?.color ?? Colors.transparent;
-
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 32.0,
-      ),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: dominantColor,
-              image: DecorationImage(
-                image: placeholder,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Image(
-            image: image,
-            fit: BoxFit.cover,
-          ),
-        ],
-      ),
     );
   }
 }

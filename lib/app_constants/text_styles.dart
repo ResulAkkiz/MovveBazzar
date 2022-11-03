@@ -74,6 +74,13 @@ class TextStyles extends TextStyle {
     color: Colors.white,
   );
 
+  static TextStyle robotoRegularBold22Style = const TextStyle(
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.w800,
+    fontSize: 24,
+    color: Colors.white,
+  );
+
   static TextStyle robotoRegularBold28Style = const TextStyle(
     fontFamily: 'Roboto',
     fontWeight: FontWeight.w800,

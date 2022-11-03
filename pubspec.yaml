@@ -57,6 +57,7 @@ dependencies:
   shake: ^2.1.0
   draggable_widget: ^2.0.0
   font_awesome_flutter: ^10.2.1
+ 
 
 
 

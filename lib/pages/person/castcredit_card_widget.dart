@@ -6,16 +6,16 @@ import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/castcredit_model.dart';
 
-import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class CastCreditCardWidget extends StatefulWidget {
   final int index;
   final int expandedIndex;
-  final CastCredit castCredit;
+  final Cast castCredit;
   final ImageProvider image;
   final PaletteGenerator? palette;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const CastCreditCardWidget({
     Key? key,
@@ -25,6 +25,7 @@ class CastCreditCardWidget extends StatefulWidget {
     required this.image,
     this.palette,
     this.onTap,
+    this.onLongPress,
   }) : super(key: key);
 
   @override
@@ -45,13 +46,12 @@ class _CastCreditCardWidgetState extends State<CastCreditCardWidget> {
   @override
   Widget build(BuildContext context) {
     PaletteGenerator? palette = widget.palette;
-    if (palette == null) {
-      debugPrint('Palette değeri boş');
-    }
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
+        onLongPress: () {
+          widget.onLongPress?.call();
+        },
         onTap: () {
           isBack = !isBack;
           widget.onTap?.call();
@@ -86,19 +86,6 @@ class _CastCreditCardWidgetState extends State<CastCreditCardWidget> {
                           ),
                           child: Column(
                             children: [
-                              Chip(
-                                backgroundColor: palette
-                                        ?.darkMutedColor?.color ??
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                label: Text(
-                                  widget.castCredit.character.toString(),
-                                  style:
-                                      TextStyles.robotoMedium16Style.copyWith(
-                                    color:
-                                        palette?.darkMutedColor?.bodyTextColor,
-                                  ),
-                                ),
-                              ),
                               Text(
                                 widget.castCredit.overview ?? 'UNKNOWN',
                                 style: TextStyle(
@@ -107,9 +94,41 @@ class _CastCreditCardWidgetState extends State<CastCreditCardWidget> {
                                       Colors.white,
                                 ),
                               ),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: palette?.darkMutedColor?.color ??
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Character',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyles.robotoRegular10Style
+                                          .copyWith(color: Colors.red
+                                              // color: palette
+                                              //     ?.darkMutedColor?.bodyTextColor,
+                                              ),
+                                    ),
+                                    if (widget.castCredit.character != null ||
+                                        widget.castCredit.character != '')
+                                      Text(
+                                        widget.castCredit.character.toString(),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyles.robotoMedium16Style
+                                            .copyWith(
+                                          color: palette
+                                              ?.darkMutedColor?.bodyTextColor,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
                               if (widget.castCredit.date != null)
                                 Text(
-                                  'First Air Date: ${DateFormat('dd-MM-yyyy').format(widget.castCredit.date!)}',
+                                  'Release Year: ${widget.castCredit.date?.year}',
                                   style:
                                       TextStyles.robotoRegular10Style.copyWith(
                                     color:
@@ -117,6 +136,12 @@ class _CastCreditCardWidgetState extends State<CastCreditCardWidget> {
                                             Colors.white,
                                   ),
                                 ),
+                              Text(
+                                'If you want to go to the media detail page, please long press.',
+                                style: TextStyles.robotoRegular10Style
+                                    .copyWith(color: Colors.black38),
+                                textAlign: TextAlign.center,
+                              ),
                             ],
                           ).separated(const SizedBox(
                             height: 6,

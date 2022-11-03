@@ -1,7 +1,5 @@
 import 'package:flutter_application_1/model/base_model.dart';
-import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
-import 'package:flutter_application_1/model/castcredit_model.dart';
 import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
@@ -120,9 +118,5 @@ class JsonPlaceService extends BaseService {
   Future<List<IBaseTrendingModel>?> searchQueries(
       String? query, String? page) async {
     return await searchQuery(query: query, page: page);
-  }
-
-  Future<List<CastCredit>> getCastCreditbyPersonIDs(int personID) async {
-    return await getCastCreditbyPersonID(personID);
   }
 }
