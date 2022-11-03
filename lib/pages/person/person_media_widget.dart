@@ -29,7 +29,7 @@ class _PersonMediaWidgetState extends State<PersonMediaWidget> {
   Widget build(BuildContext context) {
     final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
 
-    return mediaViewModel.mediaList?.isEmpty ?? true
+    return mediaViewModel.mediaList.isEmpty
         ? const SizedBox.shrink()
         : Container(
             margin: const EdgeInsets.all(12),
@@ -42,9 +42,9 @@ class _PersonMediaWidgetState extends State<PersonMediaWidget> {
             child: SizedBox(
               height: MediaQuery.of(context).size.shortestSide * 0.7,
               child: PageView.builder(
-                itemCount: mediaViewModel.mediaList?.length,
+                itemCount: mediaViewModel.mediaList.length,
                 itemBuilder: (context, index) {
-                  MediaBase currentMedia = mediaViewModel.mediaList![index];
+                  MediaBase currentMedia = mediaViewModel.mediaList[index];
 
                   if (currentMedia is MediaImage) {
                     return SizedBox(

@@ -45,10 +45,6 @@ class _CastCreditCardWidgetState extends State<CastCreditCardWidget> {
   @override
   Widget build(BuildContext context) {
     PaletteGenerator? palette = widget.palette;
-    if (palette == null) {
-      debugPrint('Palette değeri boş');
-    }
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(

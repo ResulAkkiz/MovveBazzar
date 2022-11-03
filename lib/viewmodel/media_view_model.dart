@@ -231,6 +231,7 @@ class MediaViewModel extends ChangeNotifier {
 
   Future<void> getCastCreditbyPersonID(int personID) async {
     castCreditList = await _jsonPlaceService.getCastCreditbyPersonIDs(personID);
+    print(castCreditList.length);
     notifyListeners();
   }
 

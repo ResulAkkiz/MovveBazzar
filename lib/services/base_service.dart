@@ -262,6 +262,7 @@ class BaseService {
             castCreditList.add(CastCredit.fromMap(singleMap));
           }
         }
+        debugPrint('Baseservicedeki eleman sayısı - ${castCreditList.length}');
         return castCreditList;
       default:
         throw Exception(response.body);

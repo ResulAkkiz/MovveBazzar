@@ -29,13 +29,6 @@ class _MediaWidgetState extends BaseState<MediaWidget> {
     reload();
   }
 
-  // @override
-  // void didPopNext() {
-  //   super.didPopNext();
-
-  //   reload();
-  // }
-
   void reload() {
     context
         .read<MediaViewModel>()
@@ -47,8 +40,6 @@ class _MediaWidgetState extends BaseState<MediaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // final MediaViewModel mediaViewModel = context.read<MediaViewModel>();
-
     return mediaList.isEmpty
         ? const SizedBox.shrink()
         : SizedBox(
