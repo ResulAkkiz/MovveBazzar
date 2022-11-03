@@ -1,5 +1,5 @@
-class CastCredit {
-  CastCredit({
+class Cast {
+  Cast({
     required this.id,
     this.overview,
     this.name,
@@ -25,15 +25,15 @@ class CastCredit {
   String? backdropPath;
   String? creditId;
 
-  factory CastCredit.fromMap(Map<String, dynamic> json) => CastCredit(
+  factory Cast.fromMap(Map<String, dynamic> json) => Cast(
         id: json["id"],
         overview: json["overview"],
         name: json["name"] ?? json["title"],
         mediaType: json["media_type"],
         posterPath: json["poster_path"],
         date: json["first_air_date"] != null
-            ? DateTime.tryParse(json["first_air_date"])
-            : DateTime.tryParse(json["release_date"]),
+            ? DateTime.tryParse(json["first_air_date"] ?? '')
+            : DateTime.tryParse(json["release_date"] ?? ''),
         voteAverage: json["vote_average"].toDouble(),
         voteCount: json["vote_count"],
         character: json["character"],

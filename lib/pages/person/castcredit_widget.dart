@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/app_constants/common_widgets.dart';
-import 'package:flutter_application_1/model/castcredit_model.dart';
-
+import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/model/people_model.dart';
 import 'package:flutter_application_1/pages/person/castcredit_list_view.dart';
-import 'package:flutter_application_1/viewmodel/media_view_model.dart';
-
 import 'package:palette_generator/palette_generator.dart';
-import 'package:provider/provider.dart';
 
 class CardCreditWidget extends StatefulWidget {
-  final int personID;
+  final Person person;
   final PaletteGenerator? palette;
 
   const CardCreditWidget(
-    this.personID, {
+    this.person, {
     Key? key,
     this.palette,
   }) : super(key: key);
@@ -25,29 +21,38 @@ class CardCreditWidget extends StatefulWidget {
 class _CardCreditWidgetState extends State<CardCreditWidget> {
   @override
   void initState() {
-    context.read<MediaViewModel>().getCastCreditbyPersonID(widget.personID);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final MediaViewModel mediaViewModel = context.watch<MediaViewModel>();
-    List<CastCredit> castCreditList = mediaViewModel.castCreditList;
-    debugPrint(
-        'CastCredit widgettaki eleman sayısı + ${castCreditList.length}');
-    return castCreditList.isEmpty
+    Person? person = widget.person;
+    String genderAct = person.gender == 1 ? 'Actress' : 'Actor';
+
+    return person.combinedCredits!.cast!.isEmpty
         ? const SizedBox.shrink()
         : Column(
             children: [
-              buildTitle('Productions'),
+              buildCastCardTitle('Productions Taking Role the $genderAct'),
               SizedBox(
                 height: 250,
                 child: CastCreditListView(
-                  castCreditList: castCreditList,
+                  castCreditList: person.combinedCredits!.cast,
                   palette: widget.palette,
                 ),
               ),
             ],
           );
+  }
+
+  Container buildCastCardTitle(String text) {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 15,
+        top: 15,
+      ),
+      alignment: Alignment.centerLeft,
+      child: Text(text, style: TextStyles.robotoRegularBold22Style),
+    );
   }
 }

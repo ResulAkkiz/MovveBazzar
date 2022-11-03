@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_model.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/base_trending_show_model.dart';
-import 'package:flutter_application_1/model/castcredit_model.dart';
 import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
@@ -34,7 +33,7 @@ class MediaViewModel extends ChangeNotifier {
   List<TvTrending> queryTvList = [];
   List<MovieTrending> queryMovieList = [];
   List<PeopleTrending> queryPeopleList = [];
-  List<CastCredit> castCreditList = [];
+
   Set<String> genreNameList = {};
 
   final JsonPlaceService _jsonPlaceService = JsonPlaceService();
@@ -229,12 +228,6 @@ class MediaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getCastCreditbyPersonID(int personID) async {
-    castCreditList = await _jsonPlaceService.getCastCreditbyPersonIDs(personID);
-    print(castCreditList.length);
-    notifyListeners();
-  }
-
   Future<void> searchQueries(String? query, String? page) async {
     if (query != '') {
       List<IBaseTrendingModel>? tempList =
@@ -242,8 +235,6 @@ class MediaViewModel extends ChangeNotifier {
       if (tempList != null) {
         queryResultList!.addAll(tempList);
       }
-      debugPrint(
-          'tempList ${tempList?.length} ,queryResultList ${queryResultList?.length} ');
     }
     queryTvList = queryResultList!.whereType<TvTrending>().toList();
     queryMovieList = queryResultList!.whereType<MovieTrending>().toList();

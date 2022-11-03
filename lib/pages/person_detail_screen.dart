@@ -30,8 +30,6 @@ class _PersonDetailScreenState extends State<PersonDetailScreen> {
   PaletteGenerator? palette;
   @override
   void initState() {
-    debugPrint('${widget.personID} Initstate tetikelendi');
-
     super.initState();
   }
 
@@ -98,7 +96,7 @@ class _PersonDetailScreenState extends State<PersonDetailScreen> {
                     ),
                     PersonMediaWidget(widget.personID),
                     CardCreditWidget(
-                      person.id,
+                      person,
                       palette: palette,
                     )
                   ],

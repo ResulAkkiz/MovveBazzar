@@ -41,8 +41,6 @@ class _MediaDetailPageState extends State<MediaDetailPage> {
 
   @override
   void initState() {
-    debugPrint(widget.mediaID.toString());
-
     super.initState();
   }
 

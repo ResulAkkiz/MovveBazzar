@@ -3,10 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_1/model/base_model.dart';
-import 'package:flutter_application_1/model/base_show_model.dart';
 
 import 'package:flutter_application_1/model/base_trending_model.dart';
-import 'package:flutter_application_1/model/castcredit_model.dart';
 import 'package:flutter_application_1/model/genre_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
@@ -153,7 +151,8 @@ class BaseService {
   }
 
   Future<IBaseModel> getDetailbyID(int mediaID, String type) async {
-    final String url = "$baseUrl/$type/$mediaID?api_key=$apiKey";
+    final String url =
+        "$baseUrl/$type/$mediaID?api_key=$apiKey&append_to_response=combined_credits";
 
     final response = await http.get(Uri.parse(url));
 
@@ -247,27 +246,27 @@ class BaseService {
     }
   }
 
-  Future<List<CastCredit>> getCastCreditbyPersonID(int personID) async {
-    final String url =
-        "$baseUrl/person/$personID/combined_credits?api_key=$apiKey";
+  // Future<List<CastCredit>> getCastCreditbyPersonID(int personID) async {
+  //   final String url =
+  //       "$baseUrl/person/$personID/combined_credits?api_key=$apiKey";
 
-    final response = await http.get(Uri.parse(url));
+  //   final response = await http.get(Uri.parse(url));
 
-    switch (response.statusCode) {
-      case HttpStatus.ok:
-        var jsonBody = (jsonDecode(response.body))['cast'];
-        List<CastCredit> castCreditList = [];
-        if (jsonBody is List) {
-          for (Map<String, dynamic> singleMap in jsonBody) {
-            castCreditList.add(CastCredit.fromMap(singleMap));
-          }
-        }
-        debugPrint('Baseservicedeki eleman sayısı - ${castCreditList.length}');
-        return castCreditList;
-      default:
-        throw Exception(response.body);
-    }
-  }
+  //   switch (response.statusCode) {
+  //     case HttpStatus.ok:
+  //       var jsonBody = (jsonDecode(response.body))['cast'];
+  //       List<CastCredit> castCreditList = [];
+  //       if (jsonBody is List) {
+  //         for (Map<String, dynamic> singleMap in jsonBody) {
+  //           castCreditList.add(CastCredit.fromMap(singleMap));
+  //         }
+  //       }
+  //       debugPrint('Baseservicedeki eleman sayısı - ${castCreditList.length}');
+  //       return castCreditList;
+  //     default:
+  //       throw Exception(response.body);
+  //   }
+  // }
 
   Future<List<MediaImage>?> getImagesbymediaID(
     int mediaID,

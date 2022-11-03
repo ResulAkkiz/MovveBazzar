@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/model/castcredit_model.dart';
 
+import 'package:flutter_application_1/pages/media_detail_screen.dart';
+
 import 'package:flutter_application_1/pages/person/castcredit_card_widget.dart';
 
 import 'package:palette_generator/palette_generator.dart';
 
 class CastCreditListView extends StatefulWidget {
   final PaletteGenerator? palette;
-  final List<CastCredit>? castCreditList;
+  final List<Cast>? castCreditList;
 
   const CastCreditListView({
     Key? key,
@@ -24,7 +26,7 @@ class CastCreditListView extends StatefulWidget {
 class _CastCreditListViewState extends State<CastCreditListView> {
   int expandedIndex = 0;
 
-  late List<CastCredit>? castCreditList = widget.castCreditList;
+  late List<Cast>? castCreditList = widget.castCreditList;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +36,7 @@ class _CastCreditListViewState extends State<CastCreditListView> {
       scrollDirection: Axis.horizontal,
       itemCount: castCreditList?.length,
       itemBuilder: (context, index) {
-        CastCredit currentCastCredit = castCreditList![index];
-        debugPrint(currentCastCredit.name);
+        Cast currentCastCredit = castCreditList![index];
 
         String url = getImage(
           path: currentCastCredit.posterPath,
@@ -55,6 +56,12 @@ class _CastCreditListViewState extends State<CastCreditListView> {
             if (mounted) {
               setState(() {});
             }
+          },
+          onLongPress: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => MediaDetailPage(currentCastCredit.id,
+                  mediaType: currentCastCredit.mediaType!),
+            ));
           },
         );
       },

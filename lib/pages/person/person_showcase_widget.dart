@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
-import 'package:flutter_application_1/app_constants/text_styles.dart';
-import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/app_constants/palette_function.dart';
 
 import 'package:flutter_application_1/model/people_model.dart';
@@ -52,7 +50,7 @@ class PersonShowcaseWidget extends StatelessWidget {
 
   Widget buildBackDropImage(Person person, ImageProvider placeholder) {
     String url = getImage(
-      path: person.posterPath,
+      path: person.profilePath,
       size: 'original',
     );
     final ImageProvider image = CachedNetworkImageProvider(url);

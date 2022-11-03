@@ -65,6 +65,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
         if (media is IBaseShowModel)
           IconButton(
             onPressed: () {
+              String? mediaType = media is Tv ? 'tv' : 'movie';
               String? title;
               int? runtime;
               DateTime? date;
@@ -89,7 +90,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       BookMark(
                         runtime: runtime,
                         date: date,
-                        mediaType: 'tv',
+                        mediaType: mediaType,
                         mediaID: media.id,
                         mediaVote: (media as IBaseShowModel).voteAverage,
                         mediaName: title ?? '',
