@@ -79,9 +79,9 @@ class _CastWidgetState extends BaseState<CastWidget> {
                               ),
                             );
                           },
-                          child: ClipOval(
-                            child: person.profilePath != null
-                                ? CachedNetworkImage(
+                          child: person.profilePath != null
+                              ? ClipOval(
+                                  child: CachedNetworkImage(
                                     width: 60,
                                     height: 60,
                                     fit: BoxFit.contain,
@@ -89,13 +89,13 @@ class _CastWidgetState extends BaseState<CastWidget> {
                                       path: person.profilePath ?? '',
                                       size: 'original',
                                     ),
-                                  )
-                                : CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: Colors.transparent,
-                                    child: ImageEnums.celebrity.toImage,
                                   ),
-                          ),
+                                )
+                              : CircleAvatar(
+                                  radius: 30,
+                                  backgroundColor: Colors.transparent,
+                                  child: ImageEnums.celebrity.toImage,
+                                ),
                         ),
                         Text(
                           textAlign: TextAlign.center,

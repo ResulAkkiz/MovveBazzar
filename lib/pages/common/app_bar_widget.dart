@@ -4,8 +4,10 @@ import 'package:flutter_application_1/model/base_show_model.dart';
 import 'package:flutter_application_1/model/bookmark_model.dart';
 import 'package:flutter_application_1/model/movie_model.dart';
 import 'package:flutter_application_1/model/tv_model.dart';
+import 'package:flutter_application_1/pages/home_screen.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
@@ -109,6 +111,22 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   : const Icon(Icons.bookmark_border),
             ),
           ),
+        IconButton(
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ),
+                (route) => false);
+          },
+          icon: CircleAvatar(
+              radius: 16.0,
+              backgroundColor:
+                  palette?.darkMutedColor?.color.withOpacity(0.4) ??
+                      Colors.black38,
+              foregroundColor: palette?.lightVibrantColor?.color,
+              child: const Icon(FontAwesomeIcons.house)),
+        ),
       ],
     );
   }

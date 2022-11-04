@@ -5,6 +5,7 @@ import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 RichText buildLogo() {
@@ -71,6 +72,11 @@ Widget buildMoreTrendsDDB(
   );
 }
 
+var maskFormatter = MaskTextInputFormatter(
+    mask: '+90 (###) ### ## ##',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy);
+
 Widget buildLoginTextformField({
   required IconData iconData,
   required String hintText,
@@ -82,6 +88,37 @@ Widget buildLoginTextformField({
     alignment: Alignment.centerLeft,
     children: [
       TextFormField(
+        readOnly: readOnly,
+        controller: textEditingController,
+        keyboardType: keyboardType,
+        cursorColor: Colors.red,
+        decoration: InputDecoration(
+            hintText: hintText,
+            contentPadding: const EdgeInsets.fromLTRB(74, 12, 10, 12)),
+      ),
+      CircleAvatar(
+        radius: 32,
+        child: Icon(
+          iconData,
+          size: 48,
+        ),
+      ),
+    ],
+  );
+}
+
+Widget buildLoginTextformFieldwithMask({
+  required IconData iconData,
+  required String hintText,
+  required TextEditingController textEditingController,
+  bool readOnly = false,
+  TextInputType? keyboardType,
+}) {
+  return Stack(
+    alignment: Alignment.centerLeft,
+    children: [
+      TextFormField(
+        inputFormatters: [maskFormatter],
         readOnly: readOnly,
         controller: textEditingController,
         keyboardType: keyboardType,
