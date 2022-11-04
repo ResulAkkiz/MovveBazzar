@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_widget/draggable_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
@@ -76,8 +77,19 @@ class _HomePageState extends State<HomePage>
   Future<void> getRandomTrendMedia() async {
     controller.forward(from: 0.0);
     previousRandomTrendMedia = randomTrendMedia;
-    randomTrendMedia =
-        await context.read<MediaViewModel>().getRandomTrendingMedia();
+    randomTrendMedia = await context
+        .read<MediaViewModel>()
+        .getRandomTrendingMedia()
+        .then((value) {
+      if (randomTrendMedia == null) {
+        controller.forward(from: 0.0);
+        context
+            .read<MediaViewModel>()
+            .getRandomTrendingMedia()
+            .then((value) => randomTrendMedia = value);
+      }
+      return null;
+    });
   }
 
   @override
@@ -356,6 +368,7 @@ class _HomePageState extends State<HomePage>
 
   SliverAppBar _buildSliverAppBar() {
     return SliverAppBar(
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
       floating: true,
       snap: true,
       elevation: 0,
@@ -365,7 +378,8 @@ class _HomePageState extends State<HomePage>
           icon: IconEnums.search.toIcon(),
         )
       ],
-      title: buildAppBarLogo(),
+      title:
+          SizedBox(width: 150, height: 50, child: ImageEnums.applogo.toImage),
     );
   }
 

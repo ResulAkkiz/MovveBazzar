@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
@@ -81,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     hintText: 'Username',
                     iconData: Icons.account_box,
                   ),
-                  buildLoginTextformField(
+                  buildLoginTextformFieldwithMask(
                     textEditingController: phoneController,
                     keyboardType: TextInputType.phone,
                     hintText: 'Phone Number',
@@ -165,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      await movierViewModel.saveMovier(Movier(
+                      bool isUpdated = await movierViewModel.saveMovier(Movier(
                           movierID: movierViewModel.movier!.movierID,
                           movierEmail: emailController.text,
                           movierUsername: userNameController.text,
@@ -175,6 +177,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           movierBirthday:
                               DateFormat('d/M/y').parse(dateController.text),
                           movierPhotoUrl: await _uploadProfilePhoto()));
+                      if (mounted) {
+                        showCoolerDialog(
+                          context,
+                          types: isUpdated
+                              ? CoolAlertType.success
+                              : CoolAlertType.error,
+                        );
+                      }
                     },
                     child: Text(
                       'Save',

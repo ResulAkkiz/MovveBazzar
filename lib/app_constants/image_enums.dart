@@ -15,10 +15,14 @@ enum IconEnums {
   twitter,
   profilepicture,
   danger,
-  shake
+  shake,
+  applogo,
+  appicon,
 }
 
 enum ImageEnums {
+  applogo,
+  appicon,
   sampleimage,
   sampleimage2,
   samplebodyimage,
