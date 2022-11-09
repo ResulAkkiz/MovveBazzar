@@ -62,14 +62,16 @@ class _HomePageState extends State<HomePage>
     getRandomTrendMedia();
     ShakeDetector.autoStart(
       onPhoneShake: () {
-        if (_currentIndex == 0 && ModalRoute.of(context)!.isCurrent) {
+        if (_currentIndex == 0 &&
+            (ModalRoute.of(context)!.isCurrent || isOpened)) {
+          debugPrint('if içi');
           buildRandomMediaDialog();
           getRandomTrendMedia();
         }
       },
       minimumShakeCount: 1,
       shakeSlopTimeMS: 500,
-      shakeCountResetTime: 200,
+      shakeCountResetTime: 600,
       shakeThresholdGravity: 2.2,
     );
   }
@@ -77,19 +79,8 @@ class _HomePageState extends State<HomePage>
   Future<void> getRandomTrendMedia() async {
     controller.forward(from: 0.0);
     previousRandomTrendMedia = randomTrendMedia;
-    randomTrendMedia = await context
-        .read<MediaViewModel>()
-        .getRandomTrendingMedia()
-        .then((value) {
-      if (randomTrendMedia == null) {
-        controller.forward(from: 0.0);
-        context
-            .read<MediaViewModel>()
-            .getRandomTrendingMedia()
-            .then((value) => randomTrendMedia = value);
-      }
-      return null;
-    });
+    randomTrendMedia =
+        await context.read<MediaViewModel>().getRandomTrendingMedia();
   }
 
   @override

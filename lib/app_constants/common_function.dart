@@ -17,7 +17,23 @@ String generateRandomString(int len) {
 String getImage({required String? path, required String size}) {
   return path != null
       ? 'https://image.tmdb.org/t/p/$size$path'
-      : 'https://cdn-icons-png.flaticon.com/512/3286/3286282.png';
+      : 'https://img.freepik.com/free-vector/isometric-cinema-icon-set_1284-18691.jpg?w=1060&t=st=1667910914~exp=1667911514~hmac=81739c05e0e8e63931c93a0136696a7f338e9b2548b59a990d6922a35c81cc2d';
+}
+
+String getImageWithType({
+  required String? path,
+  required String size,
+  required String type,
+}) {
+  if (path != null) {
+    return 'https://image.tmdb.org/t/p/$size$path';
+  } else {
+    if (type == 'person') {
+      return 'https://inspgr.id/app/uploads/2020/05/illustration-ricardo-polo-02.jpg';
+    } else {
+      return 'https://img.freepik.com/free-vector/isometric-cinema-icon-set_1284-18691.jpg?w=1060&t=st=1667910914~exp=1667911514~hmac=81739c05e0e8e63931c93a0136696a7f338e9b2548b59a990d6922a35c81cc2d';
+    }
+  }
 }
 
 void showCoolerDialog(

@@ -6,14 +6,21 @@ import 'package:flutter_application_1/model/media_base_model.dart';
 import 'package:flutter_application_1/model/media_images_model.dart';
 import 'package:flutter_application_1/model/media_videos_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MediaWidget extends StatefulWidget {
   final int mediaID;
   final String mediaType;
+  final PaletteGenerator? palette;
 
-  const MediaWidget(this.mediaID, this.mediaType, {Key? key}) : super(key: key);
+  const MediaWidget(
+    this.mediaID,
+    this.mediaType,
+    this.palette, {
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<MediaWidget> createState() => _MediaWidgetState();
@@ -40,10 +47,12 @@ class _MediaWidgetState extends BaseState<MediaWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Color? color = widget.palette?.darkMutedColor?.color ??
+        Theme.of(context).scaffoldBackgroundColor;
     return mediaList.isEmpty
         ? const SizedBox.shrink()
-        : SizedBox(
-            height: MediaQuery.of(context).size.shortestSide * 0.7,
+        : AspectRatio(
+            aspectRatio: 16 / 9,
             child: PageView.builder(
               itemCount: mediaList.length,
               itemBuilder: (context, index) {
@@ -51,7 +60,6 @@ class _MediaWidgetState extends BaseState<MediaWidget> {
 
                 if (currentMedia is MediaImage) {
                   return SizedBox(
-                    height: MediaQuery.of(context).size.shortestSide * 0.7,
                     child: CachedNetworkImage(
                       placeholder: (context, url) => Center(
                         child: SizedBox.square(
@@ -69,18 +77,33 @@ class _MediaWidgetState extends BaseState<MediaWidget> {
                 }
 
                 if (currentMedia is MediaVideo) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.shortestSide * 0.7,
-                    child: YoutubePlayer(
+                  return YoutubePlayerBuilder(
+                    player: YoutubePlayer(
+                      actionsPadding: const EdgeInsets.all(12),
+                      bottomActions: [
+                        CurrentPosition(),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        ProgressBar(
+                          isExpanded: true,
+                          colors: ProgressBarColors(
+                              playedColor: color, handleColor: color),
+                        ),
+                      ],
+                      showVideoProgressIndicator: true,
                       controller: YoutubePlayerController(
                         flags: const YoutubePlayerFlags(
-                          autoPlay: true,
+                          autoPlay: false,
                           mute: true,
                           disableDragSeek: true,
                         ),
                         initialVideoId: currentMedia.key!,
                       ),
                     ),
+                    builder: (context, player) {
+                      return player;
+                    },
                   );
                 }
 

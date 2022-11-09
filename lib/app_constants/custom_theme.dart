@@ -24,7 +24,7 @@ final ThemeData lightTheme = ThemeData(
   dividerColor: const Color(0x99FFFFFF),
   highlightColor: const Color(0x66bcbcbc),
   splashColor: const Color(0x66c8c8c8),
-  unselectedWidgetColor: const Color(0x8a000000),
+  unselectedWidgetColor: Colors.white,
   disabledColor: const Color(0x61000000),
   toggleableActiveColor: const Color(0xff545478),
   secondaryHeaderColor: const Color(0xfff0f0f5),
@@ -140,16 +140,16 @@ final ThemeData lightTheme = ThemeData(
     fillColor: Color(0xffffffff),
     errorBorder: OutlineInputBorder(
       borderSide: BorderSide(
-        color: Colors.red,
-        width: 1,
+        color: Color(0xFFDA1A37),
+        width: 1.4,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(30.0)),
     ),
     focusedBorder: OutlineInputBorder(
       borderSide: BorderSide(
-        color: Colors.red,
-        width: 1,
+        color: Color(0xFFDA1A37),
+        width: 1.4,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(30.0)),
@@ -172,16 +172,16 @@ final ThemeData lightTheme = ThemeData(
     ),
     enabledBorder: OutlineInputBorder(
       borderSide: BorderSide(
-        color: Colors.red,
-        width: 1,
+        color: Color(0xFFDA1A37),
+        width: 1.4,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(30.0)),
     ),
     border: OutlineInputBorder(
       borderSide: BorderSide(
-        color: Colors.red,
-        width: 1,
+        color: Color(0xFFDA1A37),
+        width: 1.4,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(30.0)),

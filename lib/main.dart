@@ -5,6 +5,7 @@ import 'package:flutter_application_1/app_constants/custom_theme.dart';
 import 'package:flutter_application_1/model/custom_theme_data.dart';
 import 'package:flutter_application_1/navigation_service.dart';
 import 'package:flutter_application_1/pages/landing_screen.dart';
+import 'package:flutter_application_1/pages/search_screen.dart';
 import 'package:flutter_application_1/viewmodel/bookmark_view_model.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_application_1/viewmodel/movier_view_model.dart';
@@ -60,7 +61,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: _theme,
       title: 'Movve',
-      home: const LandingScreen(),
+      home: const SearchScreen(),
       navigatorKey: NavigationService.instance.navigationKey,
       navigatorObservers: [NavigationService.instance.routeObserver],
     );

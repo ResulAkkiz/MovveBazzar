@@ -40,7 +40,7 @@ class _CastCreditListViewState extends State<CastCreditListView> {
 
         String url = getImage(
           path: currentCastCredit.posterPath,
-          size: 'original',
+          size: 'w200',
         );
 
         ImageProvider image = CachedNetworkImageProvider(url);
