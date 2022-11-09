@@ -108,7 +108,7 @@ class _MediaDetailPageState extends State<MediaDetailPage> {
                         palette: palette,
                       ),
                     OverviewWidget(media),
-                    MediaWidget(media.id, widget.mediaType),
+                    MediaWidget(media.id, widget.mediaType, palette),
                     CastWidget(media.id, widget.mediaType),
                     ReviewsWidget(
                       media.id,

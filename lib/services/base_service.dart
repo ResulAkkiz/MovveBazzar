@@ -399,14 +399,17 @@ class BaseService {
   }
 
   //https://api.themoviedb.org/3/search/multi?api_key=07f5723af6c9503db9c8ce9493c975ce&query=
+  //https://api.themoviedb.org/3/search/tv?api_key=<<api_key>>&query=
+  //https://api.themoviedb.org/3/search/person?api_key=<<api_key>>&query=
+  //https://api.themoviedb.org/3/search/movie?api_key=<<api_key>>&query=
 
   Future<List<IBaseTrendingModel>?> searchQuery(
-      {String? query, String? page = '1'}) async {
+      {String? query, String? type = 'multi ', String? page = '1'}) async {
     if (query != null) {
       query.trim();
       query.replaceAll('', '%20');
       final String url =
-          "$baseUrl/search/multi?api_key=$apiKey&query=$query&page=$page";
+          "$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page";
       final response = await http.get(Uri.parse(url));
       List<IBaseTrendingModel<dynamic>> resultList = [];
       var jsonBody = jsonDecode(response.body)['results'];
@@ -414,7 +417,7 @@ class BaseService {
         case HttpStatus.ok:
           if (jsonBody is List) {
             for (var singleMap in jsonBody) {
-              switch (singleMap["media_type"]) {
+              switch (type) {
                 case "movie":
                   resultList.add(MovieTrending.fromMap(singleMap));
                   break;
@@ -423,6 +426,21 @@ class BaseService {
                   break;
                 case "person":
                   resultList.add(PeopleTrending.fromMap(singleMap));
+                  break;
+                case "multi":
+                  switch (singleMap["media_type"]) {
+                    case "movie":
+                      resultList.add(MovieTrending.fromMap(singleMap));
+                      break;
+                    case "tv":
+                      resultList.add(TvTrending.fromMap(singleMap));
+                      break;
+                    case "person":
+                      resultList.add(PeopleTrending.fromMap(singleMap));
+                      break;
+                    default:
+                      debugPrint('another type model pass here');
+                  }
                   break;
                 default:
                   debugPrint('another type model pass here');

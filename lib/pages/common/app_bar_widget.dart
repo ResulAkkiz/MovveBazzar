@@ -125,7 +125,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   palette?.darkMutedColor?.color.withOpacity(0.4) ??
                       Colors.black38,
               foregroundColor: palette?.lightVibrantColor?.color,
-              child: const Icon(FontAwesomeIcons.house)),
+              child: const Icon(FontAwesomeIcons.house, size: 18)),
         ),
       ],
     );

@@ -30,6 +30,7 @@ enum ImageEnums {
   profilepicture,
   celebrity,
   glasses,
+  mediaplaceholder
 }
 
 extension IconEnumsExtension on IconEnums {

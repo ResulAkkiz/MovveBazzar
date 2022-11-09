@@ -2,14 +2,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/common_function.dart';
 import 'package:flutter_application_1/app_constants/common_widgets.dart';
+import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
 
 import 'package:flutter_application_1/model/people_trending_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/pages/media_detail_screen.dart';
+import 'package:flutter_application_1/pages/person_detail_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -29,21 +33,37 @@ class _SearchScreenState extends State<SearchScreen> {
 
   int page = 1;
   String query = '';
+  String type = 'multi';
+  bool isCheckMovie = false;
+  bool isCheckTv = false;
+  bool isCheckActor = false;
+  bool isCheckMulti = true;
 
   ScrollController tvScrollController = ScrollController();
   ScrollController movieScrollController = ScrollController();
   ScrollController peopleScrollController = ScrollController();
   @override
   void initState() {
-    tvScrollController.addListener(pagination);
-    movieScrollController.addListener(pagination);
-    peopleScrollController.addListener(pagination);
+    // tvScrollController.addListener(pagination);
+    // movieScrollController.addListener(pagination);
+    // peopleScrollController.addListener(pagination);
+    //controlChecks();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaViewModel = Provider.of<MediaViewModel>(context);
+
+    // debugPrint('isCheckTv $isCheckTv');
+    // debugPrint('isCheckMulti $isCheckMulti');
+    // debugPrint('isCheckTv || isCheckMulti ${isCheckTv || isCheckMulti}');
+    // debugPrint(
+    //     '(mediaViewModel.queryTvList.isNotEmpty) ${mediaViewModel.queryTvList.isNotEmpty}');
+    // // ignore: prefer_interpolation_to_compose_strings
+    // debugPrint(mediaViewModel.queryTvList.toString());
+    // debugPrint(
+    //     'result: ${(isCheckTv || isCheckMulti) && mediaViewModel.queryTvList.isNotEmpty}');
 
     return SafeArea(
       child: Scaffold(
@@ -59,11 +79,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     TextFormField(
                       textInputAction: TextInputAction.search,
-                      onFieldSubmitted: (value) async {
+                      onChanged: (value) {
                         query = value;
-                        mediaViewModel.queryResultList?.clear();
-                        await mediaViewModel.searchQueries(
-                            value, page.toString());
                       },
                       controller: controller,
                       cursorColor: Colors.red,
@@ -81,27 +98,138 @@ class _SearchScreenState extends State<SearchScreen> {
                   ],
                 ),
               ),
-              Divider(
-                thickness: 2,
-                color: Theme.of(context).primaryColor,
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Theme.of(context).primaryColor, width: 2)),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 15,
+                        runSpacing: 10,
+                        children: [
+                          buildCheckBox(
+                            context,
+                            labelText: 'Movie',
+                            value: isCheckMovie,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isCheckMovie = value ?? false;
+                                checkMulti();
+                              });
+                            },
+                          ),
+                          buildCheckBox(
+                            context,
+                            labelText: 'Tv Show',
+                            value: isCheckTv,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isCheckTv = value ?? false;
+                                checkMulti();
+                              });
+                            },
+                          ),
+                          buildCheckBox(context, labelText: 'Actor/Actress',
+                              onChanged: (bool? value) {
+                            setState(() {
+                              isCheckActor = value ?? false;
+                              checkMulti();
+                            });
+                          }, value: isCheckActor),
+                          buildCheckBox(
+                            context,
+                            labelText: 'Multi',
+                            value: isCheckMulti,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isCheckMulti = value!;
+                                if (value) {
+                                  isCheckActor = !value;
+                                  isCheckMovie = !value;
+                                  isCheckTv = !value;
+                                }
+                                checkMulti();
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(12)),
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        child: IconButton(
+                          onPressed: () {
+                            mediaViewModel.queryResultList?.clear();
+                            controlChecks();
+                          },
+                          icon: const Icon(Icons.search),
+                          iconSize: 45,
+                        ))
+                  ],
+                ),
               ),
-              buildTitle('Tv Shows'),
-              buildMediaListView(
-                  mediaViewModel.queryTvList, tvScrollController),
-              Divider(
-                thickness: 2,
-                color: Theme.of(context).primaryColor,
+              Column(
+                children: [
+                  if ((isCheckTv || isCheckMulti) &&
+                      mediaViewModel.queryTvList.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Theme.of(context).primaryColor, width: 2)),
+                      child: Column(
+                        children: [
+                          buildTitle('Tv Shows'),
+                          buildMediaListView(mediaViewModel.queryTvList,
+                              tvScrollController, 'tv'),
+                        ],
+                      ),
+                    ),
+                  if ((isCheckMovie || isCheckMulti) &&
+                      mediaViewModel.queryMovieList.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Theme.of(context).primaryColor, width: 2)),
+                      child: Column(
+                        children: [
+                          buildTitle('Movies'),
+                          buildMediaListView(mediaViewModel.queryMovieList,
+                              movieScrollController, 'movie'),
+                        ],
+                      ),
+                    ),
+                  if ((isCheckActor || isCheckMulti) &&
+                      mediaViewModel.queryPeopleList.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Theme.of(context).primaryColor, width: 2)),
+                      child: Column(
+                        children: [
+                          buildTitle('Actor & Actress '),
+                          buildMediaListView(mediaViewModel.queryPeopleList,
+                              peopleScrollController, 'person'),
+                        ],
+                      ),
+                    ),
+                ],
               ),
-              buildTitle('Movies'),
-              buildMediaListView(
-                  mediaViewModel.queryMovieList, movieScrollController),
-              Divider(
-                thickness: 2,
-                color: Theme.of(context).primaryColor,
-              ),
-              buildTitle('Actor & Actress '),
-              buildMediaListView(
-                  mediaViewModel.queryPeopleList, peopleScrollController),
             ],
           ),
         ),
@@ -109,8 +237,68 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  void checkMulti() {
+    if (isCheckActor && isCheckMovie && isCheckTv) {
+      isCheckMulti = true;
+      isCheckActor = false;
+      isCheckMovie = false;
+      isCheckTv = false;
+    } else if ((isCheckActor || isCheckMovie || isCheckTv)) {
+      isCheckMulti = false;
+    } else if (!isCheckActor && !isCheckMovie && !isCheckTv) {
+      isCheckMulti = true;
+      isCheckActor = false;
+      isCheckMovie = false;
+      isCheckTv = false;
+    } else {
+      isCheckMulti = false;
+    }
+  }
+
+  void controlChecks() async {
+    final mediaViewModel = Provider.of<MediaViewModel>(context, listen: false);
+    if (isCheckMulti) {
+      type = 'multi';
+      await mediaViewModel.searchQueries(query, page.toString(), type);
+    } else {
+      if (isCheckActor) {
+        type = 'person';
+        await mediaViewModel.searchQueries(query, page.toString(), type);
+      }
+      if (isCheckMovie) {
+        type = 'movie';
+        await mediaViewModel.searchQueries(query, page.toString(), type);
+      }
+      if (isCheckTv) {
+        type = 'tv';
+        await mediaViewModel.searchQueries(query, page.toString(), type);
+      }
+    }
+  }
+
+  Row buildCheckBox(BuildContext context,
+      {bool? value,
+      required String labelText,
+      required void Function(bool?)? onChanged}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 25.0,
+          width: 25.0,
+          child: Checkbox(
+              value: value,
+              activeColor: Theme.of(context).primaryColor,
+              onChanged: onChanged),
+        ),
+        Text(labelText),
+      ],
+    );
+  }
+
   Widget buildMediaListView(List<IBaseTrendingModel<dynamic>> mediaList,
-      ScrollController scrollController) {
+      ScrollController scrollController, String mediaType) {
     return SizedBox(
       height: (MediaQuery.of(context).size.shortestSide *
               0.36 /
@@ -133,10 +321,14 @@ class _SearchScreenState extends State<SearchScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return MediaDetailPage(
-                          currentMedia.id!,
-                          mediaType: currentMedia.mediaType!,
-                        );
+                        return currentMedia.mediaType == 'person'
+                            ? PersonDetailScreen(
+                                personID: currentMedia.id!,
+                              )
+                            : MediaDetailPage(
+                                currentMedia.id!,
+                                mediaType: currentMedia.mediaType!,
+                              );
                       },
                     ),
                   );
@@ -158,15 +350,19 @@ class _SearchScreenState extends State<SearchScreen> {
     DateTime? date;
     String? posterPath;
     String? knownForDepartment;
+    String? type;
     if (currentMedia is TvTrending) {
       date = currentMedia.firstAirDate;
       posterPath = currentMedia.posterPath;
+      type = 'tv';
     } else if (currentMedia is MovieTrending) {
       date = currentMedia.releaseDate;
       posterPath = currentMedia.posterPath;
+      type = 'movie';
     } else if (currentMedia is PeopleTrending) {
       posterPath = currentMedia.profilePath;
       knownForDepartment = currentMedia.knownForDepartment;
+      type = 'person';
     }
 
     return SizedBox(
@@ -174,30 +370,30 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (posterPath != null)
-            CachedNetworkImage(
-              placeholder: (context, url) {
-                return Center(
-                  child: SizedBox.square(
-                    dimension: MediaQuery.of(context).size.shortestSide * 0.2,
-                    child: const CircularProgressIndicator(),
-                  ),
-                );
-              },
-              imageUrl: getImage(path: posterPath, size: 'w200'),
-              imageBuilder: (context, imageProvider) => AspectRatio(
+          CachedNetworkImage(
+            placeholder: (context, url) {
+              return AspectRatio(
                 aspectRatio: posterAspectRatio,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            },
+            imageUrl: getImageWithType(
+                path: posterPath, size: 'w200', type: type ?? 'movie'),
+            imageBuilder: (context, imageProvider) => AspectRatio(
+              aspectRatio: posterAspectRatio,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
+          ),
           const SizedBox(
             height: 10.0,
           ),
@@ -241,7 +437,7 @@ class _SearchScreenState extends State<SearchScreen> {
         (peopleScrollController.position.pixels ==
             peopleScrollController.position.maxScrollExtent)) {
       page += 1;
-      mediaViewModel.searchQueries(query, page.toString());
+      mediaViewModel.searchQueries(query, page.toString(), type);
     }
   }
 }

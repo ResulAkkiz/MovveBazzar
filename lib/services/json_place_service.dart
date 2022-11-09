@@ -116,7 +116,7 @@ class JsonPlaceService extends BaseService {
   }
 
   Future<List<IBaseTrendingModel>?> searchQueries(
-      String? query, String? page) async {
-    return await searchQuery(query: query, page: page);
+      String? query, String? page, String type) async {
+    return await searchQuery(query: query, page: page, type: type);
   }
 }

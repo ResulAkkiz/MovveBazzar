@@ -228,10 +228,10 @@ class MediaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> searchQueries(String? query, String? page) async {
+  Future<void> searchQueries(String? query, String? page, String type) async {
     if (query != '') {
       List<IBaseTrendingModel>? tempList =
-          await _jsonPlaceService.searchQueries(query, page);
+          await _jsonPlaceService.searchQueries(query, page, type);
       if (tempList != null) {
         queryResultList!.addAll(tempList);
       }
