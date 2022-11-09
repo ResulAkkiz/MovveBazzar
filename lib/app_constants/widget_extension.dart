@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer show log;
 
 extension FlexExtension on Flex {
   separated(Widget separator) {
@@ -38,4 +39,8 @@ extension FlexExtension on Flex {
       );
     }
   }
+}
+
+extension Log on Object {
+  void log() => developer.log(toString());
 }
