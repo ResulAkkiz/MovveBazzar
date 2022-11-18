@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_widget/draggable_widget.dart';
@@ -16,6 +15,7 @@ import 'package:flutter_application_1/pages/bookmark_screen.dart';
 import 'package:flutter_application_1/pages/homebody_screen.dart';
 import 'package:flutter_application_1/pages/media_detail_screen.dart';
 import 'package:flutter_application_1/pages/profile_screen.dart';
+import 'package:flutter_application_1/pages/search_screen.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shake/shake.dart';
@@ -365,7 +365,11 @@ class _HomePageState extends State<HomePage>
       elevation: 0,
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const SearchScreen(),
+            ));
+          },
           icon: IconEnums.search.toIcon(),
         )
       ],

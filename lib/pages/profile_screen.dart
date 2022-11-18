@@ -14,6 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'landing_screen.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -254,6 +256,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         onPressed: () async {
           await movierViewModel.signOut();
+          if (mounted) {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const LandingScreen(),
+                ),
+                (route) => false);
+          }
         },
       ),
     );
