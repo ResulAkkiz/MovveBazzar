@@ -82,8 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               await movierViewModel.signinMovier(
-                                  emailController.text,
-                                  passwordController.text);
+                                  emailController.text.trim(),
+                                  passwordController.text.trim());
                               if (errorMessage.isNotEmpty) {
                                 if (!mounted) return;
                                 buildShowModelBottomSheet(context);
