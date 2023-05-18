@@ -14,6 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'landing_screen.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -254,6 +256,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         onPressed: () async {
           await movierViewModel.signOut();
+          if (mounted) {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const LandingScreen(),
+                ),
+                (route) => false);
+          }
         },
       ),
     );
@@ -281,8 +290,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildCircleAvatar() {
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Positioned(
-      left: 12,
+      left: isLandscape ? MediaQuery.of(context).size.width * 0.5 - 48 : 12,
       top: MediaQuery.of(context).size.height * 0.10,
       child: GestureDetector(
         onTap: () {
@@ -326,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ? FileImage(movierPhoto!)
                           : AssetImage(ImageEnums.profilepicture.toPath))
                   as ImageProvider,
-          radius: 64,
+          radius: isLandscape ? 48 : 64,
         ),
       ),
     );

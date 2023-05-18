@@ -6,8 +6,6 @@ import 'package:flutter_application_1/app_constants/text_styles.dart';
 import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/model/base_trending_model.dart';
 import 'package:flutter_application_1/model/movie_trending_model.dart';
-import 'package:flutter_application_1/model/people_model.dart';
-
 import 'package:flutter_application_1/model/people_trending_model.dart';
 import 'package:flutter_application_1/model/tv_trending_model.dart';
 import 'package:flutter_application_1/pages/media_detail_screen.dart';
@@ -56,10 +54,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaViewModel = Provider.of<MediaViewModel>(context);
-    // 'resultList: ${mediaViewModel.queryResultList!.length}'.log();
-    // 'queryTvList: ${mediaViewModel.queryTvList.length}'.log();
-    // 'queryMovieList: ${mediaViewModel.queryMovieList.length}'.log();
-    // 'queryPeopleList: ${mediaViewModel.queryPeopleList.length}'.log();
     return SafeArea(
       child: Scaffold(
           body: SingleChildScrollView(

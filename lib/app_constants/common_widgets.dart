@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants/image_enums.dart';
 import 'package:flutter_application_1/app_constants/text_styles.dart';
+import 'package:flutter_application_1/app_constants/widget_extension.dart';
 import 'package:flutter_application_1/services/firebase_auth_service.dart';
 import 'package:flutter_application_1/viewmodel/media_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -197,9 +198,10 @@ Widget buildSignupTextformField(
 Future<DateTime?> pickDate(BuildContext context) async => showDatePicker(
     initialEntryMode: DatePickerEntryMode.calendarOnly,
     context: context,
-    initialDate: DateTime.now(),
+    initialDatePickerMode: DatePickerMode.year,
+    initialDate: DateTime.now().subtract(const Duration(days: 18 * 365)),
     firstDate: DateTime(1910),
-    lastDate: DateTime.now());
+    lastDate: DateTime.now().subtract(const Duration(days: 18 * 365)));
 
 Future<dynamic> buildShowModelBottomSheet(BuildContext context) {
   return showModalBottomSheet(
@@ -299,6 +301,7 @@ Widget buildDateTimePicker(
   return InkWell(
     onTap: () async {
       final date = await pickDate(context);
+      date.toString().log();
       if (date == null) return;
       controller.text = '${date.day}/${date.month}/${date.year}';
       onSelected(date);

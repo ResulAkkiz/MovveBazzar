@@ -28,6 +28,9 @@ class _SplashScreenState extends State<SplashScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconEnums.applogo.toImage,
+          const SizedBox.square(
+            dimension: 50,
+          ),
           const CircularProgressIndicator(),
         ],
       ),
