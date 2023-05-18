@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_widget/draggable_widget.dart';
@@ -292,40 +293,40 @@ class _HomePageState extends State<HomePage>
         color: Theme.of(context).primaryColorDark,
       ),
       child: Flex(
-        mainAxisSize: isLandscape ? MainAxisSize.min : MainAxisSize.max,
         mainAxisAlignment:
             isLandscape ? MainAxisAlignment.center : MainAxisAlignment.start,
         direction: isLandscape ? Axis.horizontal : Axis.vertical,
         children: [
           if (media.posterPath != null)
-            AspectRatio(
-              aspectRatio: aspectRatio,
-              child: CachedNetworkImage(
-                imageUrl: getImage(
-                  path: media.posterPath,
-                  size: 'original',
-                ),
-                imageBuilder: (context, imageProvider) => DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
+            Flexible(
+              child: AspectRatio(
+                aspectRatio: aspectRatio,
+                child: CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: getImage(
+                    path: media.posterPath,
+                    size: 'original',
+                  ),
+                  imageBuilder: (context, imageProvider) => DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
+                  placeholder: (context, url) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
-                placeholder: (context, url) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
               ),
             ),
-          Flexible(
+          Expanded(
             child: Column(
-              crossAxisAlignment: isLandscape
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(media.mediaName.toString(),
@@ -334,7 +335,7 @@ class _HomePageState extends State<HomePage>
                 buildRatingBar(
                     voteAverage: media.voteAverage ?? 0,
                     voteCount: media.voteCount ?? 0),
-                buildGenreList(context),
+                Container(child: buildGenreList(context)),
                 Text(
                   'Shake me again, if you are not pleasant from result.',
                   style: TextStyles.robotoMedium12Style.copyWith(

@@ -290,8 +290,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildCircleAvatar() {
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Positioned(
-      left: 12,
+      left: isLandscape ? MediaQuery.of(context).size.width * 0.5 - 48 : 12,
       top: MediaQuery.of(context).size.height * 0.10,
       child: GestureDetector(
         onTap: () {
@@ -335,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ? FileImage(movierPhoto!)
                           : AssetImage(ImageEnums.profilepicture.toPath))
                   as ImageProvider,
-          radius: 64,
+          radius: isLandscape ? 48 : 64,
         ),
       ),
     );
