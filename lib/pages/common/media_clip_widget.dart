@@ -39,6 +39,16 @@ class MediaClipWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CachedNetworkImage(
+            placeholder: (context, url) {
+              return AspectRatio(
+                  aspectRatio: aspectRatio,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: const Center(child: CircularProgressIndicator())));
+            },
             imageUrl: getImage(
               path: posterPath,
               size: 'w200',
